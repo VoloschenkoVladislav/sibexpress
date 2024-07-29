@@ -2,14 +2,8 @@ import React, { useState, useRef, FC, useEffect } from "react";
 import suneditor from "suneditor";
 import { ru } from "suneditor/src/lang";
 import plugins from "suneditor/src/plugins";
-// import CodeMirror from "codemirror";
-// import katex from "katex";
 import "suneditor/dist/css/suneditor.min.css";
 import { usePrevious } from "../../hooks/prevProps";
-// import "codemirror/mode/htmlmixed/htmlmixed";
-// import "codemirror/lib/codemirror.css";
-// import "katex/dist/katex.min.css";
-// import "./Editor.scss"
 
 
 interface Props {
@@ -18,15 +12,7 @@ interface Props {
     onSave: Function;
 }
 
-interface State {
-    imageList: any[];
-    selectedImages: any[];
-    imageSize: string;
-}
-
 export const SEditor: FC<Props> = props => {
-    // txtArea: any;
-    // editor: any;
 
     const { contents, onBlur, onSave } = props;
     const prevContents = usePrevious(contents);
@@ -42,14 +28,11 @@ export const SEditor: FC<Props> = props => {
             plugins: plugins,
             lang: ru,
             callBackSave: (contents: string) => onSave(contents),
-            // codeMirror: CodeMirror,
             stickyToolbar: 0,
-            // katex: katex,
             width: '100%',
             height: 'auto',
             minHeight: '400px',
             value: contents,
-            // imageUploadUrl: `url`,
             imageMultipleFile: true,
             previewTemplate: `
                 <div style="width:auto; max-width:1136px; min-height:400px; margin:auto;">
