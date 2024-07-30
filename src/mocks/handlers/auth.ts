@@ -17,9 +17,16 @@ export const authHandler = http.post("/api-admin/v1/auth", async ({ request}) =>
     && password === '123'
   ) {
     data = {
+      id: 1,
       access_token: token,
-      token_type: "Bearer",
-      expires: "2025-05-06 07:06:28"
+      access_type: "Bearer",
+      expires: "2025-05-06 07:06:28",
+      abilities:[
+        "postCreate",
+        "postView",
+        "postEdit",
+        "newsDelete"
+      ]
     };
   } else {
     errors = {};

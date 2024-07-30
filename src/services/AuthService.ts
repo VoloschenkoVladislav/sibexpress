@@ -12,7 +12,7 @@ export interface AuthRequestBody {
 export interface AuthResponseData {
   id: number,
   access_token: string,
-  token_type: string,
+  access_type: string,
   expires: string,
   abilities: string[],
 }

@@ -1,8 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit"
 import { IUser } from "../../models/IUser"
-import { getToken, removeToken, setToken } from "../../cookie/cookie";
 import { authAPI, AuthResponseData, AuthResponseError } from "../../services/AuthService";
 import { IResponse } from "../../models/IApi";
+import Cookies from 'js-cookie';
+import { PERMISSIONS } from "../../constants/permission";
 
 
 interface AuthState {
@@ -12,10 +13,23 @@ interface AuthState {
   authError?: AuthResponseError | null,
 }
 
+const getUserFromCookie = () => {
+  return (
+    Cookies.get('access_token')
+      ? {
+        id: 0,
+        email: '',
+        name: '',
+        permissions: JSON.parse(Cookies.get('abilities')),
+      } as IUser
+      : null
+  );
+}
+
 const initialState: AuthState = {
-  user: null,
-  accessToken: getToken('access-token') || null,
-  isAuthorized: !!getToken('access-token'),
+  user: getUserFromCookie(),
+  accessToken: Cookies.get('access_token') || null,
+  isAuthorized: !!Cookies.get('access_token'),
 }
 
 export const authSlice = createSlice({
@@ -26,11 +40,18 @@ export const authSlice = createSlice({
     builder
       .addMatcher(authAPI.endpoints.login.matchFulfilled, (state, action) => {
         if (action.payload.data) {
-          const { access_token, expires, token_type } = action.payload.data;
+          const { access_token, expires, access_type, abilities, id } = action.payload.data;
           state.isAuthorized = true;
           state.accessToken = access_token;
           state.authError = null;
-          setToken('access-token', `${token_type} ${access_token}`, new Date(expires));
+          state.user = {
+            id,
+            email: '',
+            name: '',
+            permissions: abilities as PERMISSIONS[],
+          }
+          Cookies.set('access_token', `${access_type} ${access_token}`, { expires: new Date(expires) });
+          Cookies.set('abilities', JSON.stringify(abilities), { expires: new Date(expires) });
         }
       })
       .addMatcher(authAPI.endpoints.login.matchRejected, (state, action) => {
@@ -47,7 +68,8 @@ export const authSlice = createSlice({
         state.user = null;
         state.accessToken = null;
         state.authError = null;
-        removeToken('access-token');
+        Cookies.remove('access_token');
+        Cookies.remove('abilities');
       })
   }
 });
