@@ -10,14 +10,16 @@ export interface AuthRequestBody {
 }
 
 export interface AuthResponseData {
+  id: number,
   access_token: string,
   token_type: string,
   expires: string,
+  abilities: string[],
 }
 
 export interface AuthResponseError {
-  email?: string[],
-  password?: string[],
+  email?: string,
+  password?: string,
 }
 
 export interface MeResponseData {
@@ -31,13 +33,12 @@ export interface MeResponseData {
 
 export const authAPI = createApi({
   reducerPath: 'authAPI',
-  tagTypes: ['MeData'],
   baseQuery: fetchBaseQuery({
     baseUrl: '/api-admin/v1',
     prepareHeaders: (headers, { getState }) => {
       const { accessToken } = (getState() as RootState).authReducer;
       if (accessToken) {
-        headers.set('Authorization', `Bearer ${accessToken}`)
+        headers.set('Authorization', accessToken)
       }
       return headers
     },
@@ -52,11 +53,6 @@ export const authAPI = createApi({
           password: requestBody.password,
         },
       }),
-      invalidatesTags: ['MeData'],
-    }),
-    me: build.query<IResponse<MeResponseData, string>, void>({
-      query: () => ({ url: '/me' }),
-      providesTags: ['MeData'],
     }),
     logout: build.query<IResponse<null, null>, void>({
       query: () => ({ url: '/logout' }),
@@ -66,6 +62,5 @@ export const authAPI = createApi({
 
 export const {
   useLoginMutation,
-  useMeQuery,
   useLazyLogoutQuery
 } = authAPI;

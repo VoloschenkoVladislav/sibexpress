@@ -40,7 +40,7 @@ const LoginForm: FC = () => {
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
           <TextField
             error={!!authError?.email}
-            helperText={authError?.email?.join('\n')}
+            helperText={authError?.email}
             margin="normal"
             required
             fullWidth
@@ -52,7 +52,7 @@ const LoginForm: FC = () => {
           />
           <TextField
             error={!!authError?.password}
-            helperText={authError?.password?.join('\n')}
+            helperText={authError?.password}
             margin="normal"
             required
             fullWidth
