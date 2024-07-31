@@ -84,8 +84,14 @@ export const logoutHandler = http.get("/api-admin/v1/logout", () => {
     JSON.stringify({
       data: null,
       errors: null,
-      error_message: null,
+      error_message: 'Unauthorized',
     }),
-    { status: 200 },
+    { status: 401 },
+    // JSON.stringify({
+    //   data: null,
+    //   errors: null,
+    //   error_message: null,
+    // }),
+    // { status: 200 },
   )
 });

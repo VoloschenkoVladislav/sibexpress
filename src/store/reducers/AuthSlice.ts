@@ -11,6 +11,8 @@ interface AuthState {
   accessToken: string | null,
   isAuthorized: boolean,
   authError?: AuthResponseError | null,
+  errorMessage?: string | null,
+  errorCode?: string | null
 }
 
 const getUserFromCookie = () => {
@@ -35,7 +37,11 @@ const initialState: AuthState = {
 export const authSlice = createSlice({
   name: 'auth',
   initialState,
-  reducers: {},
+  reducers: {
+    resetError: state => {
+      state.errorMessage = null;
+    }
+  },
   extraReducers: builder => {
     builder
       .addMatcher(authAPI.endpoints.login.matchFulfilled, (state, action) => {
@@ -57,11 +63,7 @@ export const authSlice = createSlice({
       .addMatcher(authAPI.endpoints.login.matchRejected, (state, action) => {
         const data = action.payload && action.payload.data as IResponse<AuthResponseData, AuthResponseError>;
         state.authError = data?.errors;
-        if (data) {
-          console.error('422 Auth error: ', data.error_message);
-        } else {
-          console.error('500 Server error');
-        }
+        state.errorMessage = data?.error_message;
       })
       .addMatcher(authAPI.endpoints.logout.matchFulfilled, (state, action) => {
         state.isAuthorized = false;
@@ -71,7 +73,19 @@ export const authSlice = createSlice({
         Cookies.remove('access_token');
         Cookies.remove('abilities');
       })
+      .addMatcher(authAPI.endpoints.logout.matchRejected, (state, action) => {
+        const data = action.payload && action.payload.data as IResponse<null, null>;
+        state.isAuthorized = false;
+        state.user = null;
+        state.accessToken = null;
+        state.authError = null;
+        state.errorMessage = data?.error_message;
+        Cookies.remove('access_token');
+        Cookies.remove('abilities');
+      })
   }
 });
+
+export const { resetError } = authSlice.actions;
 
 export default authSlice.reducer;

@@ -9,4 +9,5 @@ export enum PATHS {
   MEDIA_ARCHIVE_RUBRICS = '/media_archive_rubrics',
   TOPICS_MANAGEMENT = '/topics_management',
   ACCESS_DENIED = '/access_denied',
+  UNAUTHORIZED = '/unauthorized',
 }

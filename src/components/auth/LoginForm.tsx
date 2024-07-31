@@ -76,7 +76,7 @@ const LoginForm: FC = () => {
   );
 };
 
-export const LoginWrap: React.FunctionComponent = () => {
+export const LoginWrap: FC = () => {
   const to = useLocation().state || '/';
   const isAuthorized = useAppSelector(state => state.authReducer.isAuthorized);
   return isAuthorized ? <Navigate to={to} /> : <LoginForm />;

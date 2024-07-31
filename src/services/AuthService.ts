@@ -1,7 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { IResponse } from '../models/IApi';
 import { RootState } from '../store/store';
-import { PERMISSIONS } from '../constants/permission';
 
 
 export interface AuthRequestBody {
@@ -20,15 +19,6 @@ export interface AuthResponseData {
 export interface AuthResponseError {
   email?: string,
   password?: string,
-}
-
-export interface MeResponseData {
-  id: number,
-  name: string,
-  email: string,
-  authorized_at: string,
-  expires: string,
-  permissions: PERMISSIONS[],
 }
 
 export const authAPI = createApi({

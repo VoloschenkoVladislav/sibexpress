@@ -7,22 +7,25 @@ import { Themes } from './themes/Themes';
 import { AuthRoute } from './auth/AuthRoute';
 import { LoginWrap } from './auth/LoginForm';
 import { NewsEdit } from './news/NewsEdit';
+import { ErrorBoundary } from './system/ErrorBoundary';
 
 
 const App: FC = () => {
   return (
     <>
       <BrowserRouter>
-        <Routes>
-          <Route path={PATHS.LOGIN} element={<LoginWrap />} />
-          <Route element={<AuthRoute />}>
-            <Route path='/' element={<Navigate to={PATHS.NEWS} replace />} />
-            <Route path={PATHS.NEWS} element={<News />} />
-            <Route path={`${PATHS.NEWS}/:id`} element={<NewsEdit />} />
-            <Route path={PATHS.TOPICS_MANAGEMENT} element={<Themes />} />
-            <Route path={PATHS.USER_LIST} element={<Users />} />
-          </Route>
-        </Routes>
+        <ErrorBoundary>
+          <Routes>
+            <Route path={PATHS.LOGIN} element={<LoginWrap />} />
+            <Route element={<AuthRoute />}>
+              <Route path='/' element={<Navigate to={PATHS.NEWS} replace />} />
+              <Route path={PATHS.NEWS} element={<News />} />
+              <Route path={`${PATHS.NEWS}/:id`} element={<NewsEdit />} />
+              <Route path={PATHS.TOPICS_MANAGEMENT} element={<Themes />} />
+              <Route path={PATHS.USER_LIST} element={<Users />} />
+            </Route>
+          </Routes>
+        </ErrorBoundary>
       </BrowserRouter>
     </>
   );

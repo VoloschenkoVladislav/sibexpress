@@ -13,6 +13,7 @@ async function enableMocking() {
 
     return worker.start();
   }
+  return Promise.resolve();
 }
 
 const root = ReactDOM.createRoot(
