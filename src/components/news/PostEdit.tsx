@@ -9,7 +9,7 @@ enum EditorType {
   SunEditor = 'SunEditor'
 }
 
-export const NewsEdit: FC = () => {
+export const PostEdit: FC = () => {
   const [ editorType, setEditorType ] = useState(EditorType.Jodit);
 
   const onEditorToggle = (

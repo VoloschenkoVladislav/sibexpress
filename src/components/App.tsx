@@ -1,13 +1,13 @@
 import { FC } from 'react';
 import { Route, Routes, BrowserRouter, Navigate } from 'react-router-dom';
-import { News } from './news/News';
+import { Posts } from './news/Posts';
 import { PATHS } from '../constants/path';
 import { Users } from './users/Users';
 import { Themes } from './themes/Themes';
 import { AuthRoute } from './auth/AuthRoute';
 import { LoginWrap } from './auth/LoginForm';
-import { NewsEdit } from './news/NewsEdit';
-import { ErrorBoundary } from './system/ErrorBoundary';
+import { PostEdit } from './news/PostEdit';
+import { ErrorBoundary } from './features/ErrorBoundary';
 
 
 const App: FC = () => {
@@ -19,8 +19,8 @@ const App: FC = () => {
             <Route path={PATHS.LOGIN} element={<LoginWrap />} />
             <Route element={<AuthRoute />}>
               <Route path='/' element={<Navigate to={PATHS.NEWS} replace />} />
-              <Route path={PATHS.NEWS} element={<News />} />
-              <Route path={`${PATHS.NEWS}/:id`} element={<NewsEdit />} />
+              <Route path={PATHS.NEWS} element={<Posts />} />
+              <Route path={`${PATHS.NEWS}/:id`} element={<PostEdit />} />
               <Route path={PATHS.TOPICS_MANAGEMENT} element={<Themes />} />
               <Route path={PATHS.USER_LIST} element={<Users />} />
             </Route>

@@ -47,7 +47,7 @@ const rows = [
   }
 ];
 
-const NewsTable: FC = () => {
+const PostsTable: FC = () => {
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
@@ -92,10 +92,10 @@ const NewsTable: FC = () => {
   );
 }
 
-export const News: FC = () => {
+export const Posts: FC = () => {
   return (
     <DashboardLayout>
-      <NewsTable />
+      <PostsTable />
     </DashboardLayout>
   )
 };
