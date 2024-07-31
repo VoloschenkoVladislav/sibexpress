@@ -1,4 +1,4 @@
-import { http, HttpResponse } from 'msw';
+import { delay, http, HttpResponse } from 'msw';
 
 
 export const topicsHandler = http.get("/api-admin/v1/topics", () => {
@@ -39,7 +39,8 @@ export const topicsHandler = http.get("/api-admin/v1/topics", () => {
   )
 });
 
-export const statusesHandler = http.get("/api-admin/v1/statuses", () => {
+export const statusesHandler = http.get("/api-admin/v1/statuses", async () => {
+  await delay(1800);
   return new HttpResponse(
     JSON.stringify({
       data: {

@@ -45,12 +45,20 @@ export const postAPI = createApi({
     },
   }),
   endpoints: build => ({
-    posts: build.query<IResponse<PostsResponseData, null>, number>({
+    posts: build.query<PostInterface[], number>({
       query: page => ({ url: `/posts?page=${page}` }),
+      keepUnusedDataFor: 10,
+      transformResponse: (response: IResponse<PostsResponseData, null>, meta, arg) => {
+        if (!!response.data) {
+          return response.data.items;
+        } else {
+          return [];
+        }
+      }
     }),
   }),
 });
 
 export const {
-  useLazyPostsQuery
+  usePostsQuery
 } = postAPI;

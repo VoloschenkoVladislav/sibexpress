@@ -3,6 +3,7 @@ import authReducer from './reducers/AuthSlice';
 import postsReducer from './reducers/PostSlice';
 import { authAPI } from "../services/AuthService";
 import { postAPI } from "../services/PostService";
+import { dictionariesAPI } from "../services/DictionaryService";
 
 
 const rootReducer = combineReducers({
@@ -10,6 +11,7 @@ const rootReducer = combineReducers({
   postsReducer,
   [authAPI.reducerPath]: authAPI.reducer,
   [postAPI.reducerPath]: postAPI.reducer,
+  [dictionariesAPI.reducerPath]: dictionariesAPI.reducer,
 });
 
 export const setupStore = () => {
@@ -19,6 +21,7 @@ export const setupStore = () => {
         getDefaultMiddleware()
           .concat(authAPI.middleware)
           .concat(postAPI.middleware)
+          .concat(dictionariesAPI.middleware)
   })
 };
 

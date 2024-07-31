@@ -1,7 +1,8 @@
-import { http, HttpResponse } from 'msw';
+import { delay, http, HttpResponse } from 'msw';
 
 
-export const postsHandler = http.get("/api-admin/v1/posts", () => {
+export const postsHandler = http.get("/api-admin/v1/posts", async () => {
+  await delay(1000);
   return new HttpResponse(
     JSON.stringify({
       data: {

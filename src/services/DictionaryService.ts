@@ -3,28 +3,28 @@ import { IResponse } from '../models/IApi';
 import { RootState } from '../store/store';
 
 
-export interface Permission {
+export interface PermissionInterface {
   id: number,
   name: string,
   description: string,
 }
 
-export interface Topic {
+export interface TopicInterface {
   id: number,
   title: string,
 }
 
-export interface Status {
+export interface StatusInterface {
   id: number,
   title: string,
 }
 
-export interface Type {
+export interface TypeInterface {
   id: number,
   title: string,
 }
 
-export interface BannerPlace {
+export interface BannerPlaceInterface {
   id: number,
   title: string,
 }
@@ -46,28 +46,63 @@ export const dictionariesAPI = createApi({
     },
   }),
   endpoints: build => ({
-    permissions: build.query<IResponse<DictionariesResponseData<Permission>, null>, void>({
+    permissions: build.query<PermissionInterface[], void>({
       query: () => ({ url: '/permissions' }),
+      transformResponse: (response: IResponse<DictionariesResponseData<PermissionInterface>, null>, meta, arg) => {
+        if (!!response.data) {
+          return response.data.items;
+        } else {
+          return [];
+        }
+      }
     }),
-    topics: build.query<IResponse<DictionariesResponseData<Topic>, null>, void>({
+    topics: build.query<TopicInterface[], void>({
       query: () => ({ url: '/topics' }),
+      transformResponse: (response: IResponse<DictionariesResponseData<TopicInterface>, null>, meta, arg) => {
+        if (!!response.data) {
+          return response.data.items;
+        } else {
+          return [];
+        }
+      }
     }),
-    statuses: build.query<IResponse<DictionariesResponseData<Status>, null>, void>({
+    statuses: build.query<StatusInterface[], void>({
       query: () => ({ url: '/statuses' }),
+      transformResponse: (response: IResponse<DictionariesResponseData<StatusInterface>, null>, meta, arg) => {
+        if (!!response.data) {
+          return response.data.items;
+        } else {
+          return [];
+        }
+      }
     }),
-    types: build.query<IResponse<DictionariesResponseData<Type>, null>, void>({
+    types: build.query<TypeInterface[], void>({
       query: () => ({ url: '/types' }),
+      transformResponse: (response: IResponse<DictionariesResponseData<TypeInterface>, null>, meta, arg) => {
+        if (!!response.data) {
+          return response.data.items;
+        } else {
+          return [];
+        }
+      }
     }),
-    bannerPlaces: build.query<IResponse<DictionariesResponseData<BannerPlace>, null>, void>({
+    bannerPlaces: build.query<BannerPlaceInterface[], void>({
       query: () => ({ url: '/banner_places' }),
+      transformResponse: (response: IResponse<DictionariesResponseData<BannerPlaceInterface>, null>, meta, arg) => {
+        if (!!response.data) {
+          return response.data.items;
+        } else {
+          return [];
+        }
+      }
     }),
   }),
 });
 
 export const {
-  useLazyPermissionsQuery,
-  useLazyTopicsQuery,
-  useLazyStatusesQuery,
-  useLazyTypesQuery,
-  useLazyBannerPlacesQuery,
+  usePermissionsQuery,
+  useTopicsQuery,
+  useStatusesQuery,
+  useTypesQuery,
+  useBannerPlacesQuery,
 } = dictionariesAPI;
