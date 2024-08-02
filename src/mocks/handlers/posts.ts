@@ -43,7 +43,7 @@ export const postsHandler = http.get("/api-admin/v1/posts", async () => {
   )
 });
 
-export const postHandler = http.get("/api-admin/v1/post/:id", async ({ params }) => {
+export const postHandler = http.get("/api-admin/v1/posts/:id", async ({ params }) => {
   await delay(1500);
   return new HttpResponse(
     JSON.stringify({
