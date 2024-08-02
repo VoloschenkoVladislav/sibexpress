@@ -6,7 +6,6 @@ import { useAppSelector } from '../../hooks/redux/redux';
 
 export const AuthRoute: FC = () => {
   const location = useLocation();
-  console.log(location);
   const isAuthorized = useAppSelector(state => state.authReducer.isAuthorized);
   const errorMessage = useAppSelector(state => state.authReducer.errorMessage);
 

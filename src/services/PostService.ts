@@ -3,12 +3,31 @@ import { IResponse } from '../models/IApi';
 import { RootState } from '../store/store';
 
 
-export interface PostInterface {
+export interface ShortPostInterface {
   id: number,
   title: string,
   type_id: number,
   status_id: number,
   published_at: string,
+}
+
+export interface PostInterface {
+  id: number,
+  type_id: number,
+  status_id: number,
+  title: string,
+  content: string,
+  media: {
+    thumb: {
+      src: string,
+    },
+    images: string[],
+    src: string,
+  },
+  created_at: string,
+  updated_at: string,
+  published_at: string,
+  topics: number[],
 }
 
 export interface LinksInterface {
@@ -27,7 +46,7 @@ export interface MetaInterface {
 }
 
 export interface PostsResponseData {
-  items: PostInterface[],
+  items: ShortPostInterface[],
   links: LinksInterface,
   meta: MetaInterface,
 }
@@ -45,7 +64,7 @@ export const postAPI = createApi({
     },
   }),
   endpoints: build => ({
-    posts: build.query<PostInterface[], number>({
+    posts: build.query<ShortPostInterface[], number>({
       query: page => ({ url: `/posts?page=${page}` }),
       keepUnusedDataFor: 10,
       transformResponse: (response: IResponse<PostsResponseData, null>, meta, arg) => {
@@ -56,9 +75,14 @@ export const postAPI = createApi({
         }
       }
     }),
+    post: build.query<IResponse<PostInterface, undefined>, number>({
+      query: postId => ({ url: `/posts/${postId}` }),
+      keepUnusedDataFor: 1,
+    }),
   }),
 });
 
 export const {
-  usePostsQuery
+  usePostsQuery,
+  usePostQuery,
 } = postAPI;

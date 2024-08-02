@@ -5,12 +5,12 @@ import { Link } from "react-router-dom";
 import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import { PATHS } from "../../constants/path";
-import { PostInterface, usePostsQuery } from "../../services/PostService";
+import { ShortPostInterface, usePostsQuery } from "../../services/PostService";
 import { StatusInterface, TypeInterface, useStatusesQuery, useTypesQuery } from "../../services/DictionaryService";
 
 
 interface TableProps {
-  posts: PostInterface[],
+  posts: ShortPostInterface[],
   statuses: StatusInterface[],
   types: TypeInterface[],
   isPostsLoading?: boolean,
@@ -93,7 +93,7 @@ const PostsTable: FC<TableProps> = props => {
                   <TableCell>{post.id}</TableCell>
                   <TableCell>{post.title}</TableCell>
                   <TableCell>
-                    {(() => isPostsLoading
+                    {(() => isTypesLoading
                       ? <Skeleton variant="text" />
                       : getTypeTitle(post.type_id)
                     )()}

@@ -10,7 +10,7 @@ interface Props {
 
 export const JEditor: FC<Props> = ({ placeholder }) => {
   const editor = useRef(null);
-  const content = useAppSelector(state => state.postsReducer.postContent);
+  const content = useAppSelector(state => state.postsReducer.content);
   const dispatch = useAppDispatch();
   const updateValue = (newContent: string) => dispatch(setContent(newContent));
   const debouncedUpdateValue = useDebouncedFunction(updateValue, 1000);
