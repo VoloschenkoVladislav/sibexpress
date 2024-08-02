@@ -1,5 +1,5 @@
 import { Box, ToggleButtonGroup, InputLabel, ToggleButton, TextField, Autocomplete, CircularProgress, Select, MenuItem, SelectChangeEvent, Paper, FormControl } from "@mui/material";
-import { FC, useMemo, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import { DashboardLayout } from "../layout/DashboardLayout";
 import { JEditor } from "../editor/JoditEditor";
 import { SEditor } from "../editor/SunEditor";
@@ -15,13 +15,16 @@ enum EditorType {
 
 export const PostEdit: FC = () => {
   const { id } = useParams();
-  const { tags_id, status_id } = useAppSelector(state => state.postsReducer);
+  const { tags_id, status_id, content } = useAppSelector(state => state.postsReducer);
   const [ editorType, setEditorType ] = useState(EditorType.SunEditor);
   const { data: topics = [], isLoading: isTopicsLoading } = useTopicsQuery();
   const { data: statuses = [], isLoading: isStatusesLoading } = useStatusesQuery();
   const { isLoading: isPostLoading } = usePostQuery(+id!);
   const [ selectedTopicIds, setSelectedTopicIds ] = useState<number[]>(tags_id);
   const [ selectedStatusId, setSelectedStatusId ] = useState<number | null>(status_id);
+
+  useEffect(() => setSelectedTopicIds(tags_id), [tags_id]);
+  useEffect(() => setSelectedStatusId(status_id), [status_id]);
 
   const onEditorToggle = (
     event: React.MouseEvent<HTMLElement>,
@@ -75,7 +78,7 @@ export const PostEdit: FC = () => {
                     case EditorType.Jodit:
                       return <Box><JEditor placeholder={'Hello, world!'} /></Box>
                     case EditorType.SunEditor:
-                      return <Box><SEditor onSave={() => {}} /></Box>
+                      return <Box><SEditor editorContent={content} onChange={() => {}} /></Box>
                   }
                 })()
               }
