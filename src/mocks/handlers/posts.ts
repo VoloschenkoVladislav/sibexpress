@@ -1,39 +1,31 @@
 import { delay, http, HttpResponse } from 'msw';
+import { newsList } from './fakeData/fakePostsList';
 
 
-export const postsHandler = http.get("/api-admin/v1/posts", async () => {
+export const postsHandler = http.get("/api-admin/v1/posts", async ({ request }) => {
   await delay(1000);
+
+  const url = new URL(request.url);
+  const page = !!url.searchParams.get('page') ? +url.searchParams.get('page')! : 1;
+  const perPage = !!url.searchParams.get('per_page') ? +url.searchParams.get('per_page')! : 10;
+  console.table({ page, perPage, length: newsList.length });
+
   return new HttpResponse(
     JSON.stringify({
       data: {
-        items: [
-          {
-            id: 175912,
-            title: "Концентрация вредных веществ в Красноярске превышена в 2,5 раза",
-            type_id: 2,
-            status_id: 1,
-            published_at: "2022-02-13 05:40:13"
-          },
-          {
-            id: 175913,
-            title: "Опасное загрязнение воздуха отмечено в Новосибирске и Новокузнецке",
-            type_id: 1,
-            status_id: 1,
-            published_at: null
-          }
-        ],
+        items: newsList.slice((page - 1) * perPage, page * perPage),
         links: {
-          first: "https://sib.express/api-admin/v1/news?page=1",
+          first: `https://sib.express/api-admin/v1/posts?page=1`,
           last: null,
-          prev: "https://sib.express/api-admin/v1/news?page=1",
-          next: "https://sib.express/api-admin/v1/news?page=3"
+          prev: page !== 1 ? `https://sib.express/api-admin/v1/posts?page=${page - 1}` : null,
+          next: page * perPage < newsList.length ? `https://sib.express/api-admin/v1/posts?page=${page + 1}` : null,
         },
         meta: {
-          current_page: 2,
-          from: 11,
-          path: "https://sib.express/api-admin/v1/news",
-          per_page: "10",
-          to: 20
+          current_page: page,
+          from: (page - 1) * perPage + 1,
+          path: "https://sib.express/api-admin/v1/posts",
+          per_page: perPage.toString(),
+          to: page * perPage
         }
       },
       errors: null,

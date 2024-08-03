@@ -31,10 +31,10 @@ export interface PostInterface {
 }
 
 export interface LinksInterface {
-  first: string,
-  last: string,
-  prev: string,
-  next: string,
+  first: string | null,
+  last: string | null,
+  prev: string | null,
+  next: string | null,
 }
 
 export interface MetaInterface {
@@ -64,16 +64,16 @@ export const postAPI = createApi({
     },
   }),
   endpoints: build => ({
-    posts: build.query<ShortPostInterface[], number>({
-      query: page => ({ url: `/posts?page=${page}` }),
+    posts: build.query<IResponse<PostsResponseData, null>, { page: number, perPage: number }>({
+      query: (params) => ({ url: `/posts?page=${params.page}&per_page=${params.perPage}` }),
       keepUnusedDataFor: 10,
-      transformResponse: (response: IResponse<PostsResponseData, null>, meta, arg) => {
-        if (!!response.data) {
-          return response.data.items;
-        } else {
-          return [];
-        }
-      }
+      // transformResponse: (response: IResponse<PostsResponseData, null>, meta, arg) => {
+      //   if (!!response.data) {
+      //     return response.data.items;
+      //   } else {
+      //     return [];
+      //   }
+      // }
     }),
     post: build.query<IResponse<PostInterface, undefined>, number>({
       query: postId => ({ url: `/posts/${postId}` }),

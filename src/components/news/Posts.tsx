@@ -1,22 +1,28 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import { DashboardLayout } from "../layout/DashboardLayout";
-import { TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper, Button, Skeleton } from "@mui/material";
 import { Link } from "react-router-dom";
 import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import { PATHS } from "../../constants/path";
-import { ShortPostInterface, usePostsQuery } from "../../services/PostService";
-import { StatusInterface, TypeInterface, useStatusesQuery, useTypesQuery } from "../../services/DictionaryService";
+import { usePostsQuery } from "../../services/PostService";
+import {
+  useStatusesQuery,
+  useTypesQuery,
+} from "../../services/DictionaryService";
+import {
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  Paper,
+  Button,
+  Skeleton,
+  TableFooter,
+  TablePagination,
+} from "@mui/material";
 
-
-interface TableProps {
-  posts: ShortPostInterface[],
-  statuses: StatusInterface[],
-  types: TypeInterface[],
-  isPostsLoading?: boolean,
-  isStatusesLoading?: boolean,
-  isTypesLoading?: boolean,
-};
 
 interface PostSkeletonProps {
   id: number,
@@ -46,17 +52,14 @@ const PostSkeleton: FC<PostSkeletonProps> = props => {
       </TableCell>
     </TableRow>
   );
-}
+};
 
-const PostsTable: FC<TableProps> = props => {
-  const {
-    posts,
-    statuses,
-    types,
-    isPostsLoading,
-    isStatusesLoading,
-    isTypesLoading,
-  } = props;
+const PostsTable: FC = () => {
+  const [ page, setPage ] = useState(0);
+  const [ rowsPerPage, setRowsPerPage ] = useState(10);
+  const { data: posts, isLoading: isPostsLoading, isFetching: isPostsFetching } = usePostsQuery({ page: page + 1, perPage: rowsPerPage });
+  const { data: statuses = [], isLoading: isStatusesLoading } = useStatusesQuery();
+  const { data: types = [], isLoading: isTypesLoading } = useTypesQuery();
   
   const getTypeTitle = (type_id: number) => {
     return types.filter(type => type.id === type_id)[0].title;
@@ -64,6 +67,20 @@ const PostsTable: FC<TableProps> = props => {
 
   const getStatusTitle = (status_id: number) => {
     return statuses.filter(status => status.id === status_id)[0].title;
+  };
+
+  const handleChangePage = (
+    event: React.MouseEvent<HTMLButtonElement> | null,
+    newPage: number,
+  ) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
   };
 
   return (
@@ -82,11 +99,11 @@ const PostsTable: FC<TableProps> = props => {
         </TableHead>
         <TableBody>
           {
-            isPostsLoading
-              ? [1, 2, 3, 4, 5].map(id => (
+            isPostsLoading || isPostsFetching
+              ? Array.from(Array(rowsPerPage).keys()).map(id => (
                 <PostSkeleton id={id} />
               ))
-              : posts.map(post => (
+              : posts?.data?.items.map(post => (
                 <TableRow
                   key={post.id}
                 >
@@ -120,26 +137,35 @@ const PostsTable: FC<TableProps> = props => {
                 </TableRow>
               ))}
         </TableBody>
+        <TableFooter>
+          <TableRow>
+            <TablePagination
+              showFirstButton
+              count={-1}
+              rowsPerPage={rowsPerPage}
+              rowsPerPageOptions={[10, 25, 50]}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+              page={page}
+              slotProps={{
+                actions: {
+                  nextButton: {
+                    disabled: !posts?.data?.links.next
+                  },
+                },
+              }}
+              onPageChange={handleChangePage}
+            />
+          </TableRow>
+        </TableFooter>
       </Table>
     </TableContainer>
   );
 }
 
 export const Posts: FC = () => {
-  const { data: posts = [], isLoading: isPostsLoading } = usePostsQuery(10);
-  const { data: statuses = [], isLoading: isStatusesLoading } = useStatusesQuery();
-  const { data: types = [], isLoading: isTypesLoading } = useTypesQuery();
-
   return (
     <DashboardLayout>
-      <PostsTable
-        posts={posts}
-        statuses={statuses}
-        types={types}
-        isPostsLoading={isPostsLoading}
-        isStatusesLoading={isStatusesLoading}
-        isTypesLoading={isTypesLoading}
-      />
+      <PostsTable />
     </DashboardLayout>
   )
 };
