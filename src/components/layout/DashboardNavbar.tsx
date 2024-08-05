@@ -20,6 +20,8 @@ const items = [
   },
 ];
 
+export const toolbarHeight = '40px';
+
 export const DashboardNavbar: FC = () => {
   const [ logoutFetch ] = useLazyLogoutQuery();
 
@@ -27,14 +29,12 @@ export const DashboardNavbar: FC = () => {
     <>
       <AppBar
         sx={{
-          width: {
-            lg: '100%',
-          },
+          width: '100%',
         }}
       >
         <Toolbar
           sx={{
-            minHeight: 64,
+            height: toolbarHeight,
             left: 0,
             px: 2,
           }}
