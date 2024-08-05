@@ -30,6 +30,7 @@ import { TopicInterface, useStatusesQuery, useTopicsQuery, useTypesQuery } from 
 import { useParams } from "react-router-dom";
 import { usePostQuery } from "../../services/PostService";
 import { useAppSelector } from "../../hooks/redux/redux";
+import { parseDate } from "../../utils/dateParser";
 
 
 const DATE_FORMAT = 'DD/MM/YYYY HH:mm:ss';
@@ -79,6 +80,8 @@ const SidePanel: FC<SidePanelProps> = props => {
   const { data: topics = [], isLoading: isTopicsLoading } = useTopicsQuery();
   const { data: statuses = [], isLoading: isStatusesLoading } = useStatusesQuery();
   const { data: types = [], isLoading: isTypesLoading } = useTypesQuery();
+
+  useEffect(() => {}, [statuses, types]);
 
   const selectedTopics = useMemo(
     () => topics!.filter(topic => selectedTopicIds.indexOf(topic.id) !== -1),
@@ -240,9 +243,8 @@ export const PostEdit: FC = () => {
     setSelectedTopicIds(tags_id);
     setSelectedStatusId(status_id);
     setSelectedTypeId(type_id);
-    setPublishedAt(published_at);
+    setPublishedAt(parseDate(published_at));
   }, [
-    isPostLoading,
     tags_id,
     status_id,
     type_id,
@@ -265,7 +267,7 @@ export const PostEdit: FC = () => {
     setSelectedTopicIds(tags_id);
     setSelectedTypeId(type_id);
     setSelectedStatusId(status_id);
-    setPublishedAt(published_at);
+    setPublishedAt(parseDate(published_at));
   }
 
   const hasChanged = useMemo(() => {
@@ -279,7 +281,11 @@ export const PostEdit: FC = () => {
     selectedTopicIds,
     selectedTypeId,
     selectedStatusId,
-    publishedAt
+    publishedAt,
+    tags_id,
+    type_id,
+    status_id,
+    published_at
   ]);
 
   return (
@@ -308,8 +314,8 @@ export const PostEdit: FC = () => {
               selectedStatusId={selectedStatusId}
               selectedTypeId={selectedTypeId}
               publishedAt={dayjs(publishedAt)}
-              createdAt={dayjs(created_at)}
-              updatedAt={dayjs(updated_at)}
+              createdAt={dayjs(parseDate(created_at))}
+              updatedAt={dayjs(parseDate(updated_at))}
               onTopicsChange={handleChangeTopics}
               onTypeChange={handleChangeType}
               onStatusChange={handleChangeStatus}
@@ -317,7 +323,7 @@ export const PostEdit: FC = () => {
               onTopicsReset={() => setSelectedTopicIds(tags_id)}
               onTypeReset={() => setSelectedTypeId(type_id)}
               onStatusReset={() => setSelectedStatusId(status_id)}
-              onPublishedAtReset={() => setPublishedAt(published_at)}
+              onPublishedAtReset={() => setPublishedAt(parseDate(published_at))}
               topicsResetDisabled={selectedTopicIds === tags_id}
               typeResetDisabled={selectedTypeId === type_id}
               statusResetDisabled={selectedStatusId === status_id}

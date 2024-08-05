@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { postAPI } from "../../services/PostService";
-import { dateParse } from "../../utils/dateParser";
 
 
 interface PostState {
@@ -9,9 +8,9 @@ interface PostState {
   status_id: number | null,
   tags_id: number[],
   title: string,
-  published_at: Date | null,
-  created_at: Date | null,
-  updated_at: Date | null,
+  published_at: string | null,
+  created_at: string | null,
+  updated_at: string | null,
 }
 
 const initialState: PostState = {
@@ -47,9 +46,9 @@ export const postsSlice = createSlice({
             updated_at,
             created_at,
           } = action.payload.data;
-          !!published_at ? state.published_at = dateParse(published_at): state.published_at = null;
-          !!updated_at ? state.updated_at = dateParse(updated_at): state.updated_at = null;
-          !!created_at ? state.created_at = dateParse(created_at): state.created_at = null;
+          state.published_at = published_at;
+          state.updated_at = updated_at;
+          state.created_at = created_at;
           state.content = content;
           state.type_id = type_id;
           state.status_id = status_id;
