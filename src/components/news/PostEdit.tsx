@@ -154,7 +154,7 @@ const SidePanel: FC<SidePanelProps> = props => {
                 labelId="post-edit-status-select-standard-label"
               >
                 {statuses!.map(status => (
-                  <MenuItem value={status.id}>{status.title}</MenuItem>
+                  <MenuItem key={status.id} value={status.id}>{status.title}</MenuItem>
                 ))}
               </Select>
             </FormControl> 
@@ -182,7 +182,7 @@ const SidePanel: FC<SidePanelProps> = props => {
                 labelId="post-edit-type-select-standard-label"
               >
                 {types!.map(type => (
-                  <MenuItem value={type.id}>{type.title}</MenuItem>
+                  <MenuItem key={type.id} value={type.id}>{type.title}</MenuItem>
                 ))}
               </Select>
             </FormControl>

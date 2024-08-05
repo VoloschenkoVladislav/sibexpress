@@ -103,7 +103,7 @@ const PostsTable: FC = () => {
           {
             isPostsLoading || isPostsFetching
               ? Array.from(Array(rowsPerPage).keys()).map(id => (
-                <PostSkeleton id={id} />
+                <PostSkeleton id={id} key={id} />
               ))
               : posts?.data?.items.map(post => (
                 <TableRow

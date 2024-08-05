@@ -41,7 +41,7 @@ export const DashboardNavbar: FC = () => {
         >
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {items.map((item) => (
-              <Link to={item.link} style={{ textDecoration: 'none' }}>
+              <Link key={item.link} to={item.link} style={{ textDecoration: 'none' }}>
                 <Button
                   key={item.title}
                   sx={{ my: 2, color: 'white', display: 'block' }}
