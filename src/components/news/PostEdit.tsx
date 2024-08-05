@@ -1,5 +1,20 @@
-import { Box, InputLabel, TextField, Autocomplete, CircularProgress, Select, MenuItem, SelectChangeEvent, Paper, FormControl, IconButton } from "@mui/material";
+import {
+  Box,
+  Button,
+  Stack,
+  InputLabel,
+  TextField,
+  Autocomplete,
+  CircularProgress,
+  Select,
+  MenuItem,
+  SelectChangeEvent,
+  Paper,
+  FormControl,
+  IconButton
+} from "@mui/material";
 import ReplayOutlinedIcon from '@mui/icons-material/ReplayOutlined';
+import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import dayjs, { Dayjs } from 'dayjs';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { DateTimeField } from '@mui/x-date-pickers/DateTimeField';
@@ -246,6 +261,27 @@ export const PostEdit: FC = () => {
     setSelectedTopicIds(newValue.map(v => v.id));
   };
 
+  const resetAll = () => {
+    setSelectedTopicIds(tags_id);
+    setSelectedTypeId(type_id);
+    setSelectedStatusId(status_id);
+    setPublishedAt(published_at);
+  }
+
+  const hasChanged = useMemo(() => {
+    return (
+      selectedTopicIds !== tags_id
+      || selectedTypeId !== type_id
+      || selectedStatusId !== status_id
+      || publishedAt !== published_at
+    );
+  }, [
+    selectedTopicIds,
+    selectedTypeId,
+    selectedStatusId,
+    publishedAt
+  ]);
+
   return (
     <DashboardLayout>
       {
@@ -287,6 +323,24 @@ export const PostEdit: FC = () => {
               statusResetDisabled={selectedStatusId === status_id}
               publishedAtResetDisabled={publishedAt === published_at}
             />
+            <Stack direction='row' spacing={2}>
+              <Button
+                variant='outlined'
+                startIcon={<ReplayOutlinedIcon />}
+                disabled={!hasChanged}
+                onClick={resetAll}
+              >
+                Отменить
+              </Button>
+              <Button
+                variant='outlined'
+                startIcon={<SaveOutlinedIcon />}
+                disabled={!hasChanged}
+                color='success'
+              >
+                Сохранить
+              </Button>
+            </Stack>
           </Box>
         </Box>
       }
