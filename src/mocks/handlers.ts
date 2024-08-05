@@ -1,6 +1,6 @@
 import { authHandler, meHandler, logoutHandler } from './handlers/auth';
 import { topicsHandler, bannerPlacesHandler, statusesHandler, typesHandler } from './handlers/dictionaries';
-import { postHandler, postsHandler } from './handlers/posts';
+import { postHandler, postsHandler, uploadThumbnail } from './handlers/posts';
 
 
 export const handlers = [
@@ -13,4 +13,5 @@ export const handlers = [
   typesHandler,
   postsHandler,
   postHandler,
+  uploadThumbnail,
 ];

@@ -9,7 +9,6 @@ import {
   Select,
   MenuItem,
   SelectChangeEvent,
-  Paper,
   FormControl,
   IconButton
 } from "@mui/material";
@@ -31,6 +30,7 @@ import { useParams } from "react-router-dom";
 import { usePostQuery } from "../../services/PostService";
 import { useAppSelector } from "../../hooks/redux/redux";
 import { parseDate } from "../../utils/dateParser";
+import { DropImage } from "./DropImage";
 
 
 const DATE_FORMAT_OUTPUT = 'DD/MM/YYYY HH:mm:ss';
@@ -89,58 +89,7 @@ const SidePanel: FC<SidePanelProps> = props => {
     [selectedTopicIds, topics]
   );
 
-  return (<Paper sx={{ p: 1, height: '100%' }}>
-    <Box sx={{ m: 1, mb: 2 }}>
-      <LocalizationProvider dateAdapter={AdapterDayjs}  adapterLocale="ru">
-        <DemoContainer components={['DateField']} >
-          <DateTimeField
-            readOnly
-            sx={{ width: '100%' }}
-            value={createdAt}
-            label='Дата создания'
-            format={DATE_FORMAT_OUTPUT}
-          />
-        </DemoContainer>
-      </LocalizationProvider>
-    </Box>
-    <Box sx={{ m: 1, mb: 2 }}>
-      <LocalizationProvider dateAdapter={AdapterDayjs}  adapterLocale="ru">
-        <DemoContainer components={['DateField']} >
-          <DateTimeField
-            readOnly
-            sx={{ width: '100%' }}
-            value={updatedAt}
-            label='Дата обновления'
-            format={DATE_FORMAT_OUTPUT}
-          />
-        </DemoContainer>
-      </LocalizationProvider>
-    </Box>
-    <Box sx={{ m: 1, mb: 2, display: 'flex', justifyContent: 'space-between' }}>
-      <LocalizationProvider dateAdapter={AdapterDayjs}  adapterLocale="ru">
-        <DemoContainer components={['DatePicker']} >
-          <DateTimePicker
-            views={['year', 'month', 'day', 'hours', 'minutes']}
-            viewRenderers={{
-              hours: renderTimeViewClock,
-              minutes: renderTimeViewClock,
-            }}
-            disablePast
-            value={publishedAt}
-            onChange={onPublishedAtChange}
-            label='Дата публикации'
-            format={DATE_FORMAT_OUTPUT}
-          />
-        </DemoContainer>
-      </LocalizationProvider>
-      <IconButton
-        aria-label='Отменить'
-        onClick={onPublishedAtReset}
-        disabled={publishedAtResetDisabled}
-      >
-        <ReplayOutlinedIcon />
-      </IconButton>
-    </Box>
+  return (<Box sx={{ p: 1, height: '100%' }}>
     <Box sx={{ m: 1, mb: 2, display: 'flex', justifyContent: 'space-between' }}>
       {
         isStatusesLoading
@@ -227,7 +176,58 @@ const SidePanel: FC<SidePanelProps> = props => {
           </>
       }
     </Box>
-  </Paper>);
+    <Box sx={{ m: 1, mb: 2, display: 'flex', justifyContent: 'space-between' }}>
+      <LocalizationProvider dateAdapter={AdapterDayjs}  adapterLocale="ru">
+        <DemoContainer components={['DatePicker']} >
+          <DateTimePicker
+            views={['year', 'month', 'day', 'hours', 'minutes']}
+            viewRenderers={{
+              hours: renderTimeViewClock,
+              minutes: renderTimeViewClock,
+            }}
+            disablePast
+            value={publishedAt}
+            onChange={onPublishedAtChange}
+            label='Дата публикации'
+            format={DATE_FORMAT_OUTPUT}
+          />
+        </DemoContainer>
+      </LocalizationProvider>
+      <IconButton
+        aria-label='Отменить'
+        onClick={onPublishedAtReset}
+        disabled={publishedAtResetDisabled}
+      >
+        <ReplayOutlinedIcon />
+      </IconButton>
+    </Box>
+    <Box sx={{ m: 1, mb: 2 }}>
+      <LocalizationProvider dateAdapter={AdapterDayjs}  adapterLocale="ru">
+        <DemoContainer components={['DateField']} >
+          <DateTimeField
+            disabled
+            sx={{ width: '100%' }}
+            value={createdAt}
+            label='Дата создания'
+            format={DATE_FORMAT_OUTPUT}
+          />
+        </DemoContainer>
+      </LocalizationProvider>
+    </Box>
+    <Box sx={{ m: 1, mb: 2 }}>
+      <LocalizationProvider dateAdapter={AdapterDayjs}  adapterLocale="ru">
+        <DemoContainer components={['DateField']} >
+          <DateTimeField
+            disabled
+            sx={{ width: '100%' }}
+            value={updatedAt}
+            label='Дата обновления'
+            format={DATE_FORMAT_OUTPUT}
+          />
+        </DemoContainer>
+      </LocalizationProvider>
+    </Box>
+  </Box>);
 };
 
 export const PostEdit: FC = () => {
@@ -302,6 +302,7 @@ export const PostEdit: FC = () => {
         }}>
           <Box sx={{ width: '75%', p: 3 }}>
             <SEditor editorContent={content} onChange={() => {}} />
+            <DropImage />
           </Box>
           <Box sx={{
             display: 'flex',

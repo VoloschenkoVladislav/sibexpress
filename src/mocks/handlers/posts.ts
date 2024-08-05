@@ -69,3 +69,34 @@ export const postHandler = http.get("/api-admin/v1/posts/:id", async ({ params }
     { status: 200 },
   )
 });
+
+export const uploadThumbnail = http.post("/api-admin/v1/posts/:id/thumbnail", async ({ request }) => {
+  const data = await request.formData();
+  const file = data.get('file');
+  let status: number = 200;
+  let error_message: string | null = null;
+
+  if (!file) {
+    status = 400;
+    error_message = 'Missing document';
+    return new HttpResponse('Missing document', { status: 400 })
+  }
+
+  if (!(file instanceof File)) {
+    status = 400;
+    error_message = 'Uploaded document is not a File';
+  }
+
+  await delay(3000);
+  return new HttpResponse(
+    JSON.stringify({
+      data: status === 200 ? ({
+        // @ts-ignore
+        src: await file.text(),
+      }) : null,
+      error_message: error_message,
+      errors: null,
+    }),
+    { status: 200 },
+  )
+});

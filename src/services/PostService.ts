@@ -65,19 +65,24 @@ export const postAPI = createApi({
   }),
   endpoints: build => ({
     posts: build.query<IResponse<PostsResponseData, null>, { page: number, perPage: number }>({
-      query: (params) => ({ url: `/posts?page=${params.page}&per_page=${params.perPage}` }),
+      query: ({ page, perPage }) => ({ url: `/posts?page=${page}&per_page=${perPage}` }),
       keepUnusedDataFor: 10,
-      // transformResponse: (response: IResponse<PostsResponseData, null>, meta, arg) => {
-      //   if (!!response.data) {
-      //     return response.data.items;
-      //   } else {
-      //     return [];
-      //   }
-      // }
     }),
     post: build.query<IResponse<PostInterface, undefined>, number>({
       query: postId => ({ url: `/posts/${postId}` }),
       keepUnusedDataFor: 1,
+    }),
+    uploadThumbnail: build.mutation<any, { postId: number, imageFile: File }>({
+      query: ({ postId, imageFile }) => {
+        const bodyFormData = new FormData();
+        bodyFormData.append('file', imageFile, imageFile.name);
+        return {
+          url: `/posts/${postId}/thumbnail`,
+          method: 'POST',
+          body: bodyFormData,
+          formData: true,
+        }
+      }
     }),
   }),
 });
@@ -85,4 +90,5 @@ export const postAPI = createApi({
 export const {
   usePostsQuery,
   usePostQuery,
+  useUploadThumbnailMutation,
 } = postAPI;
