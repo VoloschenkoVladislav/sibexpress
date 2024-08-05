@@ -57,7 +57,7 @@ export const postHandler = http.get("/api-admin/v1/posts/:id", async ({ params }
         },
         created_at: "2020-03-23 05:59:57",
         updated_at: "2022-05-04 01:13:29",
-        published_at: "2020-03-23 05:59:57",
+        published_at: "2024-09-23 05:59:57",
         topics: [
           1,
           2
