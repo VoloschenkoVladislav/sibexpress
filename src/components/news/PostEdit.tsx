@@ -33,7 +33,8 @@ import { useAppSelector } from "../../hooks/redux/redux";
 import { parseDate } from "../../utils/dateParser";
 
 
-const DATE_FORMAT = 'DD/MM/YYYY HH:mm:ss';
+const DATE_FORMAT_OUTPUT = 'DD/MM/YYYY HH:mm:ss';
+const DATE_FORMAT_INPUT = 'YYYY-MM-DD HH:mm:ss';
 
 interface SidePanelProps {
   selectedTopicIds: number[],
@@ -97,7 +98,7 @@ const SidePanel: FC<SidePanelProps> = props => {
             sx={{ width: '100%' }}
             value={createdAt}
             label='Дата создания'
-            format={DATE_FORMAT}
+            format={DATE_FORMAT_OUTPUT}
           />
         </DemoContainer>
       </LocalizationProvider>
@@ -110,7 +111,7 @@ const SidePanel: FC<SidePanelProps> = props => {
             sx={{ width: '100%' }}
             value={updatedAt}
             label='Дата обновления'
-            format={DATE_FORMAT}
+            format={DATE_FORMAT_OUTPUT}
           />
         </DemoContainer>
       </LocalizationProvider>
@@ -128,7 +129,7 @@ const SidePanel: FC<SidePanelProps> = props => {
             value={publishedAt}
             onChange={onPublishedAtChange}
             label='Дата публикации'
-            format={DATE_FORMAT}
+            format={DATE_FORMAT_OUTPUT}
           />
         </DemoContainer>
       </LocalizationProvider>
@@ -237,13 +238,13 @@ export const PostEdit: FC = () => {
   const [ selectedTopicIds, setSelectedTopicIds ] = useState<number[]>([]);
   const [ selectedStatusId, setSelectedStatusId ] = useState<number | null>(null);
   const [ selectedTypeId, setSelectedTypeId ] = useState<number | null>(null);
-  const [ publishedAt, setPublishedAt ] = useState<Date | null>(null);
+  const [ publishedAt, setPublishedAt ] = useState<Dayjs | null>(null);
 
   useEffect(() => {
     setSelectedTopicIds(tags_id);
     setSelectedStatusId(status_id);
     setSelectedTypeId(type_id);
-    setPublishedAt(parseDate(published_at));
+    setPublishedAt(dayjs(published_at, DATE_FORMAT_INPUT));
   }, [
     tags_id,
     status_id,
@@ -267,7 +268,7 @@ export const PostEdit: FC = () => {
     setSelectedTopicIds(tags_id);
     setSelectedTypeId(type_id);
     setSelectedStatusId(status_id);
-    setPublishedAt(parseDate(published_at));
+    setPublishedAt(dayjs(published_at, DATE_FORMAT_INPUT));
   }
 
   const hasChanged = useMemo(() => {
@@ -275,7 +276,7 @@ export const PostEdit: FC = () => {
       selectedTopicIds !== tags_id
       || selectedTypeId !== type_id
       || selectedStatusId !== status_id
-      || publishedAt !== published_at
+      || publishedAt?.format(DATE_FORMAT_INPUT) !== published_at
     );
   }, [
     selectedTopicIds,
@@ -311,23 +312,23 @@ export const PostEdit: FC = () => {
           }}>
             <SidePanel
               selectedTopicIds={selectedTopicIds}
-              selectedStatusId={selectedStatusId}
-              selectedTypeId={selectedTypeId}
+              selectedStatusId={selectedStatusId || status_id}
+              selectedTypeId={selectedTypeId || type_id}
               publishedAt={dayjs(publishedAt)}
               createdAt={dayjs(parseDate(created_at))}
               updatedAt={dayjs(parseDate(updated_at))}
               onTopicsChange={handleChangeTopics}
               onTypeChange={handleChangeType}
               onStatusChange={handleChangeStatus}
-              onPublishedAtChange={newValue => setPublishedAt(!!newValue ? newValue.toDate() : null)}
+              onPublishedAtChange={newValue => setPublishedAt(newValue)}
               onTopicsReset={() => setSelectedTopicIds(tags_id)}
               onTypeReset={() => setSelectedTypeId(type_id)}
               onStatusReset={() => setSelectedStatusId(status_id)}
-              onPublishedAtReset={() => setPublishedAt(parseDate(published_at))}
+              onPublishedAtReset={() => setPublishedAt(dayjs(published_at, DATE_FORMAT_INPUT))}
               topicsResetDisabled={selectedTopicIds === tags_id}
               typeResetDisabled={selectedTypeId === type_id}
               statusResetDisabled={selectedStatusId === status_id}
-              publishedAtResetDisabled={publishedAt === published_at}
+              publishedAtResetDisabled={publishedAt?.format(DATE_FORMAT_INPUT) === published_at}
             />
             <Stack direction='row' spacing={2}>
               <Button
