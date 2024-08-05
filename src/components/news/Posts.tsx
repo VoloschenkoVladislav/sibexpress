@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useMemo, useState } from "react";
 import { DashboardLayout } from "../layout/DashboardLayout";
 import { Link } from "react-router-dom";
 import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined';
@@ -60,6 +60,8 @@ const PostsTable: FC = () => {
   const { data: posts, isLoading: isPostsLoading, isFetching: isPostsFetching } = usePostsQuery({ page: page + 1, perPage: rowsPerPage });
   const { data: statuses = [], isLoading: isStatusesLoading } = useStatusesQuery();
   const { data: types = [], isLoading: isTypesLoading } = useTypesQuery();
+
+  const postsCount = useMemo(() => posts?.data?.items.length, [posts]);
   
   const getTypeTitle = (type_id: number) => {
     return types.filter(type => type.id === type_id)[0].title;
@@ -146,6 +148,15 @@ const PostsTable: FC = () => {
               rowsPerPageOptions={[10, 25, 50]}
               onRowsPerPageChange={handleChangeRowsPerPage}
               page={page}
+              labelRowsPerPage={"Новостей на странице:"}
+              labelDisplayedRows={({ from, to }) => {
+                const toCalc = postsCount === rowsPerPage
+                  ? to
+                  : !!postsCount
+                    ? from + postsCount - 1
+                    : '?';
+                return `${from} - ${toCalc}`;
+              }}
               slotProps={{
                 actions: {
                   nextButton: {
