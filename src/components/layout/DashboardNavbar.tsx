@@ -20,7 +20,7 @@ const items = [
   },
 ];
 
-export const toolbarHeight = '40px';
+export const toolbarHeight = 64;
 
 export const DashboardNavbar: FC = () => {
   const [ logoutFetch ] = useLazyLogoutQuery();

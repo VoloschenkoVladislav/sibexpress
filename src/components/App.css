@@ -1,0 +1,9 @@
+.ce-block__content,
+.ce-toolbar__content {
+    max-width: unset;
+}
+
+.codex-editor {
+  position: unset;
+  box-sizing: unset;
+}

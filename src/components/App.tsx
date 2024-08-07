@@ -8,6 +8,7 @@ import { AuthRoute } from './auth/AuthRoute';
 import { LoginWrap } from './auth/LoginForm';
 import { PostEdit } from './news/PostEdit';
 import { ErrorBoundary } from './features/ErrorBoundary';
+import './App.css';
 
 
 const App: FC = () => {
