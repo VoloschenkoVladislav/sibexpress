@@ -9,7 +9,7 @@ import ReplayOutlinedIcon from '@mui/icons-material/ReplayOutlined';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import dayjs, { Dayjs } from 'dayjs';
 import 'dayjs/locale/ru';
-import { FC, useEffect, useMemo, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { DashboardLayout } from "../layout/DashboardLayout";
 import { TopicInterface } from "../../services/DictionaryService";
 import { useParams } from "react-router-dom";
@@ -20,6 +20,8 @@ import { DropImage } from "./DropImage";
 import { BlockEditor } from "../editor/EditorJS";
 import { SidePanel } from "./SidePanel";
 import { OutputData } from "@editorjs/editorjs";
+import { ImageGallery } from "./ImageGallery";
+import { sleep } from "../../utils/sleep";
 
 
 const DATE_FORMAT_INPUT = 'YYYY-MM-DD HH:mm:ss';
@@ -39,20 +41,16 @@ const editorJSDefaultValue = {
 
 export const PostEdit: FC = () => {
   const { id } = useParams();
-  const { content } = useAppSelector(state => state.postsReducer);
   const { isLoading: isPostLoading } = usePostQuery(+id!);
-  const { tags_id, status_id, type_id, published_at, updated_at, created_at } = useAppSelector(state => state.postsReducer);
+  const { content, tags_id, status_id, type_id, published_at, updated_at, created_at, media } = useAppSelector(state => state.postsReducer);
   const [ selectedTopicIds, setSelectedTopicIds ] = useState<number[]>([]);
   const [ selectedStatusId, setSelectedStatusId ] = useState<number | null>(null);
   const [ selectedTypeId, setSelectedTypeId ] = useState<number | null>(null);
   const [ publishedAt, setPublishedAt ] = useState<Dayjs | null>(null);
-  const [editorData, setEditorData] = useState<OutputData | undefined>(undefined);
-
-  const handleEditorChange = (data: OutputData) => {
-    setEditorData(data);
-    console.log('Editor data:', data);
-  };
-
+  const [ editorData, setEditorData] = useState<OutputData | undefined>(editorJSDefaultValue);
+  const [ imageGalleryUp, setImageGalleryUp ] = useState(false);
+  const editorImageSource = useRef<string | null>(null);
+  
   useEffect(() => {
     setSelectedTopicIds(tags_id);
     setSelectedStatusId(status_id);
@@ -65,16 +63,9 @@ export const PostEdit: FC = () => {
     published_at,
   ]);
 
-  const handleChangeStatus = (event: SelectChangeEvent) => {
-    setSelectedStatusId(+event.target.value);
-  };
-
-  const handleChangeType = (event: SelectChangeEvent) => {
-    setSelectedTypeId(+event.target.value);
-  };
-
-  const handleChangeTopics = (event: any, newValue: TopicInterface[]) => {
-    setSelectedTopicIds(newValue.map(v => v.id));
+  const handleEditorChange = (data: OutputData) => {
+    setEditorData(data);
+    console.log('Editor data:', data);
   };
 
   const resetAll = () => {
@@ -113,10 +104,35 @@ export const PostEdit: FC = () => {
           alignItems: 'start',
           height: '100%',
         }}>
+          {
+            imageGalleryUp
+            ? <ImageGallery
+              onImageSelect={src => {
+                editorImageSource.current = src;
+              }}
+              media={{
+                src: media.src,
+                images: media.images,
+              }}
+            />
+            : null
+          }
           <Box sx={{ width: '75%', p: 3 }}>
-            {/* <SEditor editorContent={content} onChange={() => {}} /> */}
-            <BlockEditor data={editorJSDefaultValue} onChange={handleEditorChange} />
-            {/* <Editor data={editorData} onChange={handleEditorChange} /> */}
+            <BlockEditor
+              data={editorData}
+              onChange={handleEditorChange}
+              onImageAdded={async () => {
+                setImageGalleryUp(true);
+                while (editorImageSource.current === null) {
+                  await sleep(500);
+                }
+                setImageGalleryUp(false);
+                const src = editorImageSource.current;
+                editorImageSource.current = null;
+                return src;
+              }}
+              // onImageAdded={() => ''}
+            />
           </Box>
           <Box sx={{
             display: 'flex',
@@ -132,9 +148,9 @@ export const PostEdit: FC = () => {
               publishedAt={dayjs(publishedAt)}
               createdAt={dayjs(parseDate(created_at))}
               updatedAt={dayjs(parseDate(updated_at))}
-              onTopicsChange={handleChangeTopics}
-              onTypeChange={handleChangeType}
-              onStatusChange={handleChangeStatus}
+              onTopicsChange={(e, newValue) => setSelectedTopicIds(newValue.map(v => v.id))}
+              onTypeChange={e => setSelectedTypeId(+e.target.value)}
+              onStatusChange={e => setSelectedStatusId(+e.target.value)}
               onPublishedAtChange={newValue => setPublishedAt(newValue)}
               onTopicsReset={() => setSelectedTopicIds(tags_id)}
               onTypeReset={() => setSelectedTypeId(type_id)}

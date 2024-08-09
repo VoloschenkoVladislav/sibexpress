@@ -18,9 +18,7 @@ export interface PostInterface {
   title: string,
   content: string,
   media: {
-    thumb: {
-      src: string,
-    },
+    thumb: string | null,
     images: string[],
     src: string,
   },

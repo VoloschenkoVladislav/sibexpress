@@ -11,6 +11,11 @@ interface PostState {
   published_at: string | null,
   created_at: string | null,
   updated_at: string | null,
+  media: {
+    thumb: string | null,
+    images: string[],
+    src: string | null,
+  }
 }
 
 const initialState: PostState = {
@@ -22,6 +27,11 @@ const initialState: PostState = {
   published_at: null,
   created_at: null,
   updated_at: null,
+  media: {
+    thumb: null,
+    images: [],
+    src: null,
+  }
 }
 
 export const postsSlice = createSlice({
@@ -45,6 +55,7 @@ export const postsSlice = createSlice({
             published_at,
             updated_at,
             created_at,
+            media,
           } = action.payload.data;
           state.published_at = published_at;
           state.updated_at = updated_at;
@@ -54,6 +65,7 @@ export const postsSlice = createSlice({
           state.status_id = status_id;
           state.tags_id = topics;
           state.title = title;
+          state.media = media;
         }
       })
   }

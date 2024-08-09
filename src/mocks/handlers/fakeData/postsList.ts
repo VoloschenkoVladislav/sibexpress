@@ -1,4 +1,4 @@
-export const newsList = [
+export const postsList = [
   {
     id: 1,
     title: "Концентрация вредных веществ в Красноярске превышена в 2,5 раза",
