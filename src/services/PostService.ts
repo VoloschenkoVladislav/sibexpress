@@ -70,14 +70,12 @@ export const postAPI = createApi({
       query: postId => ({ url: `/posts/${postId}` }),
       keepUnusedDataFor: 1,
     }),
-    uploadThumbnail: build.mutation<any, { postId: number, imageFile: File }>({
-      query: ({ postId, imageFile }) => {
-        const bodyFormData = new FormData();
-        bodyFormData.append('file', imageFile, imageFile.name);
+    uploadThumbnail: build.mutation<any, { postId: number, thumbnail: File }>({
+      query: ({ postId, thumbnail }) => {
         return {
           url: `/posts/${postId}/thumbnail`,
           method: 'POST',
-          body: bodyFormData,
+          body: { thumbnail },
           formData: true,
         }
       }

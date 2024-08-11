@@ -71,7 +71,7 @@ export const DropImage: FC = () => {
     onDrop: acceptedFiles => {
       setIsLoading(false);
       if (acceptedFiles.length) {
-        sendImage({ postId: 1, imageFile: acceptedFiles[0] });
+        sendImage({ postId: 1, thumbnail: acceptedFiles[0] });
       }
       setFiles(acceptedFiles.map(file => Object.assign(file, {
         preview: URL.createObjectURL(file)
