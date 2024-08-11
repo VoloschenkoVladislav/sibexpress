@@ -36,7 +36,7 @@ export interface DictionariesResponseData<T> {
 export const dictionariesAPI = createApi({
   reducerPath: 'dictionariesAPI',
   baseQuery: fetchBaseQuery({
-    baseUrl: '/api-admin/v1',
+    baseUrl: process.env.REACT_APP_BASE_URL,
     prepareHeaders: (headers, { getState }) => {
       const { accessToken } = (getState() as RootState).authReducer;
       if (accessToken) {
@@ -47,7 +47,7 @@ export const dictionariesAPI = createApi({
   }),
   endpoints: build => ({
     permissions: build.query<PermissionInterface[], void>({
-      query: () => ({ url: '/permissions' }),
+      query: () => ({ url: '/dictionary/permissions' }),
       transformResponse: (response: IResponse<DictionariesResponseData<PermissionInterface>, null>, meta, arg) => {
         if (!!response.data) {
           return response.data.items;
@@ -57,7 +57,7 @@ export const dictionariesAPI = createApi({
       }
     }),
     topics: build.query<TopicInterface[], void>({
-      query: () => ({ url: '/topics' }),
+      query: () => ({ url: '/dictionary/tags' }),
       transformResponse: (response: IResponse<DictionariesResponseData<TopicInterface>, null>, meta, arg) => {
         if (!!response.data) {
           return response.data.items;
@@ -67,7 +67,7 @@ export const dictionariesAPI = createApi({
       }
     }),
     statuses: build.query<StatusInterface[], void>({
-      query: () => ({ url: '/statuses' }),
+      query: () => ({ url: '/dictionary/statuses' }),
       transformResponse: (response: IResponse<DictionariesResponseData<StatusInterface>, null>, meta, arg) => {
         if (!!response.data) {
           return response.data.items;
@@ -77,7 +77,7 @@ export const dictionariesAPI = createApi({
       }
     }),
     types: build.query<TypeInterface[], void>({
-      query: () => ({ url: '/types' }),
+      query: () => ({ url: '/dictionary/types' }),
       transformResponse: (response: IResponse<DictionariesResponseData<TypeInterface>, null>, meta, arg) => {
         if (!!response.data) {
           return response.data.items;
@@ -87,7 +87,7 @@ export const dictionariesAPI = createApi({
       }
     }),
     bannerPlaces: build.query<BannerPlaceInterface[], void>({
-      query: () => ({ url: '/banner_places' }),
+      query: () => ({ url: '/dictionary/banner_places' }),
       transformResponse: (response: IResponse<DictionariesResponseData<BannerPlaceInterface>, null>, meta, arg) => {
         if (!!response.data) {
           return response.data.items;

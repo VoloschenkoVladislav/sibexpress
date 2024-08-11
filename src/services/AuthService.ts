@@ -24,7 +24,7 @@ export interface AuthResponseError {
 export const authAPI = createApi({
   reducerPath: 'authAPI',
   baseQuery: fetchBaseQuery({
-    baseUrl: '/api-admin/v1',
+    baseUrl: process.env.REACT_APP_BASE_URL,
     prepareHeaders: (headers, { getState }) => {
       const { accessToken } = (getState() as RootState).authReducer;
       if (accessToken) {

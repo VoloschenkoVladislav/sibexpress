@@ -3,15 +3,13 @@ import {
   Button,
   Stack,
   CircularProgress,
-  SelectChangeEvent,
 } from "@mui/material";
 import ReplayOutlinedIcon from '@mui/icons-material/ReplayOutlined';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import dayjs, { Dayjs } from 'dayjs';
 import 'dayjs/locale/ru';
-import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { FC, useEffect, useMemo, useRef, useState } from "react";
 import { DashboardLayout } from "../layout/DashboardLayout";
-import { TopicInterface } from "../../services/DictionaryService";
 import { useParams } from "react-router-dom";
 import { usePostQuery } from "../../services/PostService";
 import { useAppSelector } from "../../hooks/redux/redux";

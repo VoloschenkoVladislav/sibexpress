@@ -8,7 +8,7 @@ import { setupStore } from './store/store';
 const store = setupStore();
 
 async function enableMocking() {
-  if (process.env.NODE_ENV === "development") {
+  if (process.env.NODE_ENV === "development" && process.env.REACT_APP_MOCKING === 'true') {
     const { worker } = await import("./mocks/browser");
 
     return worker.start();
@@ -22,10 +22,10 @@ const root = ReactDOM.createRoot(
 
 enableMocking().then(() => {
   root.render(
-    // <React.StrictMode>
+    <React.StrictMode>
       <Provider store={store}>
         <App />
       </Provider>
-    // </React.StrictMode>
+    </React.StrictMode>
   );
 });

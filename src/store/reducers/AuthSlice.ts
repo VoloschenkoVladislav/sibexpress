@@ -22,7 +22,7 @@ const getUserFromCookie = () => {
         id: 0,
         email: '',
         name: '',
-        permissions: JSON.parse(Cookies.get('abilities')),
+        permissions: [] //JSON.parse(Cookies.get('abilities')),
       } as IUser
       : null
   );
@@ -56,6 +56,7 @@ export const authSlice = createSlice({
             name: '',
             permissions: abilities as PERMISSIONS[],
           }
+          console.log(access_token);
           Cookies.set('access_token', `${access_type} ${access_token}`, { expires: new Date(expires) });
           Cookies.set('abilities', JSON.stringify(abilities), { expires: new Date(expires) });
         }

@@ -58,8 +58,8 @@ const PostsTable: FC = () => {
   const [ page, setPage ] = useState(0);
   const [ rowsPerPage, setRowsPerPage ] = useState(10);
   const { data: posts, isLoading: isPostsLoading, isFetching: isPostsFetching } = usePostsQuery({ page: page + 1, perPage: rowsPerPage });
-  const { data: statuses = [], isLoading: isStatusesLoading } = useStatusesQuery();
-  const { data: types = [], isLoading: isTypesLoading } = useTypesQuery();
+  const { data: statuses = [], isLoading: isStatusesLoading, isError: isStatusesError } = useStatusesQuery();
+  const { data: types = [], isLoading: isTypesLoading, isError: isTypesError } = useTypesQuery();
 
   const postsCount = useMemo(() => posts?.data?.items.length, [posts]);
   
