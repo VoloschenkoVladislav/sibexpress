@@ -3,7 +3,7 @@ import './SimpleImage.css';
 
 
 export interface SimpleImageData {
-  src: string,
+  src?: string,
 };
 
 interface ConstructorArgs {
@@ -11,6 +11,7 @@ interface ConstructorArgs {
   api: API,
   block: BlockAPI,
   config?: {
+    onButtonPressed: (editor: SimpleImage) => void, 
     onImageAdded: () => Promise<string>,
   }
 };
@@ -21,6 +22,7 @@ export default class SimpleImage {
   private block: BlockAPI;
   private config: {
     onImageAdded: () => Promise<string>,
+    onButtonPressed: (editor: SimpleImage) => void, 
   } | undefined;
 
   static get toolbox() {
@@ -42,37 +44,58 @@ export default class SimpleImage {
   }
 
   normalizeData(data: SimpleImageData | {}): SimpleImageData {
-    const newData: SimpleImageData = { src: '' };
+    const newData: SimpleImageData = { src: undefined };
 
     if (this.isImageData(data)) {
-      newData.src = data.src || '';
+      newData.src = data.src;
     }
 
     return newData;
   }
 
-  render(): HTMLHeadingElement {
-    const img = document.createElement('img');
-    if (!this._data.src) {
-      (async () => {
-        await this.config?.onImageAdded()
-          .then(value => {
-            this._data.src = value;
-          });
-        const data = await this.api.saver.save();
-        if (data) {
-          this.block.dispatchChange();
-          this.api.blocks.render(data);
-        }
-      })();
+  render(): HTMLImageElement | HTMLDivElement {
+    const button = document.createElement('button');
+    button.innerHTML = 'Выбрать изображение';
+    button.className = 'simple-image-button';
+
+    const buttonWrap = document.createElement('div');
+    buttonWrap.className = 'simple-image-buttonwrap';
+    buttonWrap.appendChild(button);
+
+    button.addEventListener('click', event => {
+      event.preventDefault();
+      this.config?.onButtonPressed(this);
+    });
+
+    if (this._data.src === undefined) {
+      this.config?.onButtonPressed(this);
+    } else if (!this._data.src) {
+      this._data.src = '';
     }
+
+    const img = document.createElement('img');
     img.src = this._data.src || '';
-    return img;
+    return this._data.src ? img : buttonWrap;
   }
 
   save(): SimpleImageData {
     return {
       src: this._data.src,
     };
+  }
+
+  get id() {
+    return this.block.id;
+  }
+
+  public setImage(src: string) {
+    this._data.src = src;
+    (async () => {
+      const data = await this.api.saver.save();
+      if (data) {
+        this.block.dispatchChange();
+        this.api.blocks.render(data);
+      }
+    })()
   }
 }

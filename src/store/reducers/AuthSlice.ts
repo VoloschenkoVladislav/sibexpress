@@ -48,7 +48,7 @@ export const authSlice = createSlice({
         if (action.payload.data) {
           const { access_token, expires, access_type, abilities, id } = action.payload.data;
           state.isAuthorized = true;
-          state.accessToken = access_token;
+          state.accessToken = `${access_type} ${access_token}`;
           state.authError = null;
           state.user = {
             id,

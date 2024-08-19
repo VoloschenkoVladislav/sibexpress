@@ -1,7 +1,5 @@
-import React, { FC, useState, useMemo, CSSProperties } from "react";
+import React, { FC, useMemo, CSSProperties } from "react";
 import { useDropzone } from "react-dropzone";
-import { useUploadThumbnailMutation } from "../../services/PostService";
-import { CircularProgress } from "@mui/material";
 
 
 const baseStyle: CSSProperties = {
@@ -50,10 +48,14 @@ const img: CSSProperties = {
   height: '100%',
 };
 
-export const DropImage: FC = () => {
-  const [ files, setFiles ] = useState<File[]>([]);
-  const [ isLoading, setIsLoading ] = useState(false);
-  const [ sendImage ] = useUploadThumbnailMutation();
+interface Props {
+  field: string,
+  onDrop: (file: FormData) => void,
+  name?: string | null,
+  src?: string | null,
+}
+
+export const DropImage: FC<Props> = ({ field, onDrop, name, src }) => {
   const {
     acceptedFiles,
     getRootProps,
@@ -66,45 +68,17 @@ export const DropImage: FC = () => {
       'image/png': ['.png'],
       'image/jpg': ['.jpg'],
       'image/jpeg': ['.jpeg'],
+      'image/gif': ['.gif'],
     },
     maxFiles: 1,
-    onDrop: acceptedFiles => {
-      setIsLoading(false);
+    onDrop: async acceptedFiles => {
       if (acceptedFiles.length) {
-        sendImage({ postId: 1, thumbnail: acceptedFiles[0] });
+        const data = new FormData();
+        data.append(field, acceptedFiles[0]);
+        onDrop(data);
       }
-      setFiles(acceptedFiles.map(file => Object.assign(file, {
-        preview: URL.createObjectURL(file)
-      })));
-    },
-    onDragOver: () => {
-      setIsLoading(true);
     },
   });
-
-  const thumbs = files.map(file => (
-    <div style={thumb} key={file.name}>
-      <div style={thumbInner}>
-        {
-          isLoading
-          ? <CircularProgress />
-          : <img
-            // @ts-ignore
-            src={file.preview}
-            style={img}
-            // @ts-ignore
-            onLoad={() => { URL.revokeObjectURL(file.preview); console.log('loaded') }}
-          />
-        }
-      </div>
-    </div>
-  ));
-
-  const listOfFiles = acceptedFiles.map(file => (
-    <li key={file.name}>
-      {file.name} - {file.size} bytes
-    </li>
-  ));
 
   const style = useMemo(() => ({
     ...baseStyle,
@@ -122,15 +96,19 @@ export const DropImage: FC = () => {
       <div {...getRootProps({ className: 'dropzone', style })}>
         <input {...getInputProps()} />
         {
-          acceptedFiles.length
-          ? thumbs
-          : <p>Перетащите изображение или кликните, чтобы выбрать файл...</p>
+          (src && name)
+            ? <div style={thumb}>
+              <div style={thumbInner}>
+                <img
+                  src={`${process.env.REACT_APP_BASE_URL}/${src + name}`}
+                  alt={name}
+                  loading="lazy"
+                />
+              </div>
+            </div>
+            : <p>Перетащите изображение или кликните, чтобы выбрать файл...</p>
         }
       </div>
-      <aside>
-        <h4>Files</h4>
-        <ul>{listOfFiles}</ul>
-      </aside>
     </section>
   );
 }

@@ -31,3 +31,36 @@
   max-width: 60%;
   margin: 0 auto 15px;
 }
+
+.simple-image-button {
+  display: inline-flex;
+  align-items: center;
+  background-color: transparent;
+  outline: 0;
+  text-decoration: none;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  text-transform: uppercase;
+  font-weight: 500;
+  font-size: 0.875rem;
+  min-width: 64px;
+  padding: 5px 15px;
+  border-radius: 4px;
+  border: 1px solid rgba(25, 118, 210, 0.5);
+  color: #1976d2;
+  transition-duration: 0.4s;
+}
+
+.simple-image-button:hover {
+  background-color: rgba(25, 118, 210, 0.1);
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  color: #1471cc;
+  border: 1px solid rgba(5, 98, 190, 0.5);
+}
+
+.simple-image-buttonwrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 10px;
+}

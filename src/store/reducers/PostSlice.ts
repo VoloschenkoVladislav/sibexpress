@@ -1,9 +1,10 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import type { PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 import { postAPI } from "../../services/PostService";
 
 
 interface PostState {
-  content: string,
+  content: string | null,
   type_id: number | null,
   status_id: number | null,
   tags_id: number[],
@@ -19,7 +20,7 @@ interface PostState {
 }
 
 const initialState: PostState = {
-  content: '',
+  content: null,
   type_id: null,
   status_id: null,
   tags_id: [],
@@ -38,19 +39,25 @@ export const postsSlice = createSlice({
   name: 'posts',
   initialState,
   reducers: {
-    setContent: (state, action: PayloadAction<string>) => {
-      state.content = action.payload;
-    }
+    updatePost: (state, action: PayloadAction<PostState>) => {
+      state.published_at = action.payload.published_at;
+      state.content = action.payload.content;
+      state.type_id = action.payload.type_id;
+      state.status_id = action.payload.status_id;
+      state.tags_id = action.payload.tags_id;
+      state.title = action.payload.title;
+      state.published_at = action.payload.published_at;
+    },
   },
   extraReducers: builder => {
     builder
-      .addMatcher(postAPI.endpoints.post.matchFulfilled, (state, action) => {
+      .addMatcher(postAPI.endpoints.getPost.matchFulfilled, (state, action) => {
         if (action.payload.data) {
           const {
-            content,
+            raw_content,
             type_id,
             status_id,
-            topics,
+            tags_id,
             title,
             published_at,
             updated_at,
@@ -60,17 +67,33 @@ export const postsSlice = createSlice({
           state.published_at = published_at;
           state.updated_at = updated_at;
           state.created_at = created_at;
-          state.content = content;
           state.type_id = type_id;
           state.status_id = status_id;
-          state.tags_id = topics;
+          state.tags_id = tags_id;
           state.title = title;
           state.media = media;
+          state.content = raw_content;
+        }
+      })
+      .addMatcher(postAPI.endpoints.uploadImages.matchFulfilled, (state, action) => {
+        if (action.payload.data) {
+          state.media.images = action.payload.data.images;
+        }
+      })
+      .addMatcher(postAPI.endpoints.deleteImages.matchFulfilled, (state, action) => {
+        if (action.payload.data) {
+          state.media.images = action.payload.data.images;
+        }
+      })
+      .addMatcher(postAPI.endpoints.uploadThumbnail.matchFulfilled, (state, action) => {
+        if (action.payload.data) {
+          state.media.thumb = action.payload.data.thumb;
+          state.media.src = action.payload.data.src;
         }
       })
   }
 });
 
-export const { setContent } = postsSlice.actions;
+export const { updatePost } = postsSlice.actions;
 
 export default postsSlice.reducer;

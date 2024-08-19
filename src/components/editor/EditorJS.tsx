@@ -6,24 +6,29 @@ import SimpleImage from './plugins/SimpleImage';
 import './styles/Editor.css';
 
 
+export interface EditorData extends OutputData {};
+
 interface EditorProps {
-  data?: OutputData,
-  onChange?: (data: OutputData) => void,
+	initialData?: string,
+	editorRenderNum: number,
+  onChange?: (data: string) => void,
 	onImageAdded?: () => Promise<string>,
+	onButtonPressed?: (editor: SimpleImage) => void,
 }
 
-export const BlockEditor: FC<EditorProps> = ({ data, onChange, onImageAdded }) => {
+export const BlockEditor: FC<EditorProps> = ({ editorRenderNum, initialData, onChange, onImageAdded, onButtonPressed }) => {
 	const editorInstance = useRef<EditorJS | null>(null);
 
 	useEffect(() => {
 		if (!editorInstance.current) {
+			const data = initialData ? JSON.parse(initialData) : undefined;
 			editorInstance.current = new EditorJS({
 				holder: "editorjs",
 				data: data,
         onChange: async () => {
           if (editorInstance.current && onChange) {
 						const outputData = await editorInstance.current.save();
-						onChange(outputData);
+						onChange(JSON.stringify(outputData));
           }
         },
 				tools: {
@@ -32,6 +37,7 @@ export const BlockEditor: FC<EditorProps> = ({ data, onChange, onImageAdded }) =
 						class: SimpleImage,
 						config: {
 							onImageAdded,
+							onButtonPressed
 						},
 					},
 				},
@@ -45,7 +51,8 @@ export const BlockEditor: FC<EditorProps> = ({ data, onChange, onImageAdded }) =
 				editorInstance.current = null;
 			}
 		};
-	}, []);
+	// eslint-disable-next-line
+	}, [editorRenderNum]);
 
 	return (
 		<div id="editorjs"></div>
