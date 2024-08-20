@@ -23,6 +23,7 @@ import {
   TablePagination,
   Box,
   TextField,
+  Typography,
 } from "@mui/material";
 import { PopupWindow } from "../features/PopupWindow";
 import { LoadingWrap } from "../features/LoadingWrap";
@@ -110,10 +111,10 @@ const PostsTable: FC = () => {
           message={`Вы уверены, что хотите удалить материал №${selectedPost}`}
         />
       </PopupWindow>
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
+      <TableContainer component={Paper}  sx={{ minWidth: 650, h: '100%' }}>
+        <Table size="small" aria-label="a dense table">
           <TableHead>
-            <TableRow>
+            <TableRow component='th' scope='row'>
               <TableCell>ID</TableCell>
               <TableCell>Заголовок</TableCell>
               <TableCell>Тип</TableCell>
@@ -214,16 +215,19 @@ export const NewPost: FC<NewPostProps> = props => {
   return (
     <Box
       sx={{
-        height: '100%',
+        minHeight: 200,
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
       }}
     >
-      <TextField variant="outlined" onChange={e => { title.current = e.target.value }} />
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column' }}>
+        <Typography variant='h6' gutterBottom>Введите заголовок</Typography>
+        <TextField variant='outlined' placeholder='Заголовок' onChange={e => { title.current = e.target.value }} />
+      </Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Button variant='contained' onClick={onCancel}>Отменить</Button>
-        <Button variant='contained' onClick={() => onSave(title.current)}>Добавить</Button>
+        <Button variant='outlined' color='primary' onClick={onCancel}>Отменить</Button>
+        <Button variant='outlined' color='success' onClick={() => onSave(title.current)}>Добавить</Button>
       </Box>
     </Box>
   );
@@ -244,12 +248,28 @@ export const Posts: FC = () => {
           onCancel={() => setNewPostPopupVisible(false)}
         />
       </PopupWindow>
-      <Box>
-        <Button variant='contained' onClick={() => setNewPostPopupVisible(true)}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          width: '100%',
+          alignItems: 'center',
+        }}
+      >
+        <Typography variant='h4' gutterBottom>
+          Материалы
+        </Typography>
+        <Button
+          variant='outlined'
+          onClick={() => setNewPostPopupVisible(true)}
+          sx={{
+            my: 1
+          }}
+        >
           Добавить материал
         </Button>
       </Box>
-      <Box>
+      <Box sx={{ height: '100%', mt: 2 }}>
         <PostsTable />
       </Box>
     </DashboardLayout>

@@ -142,6 +142,7 @@ export const SidePanel: FC<SidePanelProps> = props => {
           filterSelectedOptions
           value={selectedTopics}
           onChange={onTopicsChange}
+          fullWidth
           renderInput={(params) => (
             <TextField
               {...params}
@@ -171,6 +172,7 @@ export const SidePanel: FC<SidePanelProps> = props => {
           onChange={onPublishedAtChange}
           label='Дата публикации'
           format={DATE_FORMAT_OUTPUT}
+          sx={{ width: '100%' }}
         />
       </LocalizationProvider>
       <IconButton

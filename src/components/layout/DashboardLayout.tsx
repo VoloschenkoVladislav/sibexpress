@@ -1,17 +1,20 @@
 import { FC } from 'react';
 import { Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { DashboardNavbar, toolbarHeight } from './DashboardNavbar';
+import { DashboardNavbar, navbarHeight } from './DashboardNavbar';
+import { DashboardDrawer, drawerWidth } from './DashboardDrawer';
+
 
 interface Props {
   children: React.ReactNode,
 }
 
-const DashboardLayoutRoot = styled('div')(({ theme }) => ({
+const DashboardLayoutRoot = styled('div')(() => ({
   display: 'flex',
   flex: '1 1 auto',
   maxWidth: '100%',
-  paddingTop: toolbarHeight,
+  paddingTop: navbarHeight,
+  paddingLeft: drawerWidth,
 }));
 
 export const DashboardLayout: FC<Props> = props => {
@@ -25,14 +28,19 @@ export const DashboardLayout: FC<Props> = props => {
             display: 'flex',
             flex: '1 1 auto',
             flexDirection: 'column',
-            width: '100%',
-            pb: 10,
+            position: 'absolute',
+            right: 0,
+            left: drawerWidth,
+            bottom: 0,
+            top: navbarHeight,
+            p: 5,
           }}
         >
           {children}
         </Box>
       </DashboardLayoutRoot>
       <DashboardNavbar />
+      <DashboardDrawer />
     </>
   );
 };

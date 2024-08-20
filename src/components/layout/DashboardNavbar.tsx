@@ -1,69 +1,41 @@
-import { FC } from 'react';
-import { AppBar, Box, Toolbar, Button } from '@mui/material';
-import { PATHS } from '../../constants/path';
-import { Link } from 'react-router-dom';
+import React, { FC } from 'react';
 import { useLazyLogoutQuery } from '../../services/AuthService';
+import { styled } from '@mui/material/styles';
+import { AppBar, Box, Toolbar, IconButton } from '@mui/material';
+import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
+import { drawerWidth } from './DashboardDrawer';
 
 
-const items = [
-  {
-    link: PATHS.NEWS,
-    title: 'Материалы',
-  },
-  {
-    link: PATHS.TOPICS_MANAGEMENT,
-    title: 'Управление темами',
-  },
-  {
-    link: PATHS.USER_LIST,
-    title: 'Пользователи',
-  },
-];
+const DashboardNavbarRoot = styled(AppBar)(({ theme }) => ({
+  backgroundColor: theme.palette.background.paper,
+  boxShadow: theme.shadows[3],
+})); 
 
-export const toolbarHeight = 64;
+export const navbarHeight = 64;
 
 export const DashboardNavbar: FC = () => {
   const [ logoutFetch ] = useLazyLogoutQuery();
 
   return (
-    <>
-      <AppBar
+    <DashboardNavbarRoot
+      sx={{
+        left: drawerWidth,
+        width: `calc(100% - ${drawerWidth}px)`,
+      }}
+    >
+      <Toolbar
+        disableGutters
         sx={{
-          width: '100%',
+          minHeight: navbarHeight,
+          left: 0,
+          px: 2,
         }}
       >
-        <Toolbar
-          sx={{
-            height: toolbarHeight,
-            left: 0,
-            px: 2,
-          }}
-        >
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {items.map((item) => (
-              <Link key={item.link} to={item.link} style={{ textDecoration: 'none' }}>
-                <Button
-                  key={item.title}
-                  sx={{ my: 2, color: 'white', display: 'block' }}
-                >
-                  {item.title}
-                </Button>
-              </Link>
-            ))}
-          </Box>
-          <Box sx={{ flexGrow: 1 }} />
-          <Button
-            sx={{
-              my: 2,
-              color: 'white',
-              display: 'block'
-            }}
-            onClick={() => logoutFetch()}
-          >
-            Выйти
-          </Button>
-        </Toolbar>
-      </AppBar>
-    </>
+        <Box sx={{ flexGrow: 1 }} />
+        <IconButton onClick={e => logoutFetch()} size='large'>
+          <LogoutOutlinedIcon fontSize='inherit'/>
+        </IconButton>
+      </Toolbar>
+    </DashboardNavbarRoot>
   );
 };

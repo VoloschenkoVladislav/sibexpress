@@ -5,6 +5,9 @@ import {
   Stack,
   CircularProgress,
   IconButton,
+  Typography,
+  Paper,
+  Tooltip,
 } from "@mui/material";
 import ReplayOutlinedIcon from '@mui/icons-material/ReplayOutlined';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
@@ -181,6 +184,44 @@ export const PostEdit: FC = () => {
 
   return (
     <DashboardLayout>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          width: '100%',
+          alignItems: 'center',
+        }}
+      >
+        <Typography variant='h4' gutterBottom>Редактирование материала</Typography>
+        <Stack direction='row' spacing={2}>
+          <Tooltip title='Отменить всё'>
+            <IconButton
+              disabled={!hasChanged}
+              onClick={resetAll}
+              color='primary'
+            >
+              <ReplayOutlinedIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title='Добавить изображение'>
+            <IconButton
+              onClick={() => setImageManagerUp(true)}
+              color='primary'
+            >
+              <AddToPhotosOutlinedIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title='Сохранить'>
+            <IconButton
+              disabled={!hasChanged}
+              onClick={handleSave}
+              color='success'
+            >
+              <SaveOutlinedIcon />
+            </IconButton>
+          </Tooltip>
+        </Stack>
+      </Box>
       <LoadingWrap
         isLoading={isPostLoading}
         loader={<CircularProgress />}
@@ -190,6 +231,7 @@ export const PostEdit: FC = () => {
           justifyContent: 'space-between',
           alignItems: 'start',
           height: '100%',
+          mt: 2,
         }}>
           <PopupWindow visible={imageManagerUp}>
             <ImageManager
@@ -219,8 +261,8 @@ export const PostEdit: FC = () => {
             />
           </PopupWindow>
 
-          <Box sx={{ width: '75%', p: 3 }}>
-            <Box sx={{ display: 'flex' }}>
+          <Box sx={{ width: '75%', mr: 2 }}>
+            <Paper sx={{ display: 'flex', p: 1, mb: 3 }}>
               <TitleEditor
                 value={postTitle}
                 onChange={value => setPostTitle(value)}
@@ -233,81 +275,66 @@ export const PostEdit: FC = () => {
               >
                 <ReplayOutlinedIcon />
               </IconButton>
-            </Box>
-            <BlockEditor
-              editorRenderNum={editorRenderNum}
-              initialData={content || undefined}
-              onChange={handleEditorChange}
-              onButtonPressed={editor => {
-                // @ts-ignore
-                simpleImagePluginInstance.current = editor;
-                setImageGalleryUp(true);
-              }}
-            />
+            </Paper>
+            <Paper sx={{ p: 1, mb: 3 }}>
+              <BlockEditor
+                editorRenderNum={editorRenderNum}
+                initialData={content || undefined}
+                onChange={handleEditorChange}
+                onButtonPressed={editor => {
+                  // @ts-ignore
+                  simpleImagePluginInstance.current = editor;
+                  setImageGalleryUp(true);
+                }}
+              />
+            </Paper>
           </Box>
-
-          <Box sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            width: '25%',
-            p: 3,
-            height: '100%',
-          }}>
-            <SidePanel
-              selectedTopicIds={selectedTopicIds}
-              selectedStatusId={selectedStatusId || status_id}
-              selectedTypeId={selectedTypeId || type_id}
-              publishedAt={parseDate(publishedAt) ? dayjs(parseDate(publishedAt)) : null}
-              createdAt={dayjs(parseDate(created_at))}
-              updatedAt={dayjs(parseDate(updated_at))}
-              onTopicsChange={(e, newValue) => setSelectedTopicIds(newValue.map(v => v.id))}
-              onTypeChange={e => setSelectedTypeId(+e.target.value)}
-              onStatusChange={e => setSelectedStatusId(+e.target.value)}
-              onPublishedAtChange={newValue => setPublishedAt(newValue?.format(DATE_FORMAT_INPUT) || null)}
-              onTopicsReset={() => setSelectedTopicIds(tags_id)}
-              onTypeReset={() => setSelectedTypeId(type_id)}
-              onStatusReset={() => setSelectedStatusId(status_id)}
-              onPublishedAtReset={() => setPublishedAt(published_at)}
-              topicsResetDisabled={selectedTopicIds === tags_id}
-              typeResetDisabled={selectedTypeId === type_id}
-              statusResetDisabled={selectedStatusId === status_id}
-              publishedAtResetDisabled={publishedAt === published_at}
-            />
-            <DropImage
-              field="thumbnail"
-              onDrop={file => {
-                sendThumbnail({ id: +id!, thumbnail: file });
-              }}
-              src={media.src}
-              name={media.thumb}
-            />
-
-            <Stack direction='column' spacing={2}>
-              <Button
-                variant='outlined'
-                startIcon={<ReplayOutlinedIcon />}
-                disabled={!hasChanged}
-                onClick={resetAll}
-              >
-                Отменить
-              </Button>
-              <Button
-                variant='outlined'
-                startIcon={<AddToPhotosOutlinedIcon />}
-                onClick={() => setImageManagerUp(true)}
-              >
-                Добавить фото
-              </Button>
-              <Button
-                variant='outlined'
-                startIcon={<SaveOutlinedIcon />}
-                disabled={!hasChanged}
-                onClick={handleSave}
-                color='success'
-              >
-                Сохранить
-              </Button>
-            </Stack>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              width: '25%',
+              height: '100%',
+            }}
+          >
+            <Paper sx={{
+              p: 1,
+              mb: 3,
+            }}>
+              <SidePanel
+                selectedTopicIds={selectedTopicIds}
+                selectedStatusId={selectedStatusId || status_id}
+                selectedTypeId={selectedTypeId || type_id}
+                publishedAt={parseDate(publishedAt) ? dayjs(parseDate(publishedAt)) : null}
+                createdAt={dayjs(parseDate(created_at))}
+                updatedAt={dayjs(parseDate(updated_at))}
+                onTopicsChange={(e, newValue) => setSelectedTopicIds(newValue.map(v => v.id))}
+                onTypeChange={e => setSelectedTypeId(+e.target.value)}
+                onStatusChange={e => setSelectedStatusId(+e.target.value)}
+                onPublishedAtChange={newValue => setPublishedAt(newValue?.format(DATE_FORMAT_INPUT) || null)}
+                onTopicsReset={() => setSelectedTopicIds(tags_id)}
+                onTypeReset={() => setSelectedTypeId(type_id)}
+                onStatusReset={() => setSelectedStatusId(status_id)}
+                onPublishedAtReset={() => setPublishedAt(published_at)}
+                topicsResetDisabled={selectedTopicIds === tags_id}
+                typeResetDisabled={selectedTypeId === type_id}
+                statusResetDisabled={selectedStatusId === status_id}
+                publishedAtResetDisabled={publishedAt === published_at}
+              />
+            </Paper>
+            <Paper sx={{
+              p: 3,
+            }}>
+              <Typography variant='h6' gutterBottom>Главное изображение</Typography>
+              <DropImage
+                field="thumbnail"
+                onDrop={file => {
+                  sendThumbnail({ id: +id!, thumbnail: file });
+                }}
+                src={media.src}
+                name={media.thumb}
+              />
+            </Paper>
           </Box>
         </Box>
       </LoadingWrap>
