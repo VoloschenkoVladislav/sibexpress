@@ -1,5 +1,5 @@
 export const parseDate = (date: string | null) => {
-  if (date === null) {
+  if (!date) {
     return null;
   }
   const [ year, month, day ] = date.split(' ')[0].split('-');

@@ -11,7 +11,7 @@ export const PopupWindow: FC<Props> = ({ visible, children }) => {
   return (
     visible
     ? <Box sx={{
-      zIndex: 1101,
+      zIndex: 1201,
       position: 'fixed',
       top: 0,
       bottom: 0,
@@ -21,6 +21,7 @@ export const PopupWindow: FC<Props> = ({ visible, children }) => {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
+      backdropFilter: 'blur(1px)',
     }}>
       <Paper
         sx={{

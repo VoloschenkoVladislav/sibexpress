@@ -20,6 +20,7 @@ import { ITopic, useStatusesQuery, useTopicsQuery, useTypesQuery } from "../../s
 import { Dayjs } from 'dayjs';
 import ReplayOutlinedIcon from '@mui/icons-material/ReplayOutlined';
 import { LoadingWrap } from "../features/LoadingWrap";
+import { DATE_FORMAT_OUTPUT } from "../../constants/date";
 
 
 interface SidePanelProps {
@@ -42,8 +43,6 @@ interface SidePanelProps {
   statusResetDisabled: boolean,
   publishedAtResetDisabled: boolean,
 }
-
-const DATE_FORMAT_OUTPUT = 'DD/MM/YYYY HH:mm:ss';
 
 export const SidePanel: FC<SidePanelProps> = props => {
   const {
@@ -84,13 +83,13 @@ export const SidePanel: FC<SidePanelProps> = props => {
         <FormControl sx={{ width: '100%' }}>
           <InputLabel id="post-edit-status-select-standard-label">Статус</InputLabel>
           <Select
-            value={selectedStatusId?.toString()}
+            value={selectedStatusId?.toString() || ''}
             onChange={onStatusChange}
             label="Статус"
             labelId="post-edit-status-select-standard-label"
           >
             {statuses!.map(status => (
-              <MenuItem key={status.id} value={status.id}>{status.title}</MenuItem>
+              <MenuItem key={status.id} value={status.id.toString()}>{status.title}</MenuItem>
             ))}
           </Select>
         </FormControl> 
@@ -111,13 +110,13 @@ export const SidePanel: FC<SidePanelProps> = props => {
         <FormControl sx={{ width: '100%' }}>
           <InputLabel id="post-edit-type-select-standard-label">Тип публикации</InputLabel>
           <Select
-            value={selectedTypeId?.toString()}
+            value={selectedTypeId?.toString() || ''}
             onChange={onTypeChange}
             label="Тип публикации"
             labelId="post-edit-type-select-standard-label"
           >
             {types!.map(type => (
-              <MenuItem key={type.id} value={type.id}>{type.title}</MenuItem>
+              <MenuItem key={type.id} value={type.id.toString()}>{type.title}</MenuItem>
             ))}
           </Select>
         </FormControl>
@@ -160,7 +159,7 @@ export const SidePanel: FC<SidePanelProps> = props => {
         </IconButton>
       </LoadingWrap>
     </Box>
-    <Box sx={{ m: 1, mb: 2, display: 'flex', justifyContent: 'space-between', mt: 1 }}>
+    <Box sx={{ m: 1, mb: 2, mt: 2, display: 'flex', justifyContent: 'space-between' }}>
       <LocalizationProvider dateAdapter={AdapterDayjs}  adapterLocale="ru">
         <DateTimePicker
           views={['year', 'month', 'day', 'hours', 'minutes']}

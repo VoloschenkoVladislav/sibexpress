@@ -51,13 +51,11 @@ const img: CSSProperties = {
 interface Props {
   field: string,
   onDrop: (file: FormData) => void,
-  name?: string | null,
-  src?: string | null,
+  path: string | null,
 }
 
-export const DropImage: FC<Props> = ({ field, onDrop, name, src }) => {
+export const DropImage: FC<Props> = ({ field, onDrop, path }) => {
   const {
-    acceptedFiles,
     getRootProps,
     getInputProps,
     isFocused,
@@ -96,17 +94,17 @@ export const DropImage: FC<Props> = ({ field, onDrop, name, src }) => {
       <div {...getRootProps({ className: 'dropzone', style })}>
         <input {...getInputProps()} />
         {
-          (src && name)
-            ? <div style={thumb}>
-              <div style={thumbInner}>
-                <img
-                  src={`${process.env.REACT_APP_BASE_URL}/${src + name}`}
-                  alt={name}
-                  loading="lazy"
-                />
-              </div>
+          path
+          ? <div style={thumb}>
+            <div style={thumbInner}>
+              <img
+                src={`${process.env.REACT_APP_BASE_URL}/${path}`}
+                alt={path}
+                loading="lazy"
+              />
             </div>
-            : <p>Перетащите изображение или кликните, чтобы выбрать файл...</p>
+          </div>
+          : <p>Перетащите изображение или кликните, чтобы выбрать файл...</p>
         }
       </div>
     </section>

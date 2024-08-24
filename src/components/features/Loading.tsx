@@ -2,20 +2,28 @@ import { FC } from 'react';
 import { Box, CircularProgress } from '@mui/material';
 
 
-export const Loading: FC = () => {
+interface Props {
+  visible: boolean,
+};
+
+export const Loading: FC<Props> = ({ visible }) => {
   return (
-    <Box sx={{
-      display: 'flex',
-      position: 'absolute',
-      justifyContent: 'center',
-      alignItems: 'center',
-      left: 0,
+    visible
+    ? <Box sx={{
+      zIndex: 1201,
+      position: 'fixed',
       top: 0,
-      right: 0,
       bottom: 0,
-      backdropFilter: 'blur(5px)'
+      left: 0,
+      right: 0,
+      backgroundColor: 'rgba(200, 200, 200, 0.8)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backdropFilter: 'blur(1px)',
     }}>
       <CircularProgress />
     </Box>
+    : null
   );
 }

@@ -19,7 +19,7 @@ import { useParams } from "react-router-dom";
 import { useDeleteImagesMutation, useEditPostMutation, useGetPostQuery, useUploadImagesMutation, useUploadThumbnailMutation } from "../../services/PostService";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux/redux";
 import { parseDate } from "../../utils/dateParser";
-import { DropImage } from "./DropImage";
+import { DropImage } from "../features/DropImage";
 import { BlockEditor } from "../editor/EditorJS";
 import { SidePanel } from "./SidePanel";
 import { ImageManager } from "./ImageManager";
@@ -29,9 +29,8 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.bubble.css';
 import SimpleImage from "../editor/plugins/SimpleImage";
 import { updatePost } from "../../store/reducers/PostSlice";
+import { DATE_FORMAT_INPUT } from "../../constants/date";
 
-
-const DATE_FORMAT_INPUT = 'YYYY-MM-DD HH:mm:ss';
 
 interface TitleEditorProps {
   value: string,
@@ -91,7 +90,7 @@ export const PostEdit: FC = () => {
     updated_at,
     created_at,
     media,
-    title
+    title,
   } = useAppSelector(state => state.postsReducer);
   const dispatch = useAppDispatch();
 
@@ -224,7 +223,7 @@ export const PostEdit: FC = () => {
       </Box>
       <LoadingWrap
         isLoading={isPostLoading}
-        loader={<CircularProgress />}
+        loader={<CircularProgress sx={{ position: 'relative', top: '50%', left: '50%' }} />}
       >
         <Box sx={{
           display: 'flex',
@@ -262,12 +261,8 @@ export const PostEdit: FC = () => {
           </PopupWindow>
 
           <Box sx={{ width: '75%', mr: 2 }}>
-            <Paper sx={{ display: 'flex', p: 1, mb: 3 }}>
-              <TitleEditor
-                value={postTitle}
-                onChange={value => setPostTitle(value)}
-                placeholder='Введите заголовок'
-              />
+            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+              <Typography variant='h6' gutterBottom>Заголовок</Typography>
               <IconButton
                 aria-label='Отменить'
                 onClick={() => setPostTitle(title)}
@@ -275,7 +270,27 @@ export const PostEdit: FC = () => {
               >
                 <ReplayOutlinedIcon />
               </IconButton>
+            </Box>
+            <Paper sx={{ display: 'flex', p: 1, mb: 3 }}>
+              <TitleEditor
+                value={postTitle}
+                onChange={value => setPostTitle(value)}
+                placeholder='Введите заголовок'
+              />
             </Paper>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+              <Typography variant='h6' gutterBottom>Тело материала</Typography>
+              <IconButton
+                aria-label='Отменить'
+                onClick={() => {
+                  setEditorData(content);
+                  setEditorRenderNum(editorRenderNum + 1);
+                }}
+                disabled={editorData === content}
+              >
+                <ReplayOutlinedIcon />
+              </IconButton>
+            </Box>
             <Paper sx={{ p: 1, mb: 3 }}>
               <BlockEditor
                 editorRenderNum={editorRenderNum}
@@ -331,8 +346,7 @@ export const PostEdit: FC = () => {
                 onDrop={file => {
                   sendThumbnail({ id: +id!, thumbnail: file });
                 }}
-                src={media.src}
-                name={media.thumb}
+                path={(media.src && media.thumb) ? `${media.src}${media.thumb}` : null}
               />
             </Paper>
           </Box>
