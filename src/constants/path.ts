@@ -1,8 +1,7 @@
 export enum PATHS {
   LOGIN = '/login',
   NEWS = '/posts',
-  USER_CREATE = '/users/user_create',
-  USER_LIST = '/users',
+  USERS = '/users',
   WELCOME = '/welcome',
   PAGE_EDITOR = '/page_editor',
   BANNERS = '/banners',

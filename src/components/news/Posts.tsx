@@ -215,19 +215,18 @@ export const NewPost: FC<NewPostProps> = props => {
   return (
     <Box
       sx={{
-        minHeight: 200,
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
       }}
     >
       <Box sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column' }}>
-        <Typography variant='h6' gutterBottom>Введите заголовок</Typography>
-        <TextField variant='outlined' placeholder='Заголовок' onChange={e => { title.current = e.target.value }} />
+        <Typography variant='h6' gutterBottom>Введите заголовок материала</Typography>
+        <TextField sx={{ width: 800 }} variant='outlined' placeholder='Заголовок' onChange={e => { title.current = e.target.value }} />
       </Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Button variant='outlined' color='primary' onClick={onCancel}>Отменить</Button>
-        <Button variant='outlined' color='success' onClick={() => onSave(title.current)}>Добавить</Button>
+      <Box sx={{ display: 'flex', justifyContent: 'end', mt: 4 }}>
+        <Button variant='outlined' color='error' onClick={onCancel} sx={{ mr: 1 }}>Отменить</Button>
+        <Button variant='contained' color='success' onClick={() => onSave(title.current)}>Добавить</Button>
       </Box>
     </Box>
   );

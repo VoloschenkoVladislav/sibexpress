@@ -4,9 +4,8 @@ import { RootState } from '../store/store';
 
 
 export interface IPermission {
-  id: number,
   name: string,
-  description: string,
+  title: string,
 }
 
 export interface ITopic {

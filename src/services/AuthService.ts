@@ -1,6 +1,7 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { BaseQueryApi, createApi, FetchArgs, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { IResponse } from '../models/IApi';
 import { RootState } from '../store/store';
+import Cookies from 'js-cookie';
 
 
 export interface AuthRequestBody {
@@ -21,18 +22,30 @@ export interface AuthResponseError {
   password?: string,
 }
 
+const baseQuery = fetchBaseQuery({
+  baseUrl: `${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_API_PATH}`,
+  prepareHeaders: (headers, { getState }) => {
+    const { accessToken } = (getState() as RootState).authReducer;
+    if (accessToken) {
+      headers.set('Authorization', accessToken)
+    }
+    return headers
+  },
+});
+
+const baseQueryWithAuth = async (args: string | FetchArgs, api: BaseQueryApi, extraOptions: {}) => {
+  const result = await baseQuery(args, api, extraOptions);
+  if (result.error && result.error.status === 401) {
+    window.location.href = '/login';
+    Cookies.remove('access_token');
+    Cookies.remove('abilities');
+  }
+  return result;
+};
+
 export const authAPI = createApi({
   reducerPath: 'authAPI',
-  baseQuery: fetchBaseQuery({
-    baseUrl: `${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_API_PATH}`,
-    prepareHeaders: (headers, { getState }) => {
-      const { accessToken } = (getState() as RootState).authReducer;
-      if (accessToken) {
-        headers.set('Authorization', accessToken)
-      }
-      return headers
-    },
-  }),
+  baseQuery: baseQueryWithAuth,
   endpoints: build => ({
     login: build.mutation<IResponse<AuthResponseData, AuthResponseError>, AuthRequestBody>({
       query: requestBody => ({

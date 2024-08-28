@@ -3,6 +3,7 @@ import { Route, Routes, BrowserRouter, Navigate } from 'react-router-dom';
 import { Posts } from './news/Posts';
 import { PATHS } from '../constants/path';
 import { Users } from './users/Users';
+import { UserEdit } from './users/UserEdit';
 import { Topics } from './topics/Topics';
 import { AuthRoute } from './auth/AuthRoute';
 import { LoginWrap } from './auth/LoginForm';
@@ -25,7 +26,8 @@ const App: FC = () => {
               <Route path={PATHS.NEWS} element={<Posts />} />
               <Route path={`${PATHS.NEWS}/:id`} element={<PostEdit />} />
               <Route path={PATHS.TOPICS_MANAGEMENT} element={<Topics />} />
-              <Route path={PATHS.USER_LIST} element={<Users />} />
+              <Route path={PATHS.USERS} element={<Users />} />
+              <Route path={`${PATHS.USERS}/:id`} element={<UserEdit />} />
               <Route path={PATHS.BANNERS} element={<Banners />} />
               <Route path={`${PATHS.BANNERS}/:id`} element={<BannerEdit />} />
             </Route>

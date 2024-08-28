@@ -1,8 +1,10 @@
 import { FC } from 'react';
-import { Box } from '@mui/material';
+import { Alert, Box, Snackbar } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { DashboardNavbar, navbarHeight } from './DashboardNavbar';
 import { DashboardDrawer, drawerWidth } from './DashboardDrawer';
+import { useAppDispatch, useAppSelector } from '../../hooks/redux/redux';
+import { resetErrors, resetSuccess } from '../../store/reducers/AppSlice';
 
 
 interface Props {
@@ -19,6 +21,14 @@ const DashboardLayoutRoot = styled('div')(() => ({
 
 export const DashboardLayout: FC<Props> = props => {
   const { children } = props;
+  const { errors, success } = useAppSelector(state => state.appReducer);
+  const dispatch = useAppDispatch();
+  const handleErrorSnackBarClose = () => {
+    dispatch(resetErrors());
+  };
+  const handleSuccessSnackBarClose = () => {
+    dispatch(resetSuccess());
+  };
 
   return (
     <>
@@ -41,6 +51,34 @@ export const DashboardLayout: FC<Props> = props => {
       </DashboardLayoutRoot>
       <DashboardNavbar />
       <DashboardDrawer />
+      {
+        errors
+        ? <Snackbar open onClose={handleErrorSnackBarClose}>
+          <Alert
+            severity='error'
+            variant='filled'
+            sx={{ width: '100%' }}
+            onClose={handleErrorSnackBarClose}
+          >
+            {errors.map(error => (<Box key={error}>{error}<br/></Box>))}
+          </Alert>
+        </Snackbar>
+        : null
+      }
+      {
+        success
+        ? <Snackbar open autoHideDuration={2000} onClose={handleSuccessSnackBarClose}>
+          <Alert
+            severity='success'
+            variant='filled'
+            sx={{ width: '100%' }}
+            onClose={handleSuccessSnackBarClose}
+          >
+            {success}
+          </Alert>
+        </Snackbar>
+        : null
+      } 
     </>
   );
 };

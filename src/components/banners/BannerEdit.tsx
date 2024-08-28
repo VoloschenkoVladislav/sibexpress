@@ -20,13 +20,24 @@ import { DropImage } from '../features/DropImage';
 import { DateTimeField } from '@mui/x-date-pickers/DateTimeField';
 import { updateBanner } from '../../store/reducers/BannerSlice';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+import { setSuccess } from '../../store/reducers/AppSlice';
 
+
+const bannerStatuses = [
+  {
+    id: 0,
+    title: 'Выключен'
+  },
+  {
+    id: 1,
+    title: 'Включен'
+  }
+];
 
 export const BannerEdit: FC = () => {
   const { id } = useParams();
   const dispatch = useAppDispatch();
   const { isLoading: isBannerLoading } = useGetBannerQuery(+id!);
-  const { data: statuses = [], isLoading: isStatusesLoading } = useStatusesQuery();
   const { data: places = [], isLoading: isPlacesLoading } = useBannerPlacesQuery();
   const [ editBanner ] = useEditBannerMutation();
   const [ uploadImage ] = useUploadBannerImageMutation();
@@ -84,16 +95,19 @@ export const BannerEdit: FC = () => {
         started_at:	startedAt ? startedAt.format(DATE_FORMAT_INPUT) : null,
         finished_at: finishedAt ? finishedAt.format(DATE_FORMAT_INPUT) : null,
       }
-    }).then(() => {
+    }).then(response => {
       setIsSending(false);
-      dispatch(updateBanner({
-        place_id: selectedPlaceId,
-        status_id: selectedStatusId,
-        title: bannerTitle,
-        link: bannerLink,
-        started_at:	startedAt ? startedAt.format(DATE_FORMAT_INPUT) : null,
-        finished_at: finishedAt ? finishedAt.format(DATE_FORMAT_INPUT) : null,
-      }));
+      if (!response.error) {
+        dispatch(updateBanner({
+          place_id: selectedPlaceId,
+          status_id: selectedStatusId,
+          title: bannerTitle,
+          link: bannerLink,
+          started_at:	startedAt ? startedAt.format(DATE_FORMAT_INPUT) : null,
+          finished_at: finishedAt ? finishedAt.format(DATE_FORMAT_INPUT) : null,
+        }));
+        dispatch(setSuccess('Баннер сохранён'));
+      }
     });
   };
 
@@ -141,22 +155,26 @@ export const BannerEdit: FC = () => {
         <Typography variant='h4' gutterBottom>Редактирование баннера</Typography>
         <Stack direction='row' spacing={2}>
           <Tooltip title='Отменить всё'>
-            <IconButton
-              disabled={!hasChanged}
-              onClick={resetAll}
-              color='primary'
-            >
-              <ReplayOutlinedIcon />
-            </IconButton>
+            <span>
+              <IconButton
+                disabled={!hasChanged}
+                onClick={resetAll}
+                color='primary'
+              >
+                <ReplayOutlinedIcon />
+              </IconButton>
+            </span>
           </Tooltip>
           <Tooltip title='Сохранить'>
-            <IconButton
-              disabled={!hasChanged}
-              onClick={handleSave}
-              color='success'
-            >
-              <SaveOutlinedIcon />
-            </IconButton>
+            <span>
+              <IconButton
+                disabled={!hasChanged}
+                onClick={handleSave}
+                color='success'
+              >
+                <SaveOutlinedIcon />
+              </IconButton>
+            </span>
           </Tooltip>
         </Stack>
       </Box>
@@ -206,28 +224,23 @@ export const BannerEdit: FC = () => {
             }}
           >
             <Paper sx={{ p: 2, mb: 3 }}>
-              <Box sx={{ mt: 1, display: 'flex', justifyContent: 'space-between' }}>
-                <LoadingWrap
-                  isLoading={isStatusesLoading}
-                  loader={<CircularProgress />}
-                >
-                  <FormControl sx={{ width: '100%' }}>
-                    <InputLabel id='banner-edit-status-select-standard-label'>Статус</InputLabel>
-                    <Select
-                      value={selectedStatusId?.toString() || ''}
-                      fullWidth
-                      onChange={e => setSelectedStatusId(e.target.value ? +e.target.value : null)}
-                      label='Статус'
-                      labelId='banner-edit-status-select-standard-label'
-                    >
-                      {statuses!.map(status => (
-                        <MenuItem key={status.id} value={status.id.toString()}>{status.title}</MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </LoadingWrap>
+              <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
+                <FormControl sx={{ width: '100%' }}>
+                  <InputLabel id='banner-edit-status-select-standard-label'>Статус</InputLabel>
+                  <Select
+                    value={selectedStatusId?.toString() || ''}
+                    fullWidth
+                    onChange={e => setSelectedStatusId(e.target.value ? +e.target.value : null)}
+                    label='Статус'
+                    labelId='banner-edit-status-select-standard-label'
+                  >
+                    {bannerStatuses.map(status => (
+                      <MenuItem key={status.id} value={status.id.toString()}>{status.title}</MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               </Box>
-              <Box sx={{ mt: 1, display: 'flex', justifyContent: 'space-between' }}>
+              <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
                 <LoadingWrap
                   isLoading={isPlacesLoading}
                   loader={<CircularProgress />}
@@ -248,30 +261,6 @@ export const BannerEdit: FC = () => {
                   </FormControl>
                 </LoadingWrap>
               </Box>
-            </Paper>
-            <Paper sx={{ p: 2, mb: 3 }}>
-              <Box sx={{ mb: 2 }}>
-                <LocalizationProvider dateAdapter={AdapterDayjs}  adapterLocale='ru'>
-                  <DateTimeField
-                    disabled
-                    fullWidth
-                    value={dayjs(parseDate(created_at))}
-                    label='Дата создания'
-                    format={DATE_FORMAT_OUTPUT}
-                  />
-                </LocalizationProvider>
-              </Box>
-              <Box sx={{ mb: 2 }}>
-                <LocalizationProvider dateAdapter={AdapterDayjs}  adapterLocale='ru'>
-                  <DateTimeField
-                    disabled
-                    fullWidth
-                    value={dayjs(parseDate(updated_at))}
-                    label='Дата изменения'
-                    format={DATE_FORMAT_OUTPUT}
-                  />
-                </LocalizationProvider>
-              </Box>
               <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
                 <LocalizationProvider dateAdapter={AdapterDayjs}  adapterLocale='ru'>
                   <DateTimePicker
@@ -282,7 +271,7 @@ export const BannerEdit: FC = () => {
                     }}
                     value={startedAt}
                     onChange={setStartedAt}
-                    label='Дата включения'
+                    label='Дата начала показа'
                     format={DATE_FORMAT_OUTPUT}
                     sx={{ width: '100%' }}
                   />
@@ -298,9 +287,33 @@ export const BannerEdit: FC = () => {
                     }}
                     value={finishedAt}
                     onChange={setFinishedAt}
-                    label='Дата выключения'
+                    label='Дата окончания показа'
                     format={DATE_FORMAT_OUTPUT}
                     sx={{ width: '100%' }}
+                  />
+                </LocalizationProvider>
+              </Box>
+            </Paper>
+            <Paper sx={{ p: 2, mb: 3 }}>
+              <Box sx={{ mb: 2 }}>
+                <LocalizationProvider dateAdapter={AdapterDayjs}  adapterLocale='ru'>
+                  <DateTimeField
+                    disabled
+                    fullWidth
+                    value={dayjs(parseDate(created_at))}
+                    label='Дата создания'
+                    format={DATE_FORMAT_OUTPUT}
+                  />
+                </LocalizationProvider>
+              </Box>
+              <Box>
+                <LocalizationProvider dateAdapter={AdapterDayjs}  adapterLocale='ru'>
+                  <DateTimeField
+                    disabled
+                    fullWidth
+                    value={dayjs(parseDate(updated_at))}
+                    label='Дата изменения'
+                    format={DATE_FORMAT_OUTPUT}
                   />
                 </LocalizationProvider>
               </Box>

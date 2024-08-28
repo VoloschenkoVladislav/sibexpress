@@ -7,7 +7,7 @@ import { Logo } from './Logo';
 import NewspaperOutlinedIcon from '@mui/icons-material/NewspaperOutlined';
 import SpeakerNotesOutlinedIcon from '@mui/icons-material/SpeakerNotesOutlined';
 import AutoAwesomeMosaicOutlinedIcon from '@mui/icons-material/AutoAwesomeMosaicOutlined';
-import AdminPanelSettingsOutlinedIcon from '@mui/icons-material/AdminPanelSettingsOutlined';
+import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
 import { navbarHeight } from './DashboardNavbar';
 
 
@@ -28,9 +28,9 @@ const items = [
     icon: <AutoAwesomeMosaicOutlinedIcon />,
   },
   {
-    link: PATHS.USER_LIST,
+    link: PATHS.USERS,
     title: 'Пользователи',
-    icon: <AdminPanelSettingsOutlinedIcon />,
+    icon: <PeopleAltOutlinedIcon />,
   },
 ];
 

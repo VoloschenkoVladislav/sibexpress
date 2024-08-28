@@ -136,7 +136,7 @@ const TopicsTable: FC = () => {
             <TableRow component='th' scope='row'>
               <TableCell>ID</TableCell>
               <TableCell>Имя</TableCell>
-              <TableCell>Использовано</TableCell>
+              <TableCell>Упоминаний в материалах</TableCell>
               <TableCell align="right"></TableCell>
               <TableCell align="right"></TableCell>
             </TableRow>
@@ -250,12 +250,12 @@ const EditTopic: FC<EditTopicProps> = props => {
       }}
     >
       <Box sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column' }}>
-        <Typography variant='h6' gutterBottom>Введите новое наименование темы</Typography>
+        <Typography variant='h6' gutterBottom>Наименование темы</Typography>
         <TextField value={title} variant='outlined' placeholder='Наименование' onChange={e => setTitle(e.target.value)} />
       </Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
         <Button variant='outlined' color='primary' onClick={onCancel}>Отменить</Button>
-        <Button variant='outlined' disabled={!title} color='success' onClick={() => onSave(title || '')}>Добавить</Button>
+        <Button variant='outlined' disabled={!title} color='success' onClick={() => onSave(title || '')}>Сохранить</Button>
       </Box>
     </Box>
   );

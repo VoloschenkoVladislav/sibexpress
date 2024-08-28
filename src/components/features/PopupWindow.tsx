@@ -26,7 +26,6 @@ export const PopupWindow: FC<Props> = ({ visible, children }) => {
       <Paper
         sx={{
           minWidth: 400,
-          minHeight: 200,
           padding: 5
         }}
       >

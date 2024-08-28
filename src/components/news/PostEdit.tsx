@@ -30,6 +30,8 @@ import 'react-quill/dist/quill.bubble.css';
 import SimpleImage from "../editor/plugins/SimpleImage";
 import { updatePost } from "../../store/reducers/PostSlice";
 import { DATE_FORMAT_INPUT } from "../../constants/date";
+import { Loading } from "../features/Loading";
+import { setSuccess } from "../../store/reducers/AppSlice";
 
 
 interface TitleEditorProps {
@@ -102,6 +104,7 @@ export const PostEdit: FC = () => {
   const [ imageManagerUp, setImageManagerUp ] = useState(false);
   const [ imageGalleryUp, setImageGalleryUp ] = useState(false);
   const [ postTitle, setPostTitle ] = useState<string>("");
+  const [ isSending, setIsSending ] = useState(false);
 
   const simpleImagePluginInstance = useRef<SimpleImage>(null);
   
@@ -133,6 +136,7 @@ export const PostEdit: FC = () => {
   };
 
   const handleSave = () => {
+    setIsSending(true);
     editPost({
       id: +id!,
       postData: {
@@ -143,18 +147,23 @@ export const PostEdit: FC = () => {
         raw_content: editorData,
         published_at: publishedAt || null,
       }
+    }).then(response => {
+      setIsSending(false);
+      if (!response.error) {
+        dispatch(updatePost({
+          title: postTitle,
+          tags_id: selectedTopicIds,
+          type_id: selectedTypeId,
+          status_id: selectedStatusId,
+          content: editorData,
+          published_at: publishedAt || null,
+          created_at: created_at,
+          updated_at: updated_at,
+          media: media,
+        }));
+        dispatch(setSuccess('Материал сохранён'));
+      }
     });
-    dispatch(updatePost({
-      title: postTitle,
-      tags_id: selectedTopicIds,
-      type_id: selectedTypeId,
-      status_id: selectedStatusId,
-      content: editorData,
-      published_at: publishedAt || null,
-      created_at: created_at,
-      updated_at: updated_at,
-      media: media,
-    }));
   };
 
   const hasChanged = useMemo(() => {
@@ -183,6 +192,7 @@ export const PostEdit: FC = () => {
 
   return (
     <DashboardLayout>
+      <Loading visible={isSending} />
       <Box
         sx={{
           display: 'flex',
@@ -193,31 +203,37 @@ export const PostEdit: FC = () => {
       >
         <Typography variant='h4' gutterBottom>Редактирование материала</Typography>
         <Stack direction='row' spacing={2}>
-          <Tooltip title='Отменить всё'>
-            <IconButton
-              disabled={!hasChanged}
-              onClick={resetAll}
-              color='primary'
-            >
-              <ReplayOutlinedIcon />
-            </IconButton>
+          <Tooltip title='Отменить все изменения'>
+            <span>
+              <IconButton
+                disabled={!hasChanged}
+                onClick={resetAll}
+                color='primary'
+              >
+                <ReplayOutlinedIcon />
+              </IconButton>
+            </span>
           </Tooltip>
           <Tooltip title='Добавить изображение'>
-            <IconButton
-              onClick={() => setImageManagerUp(true)}
-              color='primary'
-            >
-              <AddToPhotosOutlinedIcon />
-            </IconButton>
+            <span>
+              <IconButton
+                onClick={() => setImageManagerUp(true)}
+                color='primary'
+              >
+                <AddToPhotosOutlinedIcon />
+              </IconButton>
+            </span>
           </Tooltip>
           <Tooltip title='Сохранить'>
-            <IconButton
-              disabled={!hasChanged}
-              onClick={handleSave}
-              color='success'
-            >
-              <SaveOutlinedIcon />
-            </IconButton>
+            <span>
+              <IconButton
+                disabled={!hasChanged}
+                onClick={handleSave}
+                color='success'
+              >
+                <SaveOutlinedIcon />
+              </IconButton>
+            </span>
           </Tooltip>
         </Stack>
       </Box>

@@ -7,6 +7,7 @@ interface Props {
   onSubmit: () => void,
   message: string,
 };
+
 export const ConfirmationWindow: FC<Props> = ({ message, onSubmit, onReject }) => {
   return (
     <Box
