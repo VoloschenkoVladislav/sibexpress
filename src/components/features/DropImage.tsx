@@ -42,12 +42,6 @@ const thumbInner: CSSProperties = {
   minWidth: 0,
 };
 
-const img: CSSProperties = {
-  display: 'block',
-  width: 'auto',
-  height: '100%',
-};
-
 interface Props {
   field: string,
   onDrop: (file: FormData) => void,

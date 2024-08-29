@@ -91,6 +91,9 @@ export const postsSlice = createSlice({
           state.media.src = action.payload.data.src;
         }
       })
+      .addMatcher(postAPI.endpoints.deleteThumbnail.matchFulfilled, (state, action) => {
+        state.media.thumb = null;
+      })
   }
 });
 

@@ -1,7 +1,6 @@
 import React, { FC, useEffect, useMemo, useRef, useState } from "react";
 import {
   Box,
-  Button,
   Stack,
   CircularProgress,
   IconButton,
@@ -10,13 +9,14 @@ import {
   Tooltip,
 } from "@mui/material";
 import ReplayOutlinedIcon from '@mui/icons-material/ReplayOutlined';
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import AddToPhotosOutlinedIcon from '@mui/icons-material/AddToPhotosOutlined';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ru';
 import { DashboardLayout } from "../layout/DashboardLayout";
 import { useParams } from "react-router-dom";
-import { useDeleteImagesMutation, useEditPostMutation, useGetPostQuery, useUploadImagesMutation, useUploadThumbnailMutation } from "../../services/PostService";
+import { useDeleteImagesMutation, useDeleteThumbnailMutation, useEditPostMutation, useGetPostQuery, useUploadImagesMutation, useUploadThumbnailMutation } from "../../services/PostService";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux/redux";
 import { parseDate } from "../../utils/dateParser";
 import { DropImage } from "../features/DropImage";
@@ -82,6 +82,7 @@ export const PostEdit: FC = () => {
   const [ sendThumbnail ] = useUploadThumbnailMutation();
   const [ sendImages ] = useUploadImagesMutation();
   const [ deleteImage ] = useDeleteImagesMutation();
+  const [ deleteThumbnail ] = useDeleteThumbnailMutation();
 
   const {
     content,
@@ -133,6 +134,16 @@ export const PostEdit: FC = () => {
 
   const handleEditorChange = (data: string) => {
     setEditorData(data);
+  };
+
+  const handleDeleteThumbnail = () => {
+    setIsSending(true);
+    deleteThumbnail(+id!).then(response => {
+      setIsSending(false);
+      if (!response.error) {
+        dispatch(setSuccess('Изображение удалено'));
+      }
+    })
   };
 
   const handleSave = () => {
@@ -281,6 +292,7 @@ export const PostEdit: FC = () => {
               <Typography variant='h6' gutterBottom>Заголовок</Typography>
               <IconButton
                 aria-label='Отменить'
+                color='primary'
                 onClick={() => setPostTitle(title)}
                 disabled={title === postTitle}
               >
@@ -298,6 +310,7 @@ export const PostEdit: FC = () => {
               <Typography variant='h6' gutterBottom>Тело материала</Typography>
               <IconButton
                 aria-label='Отменить'
+                color='primary'
                 onClick={() => {
                   setEditorData(content);
                   setEditorRenderNum(editorRenderNum + 1);
@@ -353,14 +366,24 @@ export const PostEdit: FC = () => {
                 publishedAtResetDisabled={publishedAt === published_at}
               />
             </Paper>
-            <Paper sx={{
-              p: 3,
-            }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
               <Typography variant='h6' gutterBottom>Главное изображение</Typography>
+              <IconButton onClick={handleDeleteThumbnail} color='error' disabled={!(media.src && media.thumb)}>
+                <DeleteOutlinedIcon />
+              </IconButton>
+            </Box>
+            <Paper sx={{ p: 3, mb: 2 }}>
               <DropImage
                 field="thumbnail"
                 onDrop={file => {
-                  sendThumbnail({ id: +id!, thumbnail: file });
+                  setIsSending(true);
+                  sendThumbnail({ id: +id!, thumbnail: file })
+                    .then(response => {
+                      setIsSending(false);
+                      if (!response.error) {
+                        dispatch(setSuccess('Изображение сохранено'));
+                      }
+                    });
                 }}
                 path={(media.src && media.thumb) ? `${media.src}${media.thumb}` : null}
               />
