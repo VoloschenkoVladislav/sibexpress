@@ -11,12 +11,19 @@ import {
 import ReplayOutlinedIcon from '@mui/icons-material/ReplayOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
-import AddToPhotosOutlinedIcon from '@mui/icons-material/AddToPhotosOutlined';
+import CollectionsOutlinedIcon from '@mui/icons-material/CollectionsOutlined';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ru';
 import { DashboardLayout } from "../layout/DashboardLayout";
 import { useParams } from "react-router-dom";
-import { useDeleteImagesMutation, useDeleteThumbnailMutation, useEditPostMutation, useGetPostQuery, useUploadImagesMutation, useUploadThumbnailMutation } from "../../services/PostService";
+import {
+  useDeleteImagesMutation,
+  useDeleteThumbnailMutation,
+  useEditPostMutation,
+  useGetPostQuery,
+  useUploadImagesMutation,
+  useUploadThumbnailMutation
+} from "../../services/PostService";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux/redux";
 import { parseDate } from "../../utils/dateParser";
 import { DropImage } from "../features/DropImage";
@@ -225,13 +232,13 @@ export const PostEdit: FC = () => {
               </IconButton>
             </span>
           </Tooltip>
-          <Tooltip title='Добавить изображение'>
+          <Tooltip title='Галерея изображений'>
             <span>
               <IconButton
                 onClick={() => setImageManagerUp(true)}
                 color='primary'
               >
-                <AddToPhotosOutlinedIcon />
+                <CollectionsOutlinedIcon />
               </IconButton>
             </span>
           </Tooltip>
@@ -267,8 +274,24 @@ export const PostEdit: FC = () => {
                 images: media.images,
               }}
               toolbar={true}
-              onLoadImage={data => sendImages({ id: +id!, images: data })}
-              onDelete={images => deleteImage({ id: +id!, images })}
+              onLoadImage={data => {
+                setIsSending(true);
+                sendImages({ id: +id!, images: data }).then(response => {
+                  setIsSending(false);
+                  if (!response.error) {
+                    dispatch(setSuccess('Изображения загружены'));
+                  }
+                });
+              }}
+              onDelete={images => {
+                setIsSending(true);
+                deleteImage({ id: +id!, images }).then(response => {
+                  setIsSending(false);
+                  if (!response.error) {
+                    dispatch(setSuccess('Изображения удалены'));
+                  }
+                });
+              }}
             />
           </PopupWindow>
 

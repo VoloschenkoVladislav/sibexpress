@@ -10,7 +10,7 @@ export const Loading: FC<Props> = ({ visible }) => {
   return (
     visible
     ? <Box sx={{
-      zIndex: 1201,
+      zIndex: 1202,
       position: 'fixed',
       top: 0,
       bottom: 0,

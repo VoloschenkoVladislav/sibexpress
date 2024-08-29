@@ -1,5 +1,9 @@
 import React, { FC, useState, ChangeEvent } from 'react';
-import { Box, Button, ImageList, ImageListItem, ImageListItemBar, Stack } from "@mui/material";
+import { Box, Button, IconButton, ImageList, ImageListItem, Stack, Tooltip, Typography } from "@mui/material";
+import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined';
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
+import CollectionsOutlinedIcon from '@mui/icons-material/CollectionsOutlined';
 import { styled } from "@mui/material/styles";
 
 
@@ -39,19 +43,35 @@ const ImageItem: FC<ImageItemInterface> = ({ src, name, onClick, selected }) => 
     <ImageListItem
       onClick={onClick}
       sx={{
-        // transform: selected ? 'scale(1.2)' : null,
-        boxShadow: selected ? '7px 4px 6px grey' : null,
-        transitionDuration: '0.5s',
+        p: 0.3,
       }}
     >
+      <CheckCircleOutlineOutlinedIcon
+        color='success'
+        style={{
+          display: !selected ? 'none' : undefined,
+          position: 'absolute',
+          top: -1,
+          left: 3,
+          zIndex: 120,
+          fontSize: '1.5em',
+          backgroundColor: '#FFFFFF',
+          borderRadius: '50%'
+        }}
+      />
       <img
+        style={{
+          transform: selected ? 'scale(0.95)' : undefined,
+          transitionDuration: '0.2s',
+          border: '2px solid',
+          borderColor: selected ? '#2e7d32' : '#d9d9d9',
+          borderRadius: '3px',
+          pointerEvents: 'none',
+          userSelect: 'none',
+        }}
         srcSet={`${process.env.REACT_APP_BASE_URL}/${src + name}?w=248&fit=crop&auto=format&dpr=2 2x`}
         src={`${process.env.REACT_APP_BASE_URL}/${src + name}?w=248&fit=crop&auto=format`}
         alt={name}
-        loading="lazy"
-      />
-      <ImageListItemBar
-        title={name.slice(0, 12) + '...'}
       />
     </ImageListItem>
   );
@@ -59,7 +79,7 @@ const ImageItem: FC<ImageItemInterface> = ({ src, name, onClick, selected }) => 
 
 export const ImageManager: FC<ImageGalleryProps> = ({ media, onLoadImage, onCancel, toolbar,  onDelete, onImageClick }) => {
   const images = media.images || [];
-  const [ selectedImage, setSelectedImage ] = useState<string | null>(null);
+  const [ selectedImages, setSelectedImages ] = useState<Set<string>>(new Set([]));
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && onLoadImage) {
@@ -71,58 +91,98 @@ export const ImageManager: FC<ImageGalleryProps> = ({ media, onLoadImage, onCanc
     }
   }
 
+  const handleSelectedImagesChange = (image: string) => {
+    const currentSelectedImages = new Set(selectedImages);
+    if (currentSelectedImages.has(image)) {
+      currentSelectedImages.delete(image);
+    } else {                      
+      currentSelectedImages.add(image);
+    }
+    setSelectedImages(currentSelectedImages);
+  };
+
   return (
     <Box>
-      <ImageList sx={{ width: 800, height: 450 }}>
-        {
-          images.map(image => (
-            <ImageItem
-              key={image}
-              name={image}
-              src={media.src}
-              onClick={() => {
-                setSelectedImage(image)
-                if (onImageClick) onImageClick(media.src + image);
-              }}
-              selected={selectedImage === image}
-            />
-          ))
-        }
-      </ImageList>
-      <Stack direction='row' spacing={2}>
-        <Button onClick={onCancel}>
-          Отмена
-        </Button>
-        {
-          toolbar
-          ? <>
-            <Button
-              disabled={!selectedImage}
-              onClick={
-                onDelete
-                ? () => {
-                  onDelete([ selectedImage! ]);
-                  setSelectedImage(null);
-                }
-                : undefined
-              }
-            >
-              Удалить
-            </Button>
-            <Button
-              component='label'
-              tabIndex={-1}
-              role={undefined}
-            >
-              Добавить
-              <VisuallyHiddenInput
-                type='file'
-                onChange={handleFileChange}
+      <Typography variant='h4' gutterBottom>Галерея</Typography>
+      {
+        images.length
+        ? <ImageList sx={{ width: 800, height: 450, p: 1 }} cols={4}>
+          {
+            images.map(image => (
+              <ImageItem
+                key={image}
+                name={image}
+                src={media.src}
+                onClick={() => {
+                  handleSelectedImagesChange(image);
+                  if (onImageClick) onImageClick(media.src + image);
+                }}
+                selected={selectedImages.has(image)}
               />
-            </Button>
-          </>
-          : null
-        }
+            ))
+          }
+        </ImageList>
+        : <Box sx={{ width: 800, height: 450, p: 1 }}>
+          <Stack
+            direction='row'
+            spacing={2}
+            justifyContent='center'
+            alignItems='center'
+            sx={{ position: 'relative', top: '40%' }}
+          >
+            <CollectionsOutlinedIcon color='disabled' sx={{ fontSize: '4em' }} />
+            <Typography sx={{ fontSize: '1.8em' }}>
+              Нет изображений в галерее
+            </Typography>
+          </Stack>
+        </Box>
+      }
+      <Stack direction='row' spacing={2} justifyContent='space-between'>
+        <Button onClick={onCancel} variant='outlined'>
+          Назад
+        </Button>
+        <Stack direction='row' spacing={2} justifyContent='end'>
+          {
+            toolbar
+            ? <>
+              <Tooltip title='Удалить изображения'>
+                <span>
+                  <IconButton
+                    disabled={!selectedImages.size}
+                    color='error'
+                    onClick={
+                      onDelete
+                      ? () => {
+                        onDelete(Array.from(selectedImages));
+                        setSelectedImages(new Set([]));
+                      }
+                      : undefined
+                    }
+                  >
+                    <DeleteOutlinedIcon />
+                  </IconButton>
+                </span>
+              </Tooltip>
+              <VisuallyHiddenInput
+                multiple
+                type='file'
+                accept='image/*'
+                onChange={handleFileChange}
+                id='icon-button-file-manager'
+              />
+              <Tooltip title='Добавить новые изображения'>
+                <span>
+                  <label htmlFor='icon-button-file-manager'>
+                    <IconButton color='success' component='span'>
+                      <AddOutlinedIcon />
+                    </IconButton>
+                  </label>
+                </span>
+              </Tooltip>
+            </>
+            : null
+          }
+        </Stack>
       </Stack>
     </Box>
   );
