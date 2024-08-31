@@ -18,6 +18,9 @@ export const rtkQueryErrorLogger: Middleware =
       if (data && data.error_message) {
         errors.push(data.error_message);
       }
+      if (!data) {
+        errors.push('Непредвиденная ошибка');
+      }
       api.dispatch(setErrors(errors));
     }
 
