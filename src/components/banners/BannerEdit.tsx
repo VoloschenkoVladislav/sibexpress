@@ -1,5 +1,5 @@
 import { FC, useEffect, useMemo, useState } from 'react';
-import { useBannerPlacesQuery, useStatusesQuery } from '../../services/DictionaryService';
+import { useBannerPlacesQuery } from '../../services/DictionaryService';
 import { Box, CircularProgress, FormControl, IconButton, InputLabel, MenuItem, Paper, Select, Stack, TextField, Tooltip, Typography } from '@mui/material';
 import { LoadingWrap } from '../features/LoadingWrap';
 import { useDeleteBannerImageMutation, useEditBannerMutation, useGetBannerQuery, useUploadBannerImageMutation } from '../../services/BannerService';
@@ -44,7 +44,7 @@ export const BannerEdit: FC = () => {
   const [ deleteImage ] = useDeleteBannerImageMutation();
   const [ isSending, setIsSending ] = useState(false);
   const [ bannerTitle, setBannerTitle ] = useState('');
-  const [ bannerLink, setBannerLink ] = useState<string | null>(null);
+  const [ bannerLink, setBannerLink ] = useState('');
   const [ selectedStatusId, setSelectedStatusId ] = useState<number | null>(null);
   const [ selectedPlaceId, setSelectedPlaceId ] = useState<number | null>(null);
   const [ startedAt, setStartedAt ] = useState<Dayjs | null>(null);
@@ -68,7 +68,7 @@ export const BannerEdit: FC = () => {
     setStartedAt(parseDate(started_at) ? dayjs(parseDate(started_at)) : null);
     setFinishedAt(parseDate(finished_at) ? dayjs(parseDate(finished_at)) : null);
     setBannerTitle(title);
-    setBannerLink(link);
+    setBannerLink(link || '');
   };
 
   useEffect(() => {
@@ -123,7 +123,7 @@ export const BannerEdit: FC = () => {
       selectedPlaceId !== place_id
       || selectedStatusId !== status_id
       || bannerTitle !== title
-      || bannerLink !== link
+      || bannerLink !== (link || '')
       || (startedAt ? startedAt.format(DATE_FORMAT_INPUT) : null) !== started_at
       || (finishedAt ? finishedAt.format(DATE_FORMAT_INPUT) : null) !== finished_at
     )}, [
@@ -192,12 +192,21 @@ export const BannerEdit: FC = () => {
           <Box sx={{ width: '75%', mr: 2 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
               <Typography variant='h6' gutterBottom>Наименование</Typography>
-              <IconButton onClick={() => setBannerTitle(title)} disabled={bannerTitle === title}>
+              <IconButton onClick={() => setBannerTitle(title)} disabled={bannerTitle === title} color='primary'>
                 <ReplayOutlinedIcon />
               </IconButton>
             </Box>
             <Paper sx={{ p: 2, mb: 3 }}>
               <TextField value={bannerTitle} variant='outlined' placeholder='Наименование' onChange={e => setBannerTitle(e.target.value)} sx={{ width: '100%' }} />
+            </Paper>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+              <Typography variant='h6' gutterBottom>Ссылка</Typography>
+              <IconButton onClick={() => setBannerLink(link || '')} disabled={bannerLink === (link || '')} color='primary'>
+                <ReplayOutlinedIcon />
+              </IconButton>
+            </Box>
+            <Paper sx={{ p: 2, mb: 3 }}>
+              <TextField value={bannerLink} variant='outlined' placeholder='Наименование' onChange={e => setBannerLink(e.target.value)} sx={{ width: '100%' }} />
             </Paper>
             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
               <Typography variant='h6' gutterBottom>Изображение баннера</Typography>
