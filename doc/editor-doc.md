@@ -36,14 +36,7 @@ Example:
 {
   "id": "XV87kJS_H1",
   "type": "list",
-  "data": {
-    "style": "unordered",
-    "items": [
-      "It is a block-styled editor",
-      "It returns clean data output in JSON",
-      "Designed to be extendable and pluggable with a simple API"
-    ]
-  }
+  "data": null
 }
 ```
 
@@ -55,6 +48,17 @@ Example:
 |-------|--------|-----------------------------|
 | text  | string | Heading text                |
 | level | number | Heading level (from 1 to 6) |
+
+**Heading level**:
+
+| Heading level | Description |
+|---------------|-------------|
+| 1             | h1 heading  |
+| 2             | h2 heading  |
+| 3             | h3 heading  |
+| 4             | h4 heading  |
+| 5             | h5 heading  |
+| 6             | h6 heading  |
 
 Example:
 ```
@@ -87,10 +91,17 @@ Example:
 
 ### 3.3. List
 
-| Field | Type      |      Description                |
-|-------|-----------|---------------------------------|
-| style | string    | List style (ordered, unordered) |
-| level | string[]  | List's item's text              |
+| Field | Type      |      Description   |
+|-------|-----------|--------------------|
+| style | string    | List style         |
+| items | string[]  | List's item's text |
+
+**List style**:
+
+| List style | Description    |
+|------------|----------------|
+| ordered    | Odrered list   |
+| unordered  | Unordered list |
 
 Example:
 ```
@@ -110,9 +121,9 @@ Example:
 
 ### 3.4. Simple image
 
-| Field | Type      |      Description                |
-|-------|-----------|---------------------------------|
-| src   | string    | Source of image                 |
+| Field | Type      |  Description    |
+|-------|-----------|-----------------|
+| src   | string    | Source of image |
 
 Example:
 ```
@@ -122,5 +133,115 @@ Example:
   "data": {
     "src": "https://sib.express/img_posts/0/71/2_oKGXfIVcqT.jpg"
   }
+}
+```
+
+### 3.5. Table
+
+|    Field     | Type       |      Description         |
+|--------------|------------|--------------------------|
+| withHeadings | boolean    | Does table have headings |
+| content      | string[][] | Content of table's cells |
+
+Example:
+```
+{
+  "id": "f0Aaiiv45u",
+  "type": "table",
+  "data": {
+    "withHeadings": true,
+    "content": [
+      [
+        "Table",
+        "Column",
+        ""
+      ],
+      [
+        "Row 1",
+        "Cell 1",
+        "Cell 3"
+      ],
+      [
+        "Row 2",
+        "",
+        "Cell 4"
+      ]
+    ]
+  }
+}
+```
+
+### 3.6. Raw HTML
+
+| Field | Type      |  Description    |
+|-------|-----------|-----------------|
+| html  | string    | Raw HTML string |
+
+Example:
+```
+{
+  "id": "f0Aaiiv45u",
+  "type": "rawTool",
+  "data": {
+    "html": "<p>Test fragment</p>"
+  }
+}
+```
+
+### 3.7. Code
+
+| Field | Type      | Description |
+|-------|-----------|-------------|
+| code  | string    | Code text   |
+
+Example:
+```
+{
+  "id": "f0Aaiiv45u",
+  "type": "code",
+  "data": {
+    "code": "function goodLogic() {\nif (true) {\n  return false;\n} else {\n  return true;\n}\n}\n"
+  }
+}
+```
+
+### 3.8. Quote
+
+|   Field   | Type      |  Description   |
+|-----------|-----------|----------------|
+| text      | string    | Code text      |
+| caption   | string    | Code text      |
+| alignment | string    | Alignment type |
+
+**Alignment type**:
+
+| Alignment type | Description  |
+|----------------|--------------|
+| left           | Align left   |
+| center         | Align center |
+
+Example:
+```
+{
+  "id": "f0Aaiiv45u",
+  "type": "code",
+  "data": {
+    "text": "Quote",
+    "caption": "Caption",
+    "alignment": "left"
+  }
+}
+```
+
+### 3.9. Delimiter
+
+Delimiter accept only empty object as data.
+
+Example:
+```
+{
+  "id": "f0Aaiiv45u",
+  "type": "code",
+  "data": {}
 }
 ```
