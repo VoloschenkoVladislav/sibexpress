@@ -26,10 +26,21 @@ import {
 import { PopupWindow } from '../features/PopupWindow';
 import { LoadingWrap } from '../features/LoadingWrap';
 import { ConfirmationWindow } from '../features/ConfirmationWindow';
-import { useBannerPlacesQuery, useStatusesQuery } from '../../services/DictionaryService';
+import { useBannerPlacesQuery } from '../../services/DictionaryService';
 import { PATHS } from '../../constants/path';
 import { Link } from 'react-router-dom';
 
+
+export const bannerStatuses = [
+  {
+    id: 0,
+    title: 'Выключен'
+  },
+  {
+    id: 1,
+    title: 'Включен'
+  }
+];
 
 interface BannerSkeletonProps {
   id: number,
@@ -71,7 +82,6 @@ const BannersTable: FC = () => {
   const [ showDeletePopup, setShowDeletePopup ] = useState(false);
   const { data: banners, isLoading: isPostsLoading, isFetching: isPostsFetching } = useGetBannersQuery({ page: page + 1, perPage: rowsPerPage });
   const [ deleteBanner ] = useDeleteBannerMutation();
-  const { data: statuses = [], isLoading: isStatusesLoading } = useStatusesQuery();
   const { data: places = [], isLoading: isPlacesLoading } = useBannerPlacesQuery();
 
   const bannersCount = useMemo(() => banners?.data?.items?.length, [banners]);
@@ -88,7 +98,7 @@ const BannersTable: FC = () => {
   };
 
   const getStatusTitle = (status_id: number) => {
-    return statuses.filter(status => status.id === status_id)[0]?.title || '';
+    return bannerStatuses.filter(status => status.id === status_id)[0]?.title || '';
   };
 
   const handleChangeRowsPerPage = (
@@ -144,16 +154,11 @@ const BannersTable: FC = () => {
                       isLoading={isPlacesLoading}
                       loader={<Skeleton variant="text" />}
                     >
-                      {banner.place_id !== null ? getPlaceTitle(banner.place_id) : ''}
+                      {banner.type_id !== null ? getPlaceTitle(banner.type_id) : ''}
                     </LoadingWrap>
                   </TableCell>
                   <TableCell>
-                    <LoadingWrap
-                      isLoading={isStatusesLoading}
-                      loader={<Skeleton variant="text" />}
-                    >
-                      {banner.status_id !== null ? getStatusTitle(banner.status_id) : ''}
-                    </LoadingWrap>
+                    {banner.status_id !== null ? getStatusTitle(banner.status_id) : ''}
                   </TableCell>
                   <TableCell align='right' sx={{ maxWidth: 7 }}>
                     <Link to={`${PATHS.BANNERS}/${banner.id}`} style={{ textDecoration: 'none' }}>

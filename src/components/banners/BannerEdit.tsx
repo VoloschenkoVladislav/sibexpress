@@ -21,18 +21,8 @@ import { DateTimeField } from '@mui/x-date-pickers/DateTimeField';
 import { updateBanner } from '../../store/reducers/BannerSlice';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import { setSuccess } from '../../store/reducers/AppSlice';
+import { bannerStatuses } from './Banners';
 
-
-const bannerStatuses = [
-  {
-    id: 0,
-    title: 'Выключен'
-  },
-  {
-    id: 1,
-    title: 'Включен'
-  }
-];
 
 export const BannerEdit: FC = () => {
   const { id } = useParams();

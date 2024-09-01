@@ -10,12 +10,12 @@ export interface IShortBanner {
   started_at: string | null,
   link: string | null,
   finished_at: string | null,
-  place_id: number | null,
+  type_id: number | null,
 }
 
 export interface IBanner {
   title: string,
-  place_id: number | null,
+  type_id: number | null,
   status_id: number | null,
   link: string | null,
   filename: string | null,
