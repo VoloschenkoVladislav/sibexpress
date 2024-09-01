@@ -67,7 +67,7 @@ const PostSkeleton: FC<PostSkeletonProps> = props => {
 
 const PostsTable: FC = () => {
   const [ page, setPage ] = useState(0);
-  const [ rowsPerPage, setRowsPerPage ] = useState(10);
+  const [ rowsPerPage, setRowsPerPage ] = useState(localStorage.getItem('postsPerPage') ? +localStorage.getItem('postsPerPage')! :  10);
   const [ selectedPost, setSelectedPost ] = useState<number | null>(null);
   const [ showDeletePopup, setShowDeletePopup ] = useState(false);
   const { data: posts, isLoading: isPostsLoading, isFetching: isPostsFetching } = useGetPostsQuery({ page: page + 1, perPage: rowsPerPage });
@@ -96,6 +96,7 @@ const PostsTable: FC = () => {
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     setRowsPerPage(+event.target.value);
+    localStorage.setItem('postsPerPage', event.target.value);
     setPage(0);
   };
 

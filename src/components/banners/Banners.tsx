@@ -66,7 +66,7 @@ const BannerSkeleton: FC<BannerSkeletonProps> = props => {
 
 const BannersTable: FC = () => {
   const [ page, setPage ] = useState(0);
-  const [ rowsPerPage, setRowsPerPage ] = useState(10);
+  const [ rowsPerPage, setRowsPerPage ] = useState(localStorage.getItem('bannersPerPage') ? +localStorage.getItem('bannersPerPage')! :  10);
   const [ selectedBanner, setSelectedBanner ] = useState<number | null>(null);
   const [ showDeletePopup, setShowDeletePopup ] = useState(false);
   const { data: banners, isLoading: isPostsLoading, isFetching: isPostsFetching } = useGetBannersQuery({ page: page + 1, perPage: rowsPerPage });
@@ -95,6 +95,7 @@ const BannersTable: FC = () => {
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     setRowsPerPage(+event.target.value);
+    localStorage.setItem('bannersPerPage', event.target.value);
     setPage(0);
   };
 

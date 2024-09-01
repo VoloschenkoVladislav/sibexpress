@@ -70,7 +70,7 @@ const UserSkeleton: FC<UserSkeletonProps> = props => {
 
 const UsersTable: FC = () => {
   const [ page, setPage ] = useState(0);
-  const [ rowsPerPage, setRowsPerPage ] = useState(10);
+  const [ rowsPerPage, setRowsPerPage ] = useState(localStorage.getItem('usersPerPage') ? +localStorage.getItem('usersPerPage')! :  10);
   const [ selectedUser, setSelectedUser ] = useState<number | null>(null);
   const [ showDeletePopup, setShowDeletePopup ] = useState(false);
   const { data: users, isLoading: isPostsLoading, isFetching: isPostsFetching } = useGetUsersQuery({ page: page + 1, perPage: rowsPerPage });
@@ -89,6 +89,7 @@ const UsersTable: FC = () => {
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     setRowsPerPage(+event.target.value);
+    localStorage.setItem('usersPerPage', event.target.value);
     setPage(0);
   };
 

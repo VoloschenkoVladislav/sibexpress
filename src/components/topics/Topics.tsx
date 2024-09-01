@@ -71,7 +71,7 @@ const TopicSkeleton: FC<TopicSkeletonProps> = props => {
 
 const TopicsTable: FC = () => {
   const [ page, setPage ] = useState(0);
-  const [ rowsPerPage, setRowsPerPage ] = useState(10);
+  const [ rowsPerPage, setRowsPerPage ] = useState(localStorage.getItem('topicsPerPage') ? +localStorage.getItem('topicsPerPage')! :  10);
   const [ selectedTopic, setSelectedTopic ] = useState<number | null>(null);
   const [ selectedTopicTitle, setSelectedTopicTitle ] = useState<string | null>(null);
   const [ showDeletePopup, setShowDeletePopup ] = useState(false);
@@ -94,6 +94,7 @@ const TopicsTable: FC = () => {
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     setRowsPerPage(+event.target.value);
+    localStorage.setItem('topicsPerPage', event.target.value);
     setPage(0);
   };
 
