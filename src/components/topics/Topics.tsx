@@ -28,15 +28,11 @@ import { PopupWindow } from "../features/PopupWindow";
 import { LoadingWrap } from "../features/LoadingWrap";
 import { ConfirmationWindow } from "../features/ConfirmationWindow";
 import { Loading } from "../features/Loading";
+import { NewItem } from "../features/NewItem";
 
 
 interface TopicSkeletonProps {
   id: number,
-}
-
-interface NewTopicProps {
-  onSave: (title: string) => void,
-  onCancel: () => void,
 }
 
 interface EditTopicProps {
@@ -215,31 +211,6 @@ const TopicsTable: FC = () => {
   );
 }
 
-const NewTopic: FC<NewTopicProps> = props => {
-  const [ title, setTitle ] = useState('');
-  const { onSave, onCancel } = props;
-
-  return (
-    <Box
-      sx={{
-        minHeight: 200,
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-      }}
-    >
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column' }}>
-        <Typography variant='h6' gutterBottom>Введите наименование темы</Typography>
-        <TextField value={title} variant='outlined' placeholder='Наименование' onChange={e => setTitle(e.target.value)} />
-      </Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Button variant='outlined' color='primary' onClick={onCancel}>Отменить</Button>
-        <Button variant='outlined' disabled={!title} color='success' onClick={() => onSave(title)}>Добавить</Button>
-      </Box>
-    </Box>
-  );
-}
-
 const EditTopic: FC<EditTopicProps> = props => {
   const [ title, setTitle ] = useState(props.title);
   const { onSave, onCancel } = props;
@@ -274,7 +245,7 @@ export const Topics: FC = () => {
     <DashboardLayout>
       <Loading visible={loading} />
       <PopupWindow visible={newTopicPopupVisible}>
-        <NewTopic
+        <NewItem
           onSave={title => {
             setNewTopicPopupVisible(false);
             setLoading(true);
@@ -283,6 +254,8 @@ export const Topics: FC = () => {
             });
           }}
           onCancel={() => setNewTopicPopupVisible(false)}
+          title='Наименование темы'
+          placeholder='Наименование'
         />
       </PopupWindow>
       <Box

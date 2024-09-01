@@ -1,4 +1,4 @@
-import { FC, useMemo, useRef, useState } from "react";
+import { FC, useMemo, useState } from "react";
 import { DashboardLayout } from "../layout/DashboardLayout";
 import { Link } from "react-router-dom";
 import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined';
@@ -22,21 +22,16 @@ import {
   TableFooter,
   TablePagination,
   Box,
-  TextField,
   Typography,
 } from "@mui/material";
 import { PopupWindow } from "../features/PopupWindow";
 import { LoadingWrap } from "../features/LoadingWrap";
 import { ConfirmationWindow } from "../features/ConfirmationWindow";
+import { NewItem } from '../features/NewItem';
 
 
 interface PostSkeletonProps {
   id: number,
-}
-
-interface NewPostProps {
-  onSave: (title: string) => void,
-  onCancel: () => void,
 }
 
 const PostSkeleton: FC<PostSkeletonProps> = props => {
@@ -213,30 +208,6 @@ const PostsTable: FC = () => {
   );
 }
 
-export const NewPost: FC<NewPostProps> = props => {
-  const title = useRef('');
-  const { onSave, onCancel } = props;
-
-  return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-      }}
-    >
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column' }}>
-        <Typography variant='h6' gutterBottom>Введите заголовок материала</Typography>
-        <TextField sx={{ width: 800 }} variant='outlined' placeholder='Заголовок' onChange={e => { title.current = e.target.value }} />
-      </Box>
-      <Box sx={{ display: 'flex', justifyContent: 'end', mt: 4 }}>
-        <Button variant='outlined' color='error' onClick={onCancel} sx={{ mr: 1 }}>Отменить</Button>
-        <Button variant='contained' color='success' onClick={() => onSave(title.current)}>Добавить</Button>
-      </Box>
-    </Box>
-  );
-}
-
 export const Posts: FC = () => {
   const [ newPostPopupVisible, setNewPostPopupVisible ] = useState(false);
   const [ createPost ] = useCreatePostMutation();
@@ -244,12 +215,14 @@ export const Posts: FC = () => {
   return (
     <DashboardLayout>
       <PopupWindow visible={newPostPopupVisible}>
-        <NewPost
+        <NewItem
           onSave={title => {
             createPost(`<p>${title}</p>`);
             setNewPostPopupVisible(false);
           }}
           onCancel={() => setNewPostPopupVisible(false)}
+          title='Введите заголовок материала'
+          placeholder='Заголовок'
         />
       </PopupWindow>
       <Box

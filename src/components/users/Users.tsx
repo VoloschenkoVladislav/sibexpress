@@ -230,9 +230,9 @@ const NewUser: FC<NewUserProps> = props => {
         />
       </Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Button variant='outlined' color='primary' onClick={onCancel}>Отменить</Button>
+        <Button variant='outlined' color='primary' onClick={onCancel}>Отмена</Button>
         <Button
-          variant='outlined'
+          variant='contained'
           color='success'
           onClick={() => onSave({
             email: email.current,

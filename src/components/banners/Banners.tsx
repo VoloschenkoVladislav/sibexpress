@@ -1,4 +1,4 @@
-import { FC, useMemo, useRef, useState } from 'react';
+import { FC, useMemo, useState } from 'react';
 import { DashboardLayout } from '../layout/DashboardLayout';
 import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
@@ -20,7 +20,6 @@ import {
   TableFooter,
   TablePagination,
   Box,
-  TextField,
   Typography,
 } from '@mui/material';
 import { PopupWindow } from '../features/PopupWindow';
@@ -29,6 +28,7 @@ import { ConfirmationWindow } from '../features/ConfirmationWindow';
 import { useBannerPlacesQuery } from '../../services/DictionaryService';
 import { PATHS } from '../../constants/path';
 import { Link } from 'react-router-dom';
+import { NewItem } from '../features/NewItem';
 
 
 export const bannerStatuses = [
@@ -44,11 +44,6 @@ export const bannerStatuses = [
 
 interface BannerSkeletonProps {
   id: number,
-}
-
-interface NewBannerProps {
-  onSave: (title: string) => void,
-  onCancel: () => void,
 }
 
 const BannerSkeleton: FC<BannerSkeletonProps> = props => {
@@ -214,31 +209,6 @@ const BannersTable: FC = () => {
   );
 }
 
-const NewBanner: FC<NewBannerProps> = props => {
-  const title = useRef('');
-  const { onSave, onCancel } = props;
-
-  return (
-    <Box
-      sx={{
-        minHeight: 200,
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-      }}
-    >
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column' }}>
-        <Typography variant='h6' gutterBottom>Введите наименование баннера</Typography>
-        <TextField variant='outlined' placeholder='Наименование' onChange={e => { title.current = e.target.value }} />
-      </Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Button variant='outlined' color='primary' onClick={onCancel}>Отменить</Button>
-        <Button variant='outlined' color='success' onClick={() => onSave(title.current)}>Добавить</Button>
-      </Box>
-    </Box>
-  );
-}
-
 export const Banners: FC = () => {
   const [ newBannerPopupVisible, setNewBannerPopupVisible ] = useState(false);
   const [ createBanner ] = useCreateBannerMutation();
@@ -246,12 +216,14 @@ export const Banners: FC = () => {
   return (
     <DashboardLayout>
       <PopupWindow visible={newBannerPopupVisible}>
-        <NewBanner
+        <NewItem
           onSave={title => {
             createBanner(title);
             setNewBannerPopupVisible(false);
           }}
           onCancel={() => setNewBannerPopupVisible(false)}
+          title='Введите наименование баннера'
+          placeholder='Наименование'
         />
       </PopupWindow>
       <Box
