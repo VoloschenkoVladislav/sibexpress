@@ -108,6 +108,9 @@ const BannersTable: FC = () => {
           }}
           onReject={() => setShowDeletePopup(false)}
           message={`Вы уверены, что хотите удалить тему №${selectedBanner}?`}
+          submitColor='error'
+          submitTitle='Удалить'
+          rejectTitle='Отмена'
         />
       </PopupWindow>
       <TableContainer component={Paper}  sx={{ minWidth: 650, h: '100%' }}>

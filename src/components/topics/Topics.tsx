@@ -113,6 +113,9 @@ const TopicsTable: FC = () => {
           }}
           onReject={() => setShowDeletePopup(false)}
           message={`Вы уверены, что хотите удалить тему №${selectedTopic}?`}
+          submitColor='error'
+          submitTitle='Удалить'
+          rejectTitle='Отмена'
         />
       </PopupWindow>
       <PopupWindow visible={showEditPopup}>

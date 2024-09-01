@@ -108,7 +108,11 @@ const PostsTable: FC = () => {
             setShowDeletePopup(false);
           }}
           onReject={() => setShowDeletePopup(false)}
-          message={`Вы уверены, что хотите удалить материал №${selectedPost}`}
+          message={`Вы уверены, что хотите удалить материал №${selectedPost}?`}
+          submitTitle='Удалить'
+          rejectTitle='Отмена'
+          submitColor='error'
+          rejectColor='primary'
         />
       </PopupWindow>
       <TableContainer component={Paper}  sx={{ minWidth: 650, h: '100%' }}>

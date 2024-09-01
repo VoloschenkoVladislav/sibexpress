@@ -102,6 +102,9 @@ const UsersTable: FC = () => {
           }}
           onReject={() => setShowDeletePopup(false)}
           message={`Вы уверены, что хотите удалить пользователя №${selectedUser}?`}
+          submitColor='error'
+          submitTitle='Удалить'
+          rejectTitle='Отмена'
         />
       </PopupWindow>
       <TableContainer component={Paper}  sx={{ minWidth: 650, h: '100%' }}>
