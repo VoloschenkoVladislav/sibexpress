@@ -1,6 +1,6 @@
 # EditorJS blocks documentation
 
-Updated at: 2024.08.25
+Updated at: 2024.09.01
 
 ## 1. Main structure of editor's raw content
 
@@ -224,7 +224,7 @@ Example:
 ```
 {
   "id": "f0Aaiiv45u",
-  "type": "code",
+  "type": "quote",
   "data": {
     "text": "Quote",
     "caption": "Caption",
@@ -241,7 +241,7 @@ Example:
 ```
 {
   "id": "f0Aaiiv45u",
-  "type": "code",
+  "type": "delimiter",
   "data": {}
 }
 ```
