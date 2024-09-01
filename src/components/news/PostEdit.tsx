@@ -139,6 +139,13 @@ export const PostEdit: FC = () => {
     content,
   ]);
 
+  const compareEditorData = (previous: string | null, current: string | null) => {
+    if (previous && current) {
+      return JSON.stringify(JSON.parse(previous).blocks) === JSON.stringify(JSON.parse(current).blocks);
+    }
+    return previous === current;
+  };
+
   const handleEditorChange = (data: string) => {
     setEditorData(data);
   };
@@ -190,7 +197,7 @@ export const PostEdit: FC = () => {
       || selectedTypeId !== type_id
       || selectedStatusId !== status_id
       || publishedAt !== published_at
-      || editorData !== content
+      || !compareEditorData(content, editorData)
       || title !== postTitle
     );
   }, [
@@ -338,7 +345,7 @@ export const PostEdit: FC = () => {
                   setEditorData(content);
                   setEditorRenderNum(editorRenderNum + 1);
                 }}
-                disabled={editorData === content}
+                disabled={compareEditorData(content, editorData)}
               >
                 <ReplayOutlinedIcon />
               </IconButton>
