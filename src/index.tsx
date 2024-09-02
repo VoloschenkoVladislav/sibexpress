@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom/client';
 import App from './components/App';
 import { Provider } from 'react-redux';
 import { setupStore } from './store/store';
+import { ThemeProvider } from '@mui/material';
+import { theme } from './theme';
 import 'normalize.css';
 import './index.css';
 
@@ -25,9 +27,11 @@ const root = ReactDOM.createRoot(
 enableMocking().then(() => {
   root.render(
     <React.StrictMode>
-      <Provider store={store}>
-        <App />
-      </Provider>
+      <ThemeProvider theme={theme}>
+        <Provider store={store}>
+          <App />
+        </Provider>
+      </ThemeProvider>
     </React.StrictMode>
   );
 });

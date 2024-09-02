@@ -1,14 +1,12 @@
 import { FC } from 'react';
 import { PATHS } from '../../constants/path';
-import { Link } from 'react-router-dom';
 import { Drawer, Box, Divider } from '@mui/material';
 import { NavItem } from './NavItem';
-import { Logo } from './Logo';
 import NewspaperOutlinedIcon from '@mui/icons-material/NewspaperOutlined';
 import SpeakerNotesOutlinedIcon from '@mui/icons-material/SpeakerNotesOutlined';
 import AutoAwesomeMosaicOutlinedIcon from '@mui/icons-material/AutoAwesomeMosaicOutlined';
 import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
-import { navbarHeight } from './DashboardNavbar';
+import { Logo } from './Logo';
 
 
 const items = [
@@ -34,7 +32,7 @@ const items = [
   },
 ];
 
-export const drawerWidth = 240;
+export const drawerWidth = 280;
 
 export const DashboardDrawer: FC = () => {
 
@@ -44,8 +42,11 @@ export const DashboardDrawer: FC = () => {
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
+        alignItems: 'start'
       }}
     >
+      <Logo />
+      <Divider sx={{ backgroundColor: 'grey.200', width: '100%' }} />
       <Box sx={{ flexGrow: 1, mt: 3 }}>
         {items.map(item => (
           <NavItem
@@ -65,9 +66,8 @@ export const DashboardDrawer: FC = () => {
       open
       PaperProps={{
         sx: {
-          backgroundColor: 'neutral.900',
-          color: '#FFFFFF',
           width: drawerWidth,
+          backgroundColor: 'primary.dark'
         },
       }}
       variant='permanent'

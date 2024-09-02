@@ -22,27 +22,29 @@ export const NavItem: React.FunctionComponent<Props> = props => {
         mb: 0.5,
         py: 0,
         px: 2,
+        width: '100%',
       }}
     >
-      <Link to={link} style={{ textDecoration: 'none' }}>
+      <Link to={link} style={{ textDecoration: 'none', width: '100%' }}>
         <Button
           startIcon={icon}
           disableRipple
           sx={{
-            backgroundColor: active ? 'rgba(255,255,255, 0.08)' : undefined,
-            borderRadius: 1,
-            color: active ? 'secondary.main' : 'neutral.300',
+            color: active ? 'common.white' : 'primary.light',
+            backgroundColor: active ? 'primary.light' : undefined,
+            borderRadius: 2,
             fontWeight: active ? 'fontWeightBold' : undefined,
             justifyContent: 'flex-start',
             px: 3,
+            py: 1,
             textAlign: 'left',
             textTransform: 'none',
             width: '100%',
             '& .MuiButton-startIcon': {
-              color: active ? 'secondary.main' : 'neutral.400',
+              color: active ? 'common.white' : 'primary.light',
             },
             '&:hover': {
-              backgroundColor: 'rgba(255,255,255, 0.08)',
+              backgroundColor: active ? 'primary.light' : 'rgba(255,255,255, 0.22)',
             },
           }}
         >
