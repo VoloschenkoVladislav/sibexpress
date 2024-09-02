@@ -1,9 +1,11 @@
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import { useLazyLogoutQuery } from '../../services/AuthService';
 import { styled } from '@mui/material/styles';
-import { AppBar, Box, Toolbar, IconButton } from '@mui/material';
+import { AppBar, Box, Toolbar, IconButton, Tooltip } from '@mui/material';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import { drawerWidth } from './DashboardDrawer';
+import { ConfirmationWindow } from '../features/ConfirmationWindow';
+import { PopupWindow } from '../features/PopupWindow';
 
 
 const DashboardNavbarRoot = styled(AppBar)(({ theme }) => ({
@@ -14,28 +16,45 @@ const DashboardNavbarRoot = styled(AppBar)(({ theme }) => ({
 export const navbarHeight = 64;
 
 export const DashboardNavbar: FC = () => {
-  const [ logoutFetch ] = useLazyLogoutQuery();
+  const [ logoutConfirmationUp, setLogoutConfirmationUp ] = useState(false);
+  const [ logout ] = useLazyLogoutQuery();
 
   return (
-    <DashboardNavbarRoot
-      sx={{
-        left: drawerWidth,
-        width: `calc(100% - ${drawerWidth}px)`,
-      }}
-    >
-      <Toolbar
-        disableGutters
+    <>
+      <PopupWindow visible={logoutConfirmationUp}>
+        <ConfirmationWindow
+          message='Вы точно хотите выйти?'
+          onSubmit={() => logout()}
+          onReject={() => setLogoutConfirmationUp(false)}
+          submitTitle='Выйти'
+          rejectTitle='Отмена'
+        />
+      </PopupWindow>
+      <DashboardNavbarRoot
         sx={{
-          minHeight: navbarHeight,
-          left: 0,
-          px: 2,
+          left: drawerWidth,
+          width: `calc(100% - ${drawerWidth}px)`,
         }}
       >
-        <Box sx={{ flexGrow: 1 }} />
-        <IconButton onClick={e => logoutFetch()} size='large'>
-          <LogoutOutlinedIcon fontSize='inherit'/>
-        </IconButton>
-      </Toolbar>
-    </DashboardNavbarRoot>
+        <Toolbar
+          disableGutters
+          sx={{
+            minHeight: navbarHeight,
+            left: 0,
+            px: 2,
+          }}
+        >
+          <Box sx={{ flexGrow: 1 }} />
+          
+          <Tooltip title='Выйти'>
+            <span>
+              <IconButton onClick={e => setLogoutConfirmationUp(true)} size='large'>
+                <LogoutOutlinedIcon fontSize='inherit'/>
+              </IconButton>
+            </span>
+          </Tooltip>
+        </Toolbar>
+      </DashboardNavbarRoot>
+    </>
   );
 };
