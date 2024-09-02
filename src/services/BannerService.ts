@@ -15,7 +15,7 @@ export interface IShortBanner {
 
 export interface IBanner {
   title: string,
-  type_id: number | null,
+  place_id: number | null,
   status_id: number | null,
   link: string | null,
   filename: string | null,

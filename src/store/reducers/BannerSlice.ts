@@ -57,7 +57,7 @@ export const bannersSlice = createSlice({
         if (action.payload.data) {
           const {
             title,
-            type_id,
+            place_id,
             status_id,
             link,
             filename,
@@ -68,7 +68,7 @@ export const bannersSlice = createSlice({
             started_at,
           } = action.payload.data;
           state.title = title;
-          state.place_id = type_id;
+          state.place_id = place_id;
           state.status_id = status_id;
           state.link = link;
           state.filename = filename;
