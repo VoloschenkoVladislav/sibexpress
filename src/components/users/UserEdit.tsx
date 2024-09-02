@@ -67,7 +67,7 @@ export const UserEdit: FC = () => {
       setIsSending(false);
       if (!response.error) {
         dispatch(updateUser({
-          email: userName,
+          name: userName,
           permissions: Array.from(selectedUserPermissions),
         }));
         dispatch(setSuccess('Данные по пользователю сохранены'));

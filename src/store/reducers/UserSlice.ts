@@ -34,8 +34,8 @@ export const usersSlice = createSlice({
   name: 'users',
   initialState,
   reducers: {
-    updateUser: (state, action: PayloadAction<{ email: string, permissions: string[] }>) => {
-      state.email = action.payload.email;
+    updateUser: (state, action: PayloadAction<{ name: string, permissions: string[] }>) => {
+      state.name = action.payload.name;
       state.permissions = action.payload.permissions;
     },
   },
