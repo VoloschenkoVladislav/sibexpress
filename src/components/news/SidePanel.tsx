@@ -21,6 +21,8 @@ import { Dayjs } from 'dayjs';
 import ReplayOutlinedIcon from '@mui/icons-material/ReplayOutlined';
 import { LoadingWrap } from "../features/LoadingWrap";
 import { DATE_FORMAT_OUTPUT } from "../../constants/date";
+import { useAbac } from "react-abac";
+import { PERMISSIONS } from "../../constants/permission";
 
 
 interface SidePanelProps {
@@ -45,6 +47,7 @@ interface SidePanelProps {
 }
 
 export const SidePanel: FC<SidePanelProps> = props => {
+  const { userHasPermissions } = useAbac();
   const {
     selectedTopicIds,
     selectedStatusId,
@@ -86,20 +89,26 @@ export const SidePanel: FC<SidePanelProps> = props => {
             value={selectedStatusId?.toString() || ''}
             onChange={onStatusChange}
             label="Статус"
+            disabled={!userHasPermissions(PERMISSIONS.POST_EDIT)}
             labelId="post-edit-status-select-standard-label"
           >
             {statuses!.map(status => (
               <MenuItem key={status.id} value={status.id.toString()}>{status.title}</MenuItem>
             ))}
           </Select>
-        </FormControl> 
-        <IconButton
-          aria-label='Отменить'
-          onClick={onStatusReset}
-          disabled={statusResetDisabled}
-        >
-          <ReplayOutlinedIcon />
-        </IconButton>
+        </FormControl>
+        {
+          userHasPermissions(PERMISSIONS.POST_EDIT)
+          ? <IconButton
+            aria-label='Отменить'
+            onClick={onStatusReset}
+            disabled={statusResetDisabled}
+            color='primary'
+          >
+            <ReplayOutlinedIcon />
+          </IconButton>
+          : null
+        }
       </LoadingWrap>
     </Box>
     <Box sx={{ m: 1, mb: 2, display: 'flex', justifyContent: 'space-between' }}>
@@ -114,19 +123,25 @@ export const SidePanel: FC<SidePanelProps> = props => {
             onChange={onTypeChange}
             label="Тип публикации"
             labelId="post-edit-type-select-standard-label"
+            disabled={!userHasPermissions(PERMISSIONS.POST_EDIT)}
           >
             {types!.map(type => (
               <MenuItem key={type.id} value={type.id.toString()}>{type.title}</MenuItem>
             ))}
           </Select>
         </FormControl>
-        <IconButton
-          aria-label='Отменить'
-          onClick={onTypeReset}
-          disabled={typeResetDisabled}
-        >
-          <ReplayOutlinedIcon />
-        </IconButton>
+        {
+          userHasPermissions(PERMISSIONS.POST_EDIT)
+          ? <IconButton
+            aria-label='Отменить'
+            onClick={onTypeReset}
+            disabled={typeResetDisabled}
+            color='primary'
+          >
+            <ReplayOutlinedIcon />
+          </IconButton>
+          : null
+        }
       </LoadingWrap>
     </Box>
     <Box sx={{ m: 1, display: 'flex', justifyContent: 'space-between' }}>
@@ -142,6 +157,7 @@ export const SidePanel: FC<SidePanelProps> = props => {
           value={selectedTopics}
           onChange={onTopicsChange}
           fullWidth
+          disabled={!userHasPermissions(PERMISSIONS.POST_EDIT)}
           renderInput={(params) => (
             <TextField
               {...params}
@@ -150,13 +166,18 @@ export const SidePanel: FC<SidePanelProps> = props => {
             />
           )}
         />
-        <IconButton
-          aria-label='Отменить'
-          onClick={onTopicsReset}
-          disabled={topicsResetDisabled}
-        >
-          <ReplayOutlinedIcon />
-        </IconButton>
+        {
+          userHasPermissions(PERMISSIONS.POST_EDIT)
+          ? <IconButton
+            aria-label='Отменить'
+            onClick={onTopicsReset}
+            disabled={topicsResetDisabled}
+            color='primary'
+          >
+            <ReplayOutlinedIcon />
+          </IconButton>
+          : null
+        }
       </LoadingWrap>
     </Box>
     <Box sx={{ m: 1, mb: 2, mt: 2, display: 'flex', justifyContent: 'space-between' }}>
@@ -168,19 +189,25 @@ export const SidePanel: FC<SidePanelProps> = props => {
             minutes: renderTimeViewClock,
           }}
           value={publishedAt}
+          disabled={!userHasPermissions(PERMISSIONS.POST_EDIT)}
           onChange={onPublishedAtChange}
           label='Дата публикации'
           format={DATE_FORMAT_OUTPUT}
           sx={{ width: '100%' }}
         />
       </LocalizationProvider>
-      <IconButton
-        aria-label='Отменить'
-        onClick={onPublishedAtReset}
-        disabled={publishedAtResetDisabled}
-      >
-        <ReplayOutlinedIcon />
-      </IconButton>
+      {
+        userHasPermissions(PERMISSIONS.POST_EDIT)
+        ? <IconButton
+          aria-label='Отменить'
+          onClick={onPublishedAtReset}
+          disabled={publishedAtResetDisabled}
+          color='primary'
+        >
+          <ReplayOutlinedIcon />
+        </IconButton>
+        : null
+      }
     </Box>
     <Box sx={{ m: 1, mb: 2, mt: 1 }}>
       <LocalizationProvider dateAdapter={AdapterDayjs}  adapterLocale="ru">

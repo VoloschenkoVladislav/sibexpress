@@ -19,9 +19,12 @@ import { updateUser } from '../../store/reducers/UserSlice';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
 import { setSuccess } from '../../store/reducers/AppSlice';
+import { useAbac } from "react-abac";
+import { PERMISSIONS } from "../../constants/permission";
 
 
 export const UserEdit: FC = () => {
+  const { userHasPermissions } = useAbac();
   const { id } = useParams();
   const {
     email,
@@ -61,7 +64,7 @@ export const UserEdit: FC = () => {
       userData: {
         name: userName,
         permissions: Array.from(selectedUserPermissions),
-        password: password || null,
+        password: password,
       }
     }).then(response => {
       setIsSending(false);
@@ -112,31 +115,38 @@ export const UserEdit: FC = () => {
           alignItems: 'center',
         }}
       >
-        <Typography variant='h4' gutterBottom>Редактирование пользователя</Typography>
-        <Stack direction='row' spacing={2}>
-          <Tooltip title='Отменить всё'>
-            <span>
-              <IconButton
-                disabled={!hasChanged}
-                onClick={resetAll}
-                color='primary'
-              >
-                <ReplayOutlinedIcon />
-              </IconButton>
-            </span>
-          </Tooltip>
-          <Tooltip title='Сохранить'>
-            <span>
-              <IconButton
-                disabled={!hasChanged}
-                onClick={handleSave}
-                color='success'
-              >
-                <SaveOutlinedIcon />
-              </IconButton>
-            </span>
-          </Tooltip>
-        </Stack>
+        
+        {
+          userHasPermissions(PERMISSIONS.USER_EDIT)
+          ? <>
+            <Typography variant='h4' gutterBottom>Редактирование пользователя</Typography>
+            <Stack direction='row' spacing={2}>
+              <Tooltip title='Отменить всё'>
+                <span>
+                  <IconButton
+                    disabled={!hasChanged}
+                    onClick={resetAll}
+                    color='primary'
+                  >
+                    <ReplayOutlinedIcon />
+                  </IconButton>
+                </span>
+              </Tooltip>
+              <Tooltip title='Сохранить'>
+                <span>
+                  <IconButton
+                    disabled={!hasChanged}
+                    onClick={handleSave}
+                    color='success'
+                  >
+                    <SaveOutlinedIcon />
+                  </IconButton>
+                </span>
+              </Tooltip>
+            </Stack>
+          </>
+          : <Typography variant='h4' gutterBottom>Просмотр пользователя</Typography>
+        }
       </Box>
       <LoadingWrap
         isLoading={isUserLoading}
@@ -166,6 +176,7 @@ export const UserEdit: FC = () => {
                   variant='outlined'
                   label='Логин'
                   fullWidth
+                  disabled={!userHasPermissions(PERMISSIONS.USER_EDIT)}
                   value={userName}
                   onChange={e => setUserName(e.target.value)}
                 />
@@ -176,6 +187,7 @@ export const UserEdit: FC = () => {
                   label='Пароль'
                   placeholder='Оставьте пустым, чтобы не менять пароль'
                   fullWidth
+                  disabled={!userHasPermissions(PERMISSIONS.USER_EDIT)}
                   value={password}
                   onChange={e => setPassword(e.target.value)}
                   type={showPassword ? "text" : "password"}
@@ -185,6 +197,7 @@ export const UserEdit: FC = () => {
                         <IconButton
                           aria-label="toggle password visibility"
                           onClick={() => setShowPassword(!showPassword)}
+                          disabled={!userHasPermissions(PERMISSIONS.USER_EDIT)}
                         >
                           {showPassword ? <VisibilityOffOutlinedIcon /> : <VisibilityOutlinedIcon />}
                         </IconButton>
@@ -208,6 +221,7 @@ export const UserEdit: FC = () => {
                         label={p.title}
                         control={
                           <Checkbox
+                            disabled={!userHasPermissions(PERMISSIONS.USER_EDIT)}
                             checked={selectedUserPermissions.has(p.name)}
                             onChange={() => handlePermissionChange(p.name)}
                           />

@@ -13,7 +13,8 @@ interface ConstructorArgs {
   config?: {
     onButtonPressed: (editor: SimpleImage) => void, 
     onImageAdded: () => Promise<string>,
-  }
+  },
+  readOnly: boolean,
 };
 
 export default class SimpleImage {
@@ -24,6 +25,7 @@ export default class SimpleImage {
     onImageAdded: () => Promise<string>,
     onButtonPressed: (editor: SimpleImage) => void, 
   } | undefined;
+  private readOnly: boolean;
 
   static get toolbox() {
     return {
@@ -32,11 +34,16 @@ export default class SimpleImage {
     };
   }
 
-  constructor({ data, config, api, block }: ConstructorArgs) {
+  constructor({ data, config, api, block, readOnly }: ConstructorArgs) {
     this.api = api;
     this.config = config;
     this.block = block;
+    this.readOnly = readOnly;
     this._data = this.normalizeData(data);
+  }
+
+  static get isReadOnlySupported(): boolean {
+    return true;
   }
 
   isImageData(data: any): data is SimpleImageData {

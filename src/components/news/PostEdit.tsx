@@ -39,6 +39,8 @@ import { updatePost } from "../../store/reducers/PostSlice";
 import { DATE_FORMAT_INPUT } from "../../constants/date";
 import { Loading } from "../features/Loading";
 import { setSuccess } from "../../store/reducers/AppSlice";
+import { useAbac } from "react-abac";
+import { PERMISSIONS } from "../../constants/permission";
 
 
 interface TitleEditorProps {
@@ -81,6 +83,7 @@ const TitleEditor: FC<TitleEditorProps> = props => {
 }
 
 export const PostEdit: FC = () => {
+  const { userHasPermissions } = useAbac();
   const { id } = useParams();
   const { isLoading: isPostLoading } = useGetPostQuery(+id!);
   const [editorRenderNum, setEditorRenderNum] = useState(0);
@@ -226,41 +229,47 @@ export const PostEdit: FC = () => {
           alignItems: 'center',
         }}
       >
-        <Typography variant='h4' gutterBottom>Редактирование материала</Typography>
-        <Stack direction='row' spacing={2}>
-          <Tooltip title='Отменить все изменения'>
-            <span>
-              <IconButton
-                disabled={!hasChanged}
-                onClick={resetAll}
-                color='primary'
-              >
-                <ReplayOutlinedIcon />
-              </IconButton>
-            </span>
-          </Tooltip>
-          <Tooltip title='Галерея изображений'>
-            <span>
-              <IconButton
-                onClick={() => setImageManagerUp(true)}
-                color='primary'
-              >
-                <CollectionsOutlinedIcon />
-              </IconButton>
-            </span>
-          </Tooltip>
-          <Tooltip title='Сохранить'>
-            <span>
-              <IconButton
-                disabled={!hasChanged}
-                onClick={handleSave}
-                color='success'
-              >
-                <SaveOutlinedIcon />
-              </IconButton>
-            </span>
-          </Tooltip>
-        </Stack>
+        {
+          userHasPermissions(PERMISSIONS.POST_EDIT)
+          ? <>
+            <Typography variant='h4' gutterBottom>Редактирование материала</Typography>
+            <Stack direction='row' spacing={2}>
+              <Tooltip title='Отменить все изменения'>
+                <span>
+                  <IconButton
+                    disabled={!hasChanged}
+                    onClick={resetAll}
+                    color='primary'
+                  >
+                    <ReplayOutlinedIcon />
+                  </IconButton>
+                </span>
+              </Tooltip>
+              <Tooltip title='Галерея изображений'>
+                <span>
+                  <IconButton
+                    onClick={() => setImageManagerUp(true)}
+                    color='primary'
+                  >
+                    <CollectionsOutlinedIcon />
+                  </IconButton>
+                </span>
+              </Tooltip>
+              <Tooltip title='Сохранить'>
+                <span>
+                  <IconButton
+                    disabled={!hasChanged}
+                    onClick={handleSave}
+                    color='success'
+                  >
+                    <SaveOutlinedIcon />
+                  </IconButton>
+                </span>
+              </Tooltip>
+            </Stack>
+          </>
+          : <Typography variant='h4' gutterBottom>Просмотр материала</Typography>
+        }
       </Box>
       <LoadingWrap
         isLoading={isPostLoading}
@@ -320,38 +329,48 @@ export const PostEdit: FC = () => {
           <Box sx={{ width: '75%', mr: 2 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
               <Typography variant='h6' gutterBottom>Заголовок</Typography>
-              <IconButton
-                aria-label='Отменить'
-                color='primary'
-                onClick={() => setPostTitle(title)}
-                disabled={title === postTitle}
-              >
-                <ReplayOutlinedIcon />
-              </IconButton>
+              {
+                userHasPermissions(PERMISSIONS.POST_EDIT)
+                ? <IconButton
+                  aria-label='Отменить'
+                  color='primary'
+                  onClick={() => setPostTitle(title)}
+                  disabled={title === postTitle}
+                >
+                  <ReplayOutlinedIcon />
+                </IconButton>
+                : null
+              }
             </Box>
             <Paper sx={{ display: 'flex', p: 1, mb: 3 }}>
               <TitleEditor
                 value={postTitle}
+                readOnly={!userHasPermissions(PERMISSIONS.POST_EDIT)}
                 onChange={value => setPostTitle(value)}
                 placeholder='Введите заголовок'
               />
             </Paper>
             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
               <Typography variant='h6' gutterBottom>Тело материала</Typography>
-              <IconButton
-                aria-label='Отменить'
-                color='primary'
-                onClick={() => {
-                  setEditorData(content);
-                  setEditorRenderNum(editorRenderNum + 1);
-                }}
-                disabled={compareEditorData(content, editorData)}
-              >
-                <ReplayOutlinedIcon />
-              </IconButton>
+              {
+                userHasPermissions(PERMISSIONS.POST_EDIT)
+                ? <IconButton
+                  aria-label='Отменить'
+                  color='primary'
+                  onClick={() => {
+                    setEditorData(content);
+                    setEditorRenderNum(editorRenderNum + 1);
+                  }}
+                  disabled={compareEditorData(content, editorData)}
+                >
+                  <ReplayOutlinedIcon />
+                </IconButton>
+                : null
+              }
             </Box>
             <Paper sx={{ p: 1, mb: 3 }}>
               <BlockEditor
+                readOnly={!userHasPermissions(PERMISSIONS.POST_EDIT)}
                 editorRenderNum={editorRenderNum}
                 initialData={content || undefined}
                 onChange={handleEditorChange}
@@ -398,13 +417,18 @@ export const PostEdit: FC = () => {
             </Paper>
             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
               <Typography variant='h6' gutterBottom>Главное изображение</Typography>
-              <IconButton onClick={handleDeleteThumbnail} color='error' disabled={!(media.src && media.thumb)}>
-                <DeleteOutlinedIcon />
-              </IconButton>
+              {
+                userHasPermissions(PERMISSIONS.POST_EDIT)
+                ? <IconButton onClick={handleDeleteThumbnail} color='error' disabled={!(media.src && media.thumb)}>
+                  <DeleteOutlinedIcon />
+                </IconButton>
+                : null
+              }
             </Box>
             <Paper sx={{ p: 3, mb: 2 }}>
               <DropImage
                 field="thumbnail"
+                disabled={!userHasPermissions(PERMISSIONS.POST_EDIT)}
                 onDrop={file => {
                   setIsSending(true);
                   sendThumbnail({ id: +id!, thumbnail: file })

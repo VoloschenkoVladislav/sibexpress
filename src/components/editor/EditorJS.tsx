@@ -9,6 +9,7 @@ import './styles/Editor.css';
 export interface EditorData extends OutputData {};
 
 interface EditorProps {
+	readOnly?: boolean,
 	initialData?: string,
 	editorRenderNum: number,
   onChange?: (data: string) => void,
@@ -16,13 +17,14 @@ interface EditorProps {
 	onButtonPressed?: (editor: SimpleImage) => void,
 }
 
-export const BlockEditor: FC<EditorProps> = ({ editorRenderNum, initialData, onChange, onImageAdded, onButtonPressed }) => {
+export const BlockEditor: FC<EditorProps> = ({ editorRenderNum, initialData, onChange, onImageAdded, onButtonPressed, readOnly }) => {
 	const editorInstance = useRef<EditorJS | null>(null);
 
 	useEffect(() => {
 		if (!editorInstance.current) {
 			const data = initialData ? JSON.parse(initialData) : undefined;
 			editorInstance.current = new EditorJS({
+				readOnly,
 				holder: "editorjs",
 				data: data,
         onChange: async () => {

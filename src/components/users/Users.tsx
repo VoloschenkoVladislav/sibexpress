@@ -33,6 +33,8 @@ import { LoadingWrap } from '../features/LoadingWrap';
 import { ConfirmationWindow } from '../features/ConfirmationWindow';
 import { PATHS } from '../../constants/path';
 import { Link } from 'react-router-dom';
+import { useAbac } from "react-abac";
+import { PERMISSIONS } from "../../constants/permission";
 
 
 interface UserSkeletonProps {
@@ -69,6 +71,7 @@ const UserSkeleton: FC<UserSkeletonProps> = props => {
 };
 
 const UsersTable: FC = () => {
+  const { userHasPermissions } = useAbac();
   const [ page, setPage ] = useState(0);
   const [ rowsPerPage, setRowsPerPage ] = useState(localStorage.getItem('usersPerPage') ? +localStorage.getItem('usersPerPage')! :  10);
   const [ selectedUser, setSelectedUser ] = useState<number | null>(null);
@@ -117,7 +120,11 @@ const UsersTable: FC = () => {
               <TableCell>Создан</TableCell>
               <TableCell>Изменён</TableCell>
               <TableCell align='right'></TableCell>
-              <TableCell align='right'></TableCell>
+              {
+                userHasPermissions(PERMISSIONS.USER_DELETE)
+                ? <TableCell align="right"></TableCell>
+                : null
+              }
             </TableRow>
           </TableHead>
           <TableBody>
@@ -138,18 +145,26 @@ const UsersTable: FC = () => {
                   <TableCell align='right' sx={{ maxWidth: 7 }}>
                     <Link to={`${PATHS.USERS}/${user.id}`} style={{ textDecoration: 'none' }}>
                       <Button>
-                        <CreateOutlinedIcon />
+                        {
+                          userHasPermissions(PERMISSIONS.USER_EDIT)
+                          ? <CreateOutlinedIcon />
+                          : <VisibilityOutlinedIcon />
+                        }
                       </Button>
                     </Link>
                   </TableCell>
-                  <TableCell align='right' sx={{ maxWidth: 7 }}>
-                    <Button onClick={() => {
-                      setSelectedUser(user.id);
-                      setShowDeletePopup(true);
-                    }}>
-                      <DeleteOutlinedIcon sx={{ color: '#C50000' }}/>
-                    </Button>
-                  </TableCell>
+                  {
+                    userHasPermissions(PERMISSIONS.USER_DELETE)
+                    ? <TableCell align='right' sx={{ maxWidth: 7 }}>
+                      <Button onClick={() => {
+                        setSelectedUser(user.id);
+                        setShowDeletePopup(true);
+                      }}>
+                        <DeleteOutlinedIcon sx={{ color: '#C50000' }}/>
+                      </Button>
+                    </TableCell>
+                    : null
+                  }
                 </TableRow>
               ))}
             </LoadingWrap>
@@ -246,6 +261,7 @@ const NewUser: FC<NewUserProps> = props => {
 }
 
 export const Users: FC = () => {
+  const { userHasPermissions } = useAbac();
   const [ newUserPopupVisible, setNewUserPopupVisible ] = useState(false);
   const [ createUser ] = useCreateUserMutation();
 
@@ -271,15 +287,19 @@ export const Users: FC = () => {
         <Typography variant='h4' gutterBottom>
           Управление пользователями
         </Typography>
-        <Button
-          variant='outlined'
-          onClick={() => setNewUserPopupVisible(true)}
-          sx={{
-            my: 1
-          }}
-        >
-          Добавить пользователя
-        </Button>
+        {
+          userHasPermissions(PERMISSIONS.USER_CREATE)
+          ? <Button
+            variant='outlined'
+            onClick={() => setNewUserPopupVisible(true)}
+            sx={{
+              my: 1
+            }}
+          >
+            Добавить пользователя
+          </Button>
+          : null
+        }
       </Box>
       <Box sx={{ height: '100%', mt: 2 }}>
         <UsersTable />

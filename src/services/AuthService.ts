@@ -14,7 +14,7 @@ export interface AuthResponseData {
   access_token: string,
   access_type: string,
   expires: string,
-  abilities: string[],
+  permissions: string[],
 }
 
 export interface AuthResponseError {

@@ -3,6 +3,7 @@ import { DashboardLayout } from "../layout/DashboardLayout";
 import { Link } from "react-router-dom";
 import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import { PATHS } from "../../constants/path";
 import { useCreatePostMutation, useDeletePostMutation, useGetPostsQuery } from "../../services/PostService";
 import {
@@ -28,6 +29,8 @@ import { PopupWindow } from "../features/PopupWindow";
 import { LoadingWrap } from "../features/LoadingWrap";
 import { ConfirmationWindow } from "../features/ConfirmationWindow";
 import { NewItem } from '../features/NewItem';
+import { useAbac } from "react-abac";
+import { PERMISSIONS } from "../../constants/permission";
 
 
 interface PostSkeletonProps {
@@ -61,6 +64,7 @@ const PostSkeleton: FC<PostSkeletonProps> = props => {
 };
 
 const PostsTable: FC = () => {
+  const { userHasPermissions } = useAbac();
   const [ page, setPage ] = useState(0);
   const [ rowsPerPage, setRowsPerPage ] = useState(localStorage.getItem('postsPerPage') ? +localStorage.getItem('postsPerPage')! :  10);
   const [ selectedPost, setSelectedPost ] = useState<number | null>(null);
@@ -121,7 +125,11 @@ const PostsTable: FC = () => {
               <TableCell>Дата и время</TableCell>
               <TableCell>Статус</TableCell>
               <TableCell align="right"></TableCell>
-              <TableCell align="right"></TableCell>
+              {
+                userHasPermissions(PERMISSIONS.POST_DELETE)
+                ? <TableCell align="right"></TableCell>
+                : null
+              }
             </TableRow>
           </TableHead>
           <TableBody>
@@ -157,18 +165,26 @@ const PostsTable: FC = () => {
                   <TableCell align="right" sx={{ maxWidth: 7 }}>
                     <Link to={`${PATHS.NEWS}/${post.id}`} style={{ textDecoration: 'none' }}>
                       <Button>
-                        <CreateOutlinedIcon />
+                        {
+                          userHasPermissions(PERMISSIONS.POST_EDIT)
+                          ? <CreateOutlinedIcon />
+                          : <VisibilityOutlinedIcon />
+                        }
                       </Button>
                     </Link>
                   </TableCell>
-                  <TableCell align="right" sx={{ maxWidth: 7 }}>
-                    <Button onClick={() => {
-                      setSelectedPost(post.id);
-                      setShowDeletePopup(true);
-                    }}>
-                      <DeleteOutlinedIcon sx={{ color: '#C50000' }}/>
-                    </Button>
-                  </TableCell>
+                  {
+                    userHasPermissions(PERMISSIONS.POST_DELETE)
+                    ? <TableCell align="right" sx={{ maxWidth: 7 }}>
+                      <Button onClick={() => {
+                        setSelectedPost(post.id);
+                        setShowDeletePopup(true);
+                      }}>
+                        <DeleteOutlinedIcon sx={{ color: '#C50000' }}/>
+                      </Button>
+                    </TableCell>
+                    : null
+                  }
                 </TableRow>
               ))}
             </LoadingWrap>
@@ -209,6 +225,7 @@ const PostsTable: FC = () => {
 }
 
 export const Posts: FC = () => {
+  const { userHasPermissions } = useAbac();
   const [ newPostPopupVisible, setNewPostPopupVisible ] = useState(false);
   const [ createPost ] = useCreatePostMutation();
 
@@ -236,15 +253,19 @@ export const Posts: FC = () => {
         <Typography variant='h4' gutterBottom>
           Материалы
         </Typography>
-        <Button
-          variant='outlined'
-          onClick={() => setNewPostPopupVisible(true)}
-          sx={{
-            my: 1
-          }}
-        >
-          Добавить материал
-        </Button>
+        {
+          userHasPermissions(PERMISSIONS.POST_CREATE)
+          ? <Button
+            variant='outlined'
+            onClick={() => setNewPostPopupVisible(true)}
+            sx={{
+              my: 1
+            }}
+          >
+            Добавить материал
+          </Button>
+          : null
+        }
       </Box>
       <Box sx={{ height: '100%', mt: 2 }}>
         <PostsTable />

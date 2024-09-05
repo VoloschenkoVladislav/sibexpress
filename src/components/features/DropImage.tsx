@@ -46,9 +46,10 @@ interface Props {
   field: string,
   onDrop: (file: FormData) => void,
   path: string | null,
+  disabled?: boolean,
 }
 
-export const DropImage: FC<Props> = ({ field, onDrop, path }) => {
+export const DropImage: FC<Props> = ({ field, onDrop, path, disabled }) => {
   const {
     getRootProps,
     getInputProps,
@@ -70,6 +71,7 @@ export const DropImage: FC<Props> = ({ field, onDrop, path }) => {
         onDrop(data);
       }
     },
+    disabled
   });
 
   const style = useMemo(() => ({
@@ -80,7 +82,7 @@ export const DropImage: FC<Props> = ({ field, onDrop, path }) => {
   }), [
     isFocused,
     isDragAccept,
-    isDragReject
+    isDragReject,
   ]);
 
   return (

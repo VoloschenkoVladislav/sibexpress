@@ -22,7 +22,7 @@ const getUserFromCookie = () => {
         id: 0,
         email: '',
         name: '',
-        permissions: [] //JSON.parse(Cookies.get('abilities')),
+        permissions: Cookies.get('permissions') ? JSON.parse(Cookies.get('permissions')) : [], //
       } as IUser
       : null
   );
@@ -46,7 +46,7 @@ export const authSlice = createSlice({
     builder
       .addMatcher(authAPI.endpoints.login.matchFulfilled, (state, action) => {
         if (action.payload.data) {
-          const { access_token, expires, access_type, abilities, id } = action.payload.data;
+          const { access_token, expires, access_type, permissions, id } = action.payload.data;
           state.isAuthorized = true;
           state.accessToken = `${access_type} ${access_token}`;
           state.authError = null;
@@ -54,11 +54,11 @@ export const authSlice = createSlice({
             id,
             email: '',
             name: '',
-            permissions: abilities as PERMISSIONS[],
+            permissions: permissions as PERMISSIONS[],
           }
           console.log(access_token);
           Cookies.set('access_token', `${access_type} ${access_token}`, { expires: new Date(expires) });
-          Cookies.set('abilities', JSON.stringify(abilities), { expires: new Date(expires) });
+          Cookies.set('permissions', JSON.stringify(permissions), { expires: new Date(expires) });
         }
       })
       .addMatcher(authAPI.endpoints.login.matchRejected, (state, action) => {

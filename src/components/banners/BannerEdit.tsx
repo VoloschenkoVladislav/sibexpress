@@ -22,9 +22,12 @@ import { updateBanner } from '../../store/reducers/BannerSlice';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import { setSuccess } from '../../store/reducers/AppSlice';
 import { bannerStatuses } from './Banners';
+import { useAbac } from "react-abac";
+import { PERMISSIONS } from "../../constants/permission";
 
 
 export const BannerEdit: FC = () => {
+  const { userHasPermissions } = useAbac();
   const { id } = useParams();
   const dispatch = useAppDispatch();
   const { isLoading: isBannerLoading } = useGetBannerQuery(+id!);
@@ -142,31 +145,37 @@ export const BannerEdit: FC = () => {
           alignItems: 'center',
         }}
       >
-        <Typography variant='h4' gutterBottom>Редактирование баннера</Typography>
-        <Stack direction='row' spacing={2}>
-          <Tooltip title='Отменить всё'>
-            <span>
-              <IconButton
-                disabled={!hasChanged}
-                onClick={resetAll}
-                color='primary'
-              >
-                <ReplayOutlinedIcon />
-              </IconButton>
-            </span>
-          </Tooltip>
-          <Tooltip title='Сохранить'>
-            <span>
-              <IconButton
-                disabled={!hasChanged}
-                onClick={handleSave}
-                color='success'
-              >
-                <SaveOutlinedIcon />
-              </IconButton>
-            </span>
-          </Tooltip>
-        </Stack>
+        {
+          userHasPermissions(PERMISSIONS.BANNER_EDIT)
+          ? <>
+            <Typography variant='h4' gutterBottom>Редактирование баннера</Typography>
+            <Stack direction='row' spacing={2}>
+              <Tooltip title='Отменить всё'>
+                <span>
+                  <IconButton
+                    disabled={!hasChanged}
+                    onClick={resetAll}
+                    color='primary'
+                  >
+                    <ReplayOutlinedIcon />
+                  </IconButton>
+                </span>
+              </Tooltip>
+              <Tooltip title='Сохранить'>
+                <span>
+                  <IconButton
+                    disabled={!hasChanged}
+                    onClick={handleSave}
+                    color='success'
+                  >
+                    <SaveOutlinedIcon />
+                  </IconButton>
+                </span>
+              </Tooltip>
+            </Stack>
+          </>
+          : <Typography variant='h4' gutterBottom>Просмотр баннера</Typography>
+        }
       </Box>
       <LoadingWrap
         isLoading={isBannerLoading}
@@ -182,31 +191,58 @@ export const BannerEdit: FC = () => {
           <Box sx={{ width: '75%', mr: 2 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
               <Typography variant='h6' gutterBottom>Наименование</Typography>
-              <IconButton onClick={() => setBannerTitle(title)} disabled={bannerTitle === title} color='primary'>
-                <ReplayOutlinedIcon />
-              </IconButton>
+              {
+                userHasPermissions(PERMISSIONS.BANNER_EDIT)
+                ? <IconButton onClick={() => setBannerTitle(title)} disabled={bannerTitle === title} color='primary'>
+                  <ReplayOutlinedIcon />
+                </IconButton>
+                : null
+              }
             </Box>
             <Paper sx={{ p: 2, mb: 3 }}>
-              <TextField value={bannerTitle} variant='outlined' placeholder='Наименование' onChange={e => setBannerTitle(e.target.value)} sx={{ width: '100%' }} />
+              <TextField
+                value={bannerTitle}
+                variant='outlined'
+                placeholder='Наименование'
+                onChange={e => setBannerTitle(e.target.value)}
+                sx={{ width: '100%' }}
+                disabled={!userHasPermissions(PERMISSIONS.BANNER_EDIT)}
+              />
             </Paper>
             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
               <Typography variant='h6' gutterBottom>Ссылка</Typography>
-              <IconButton onClick={() => setBannerLink(link || '')} disabled={bannerLink === (link || '')} color='primary'>
-                <ReplayOutlinedIcon />
-              </IconButton>
+              {
+                userHasPermissions(PERMISSIONS.BANNER_EDIT)
+                ? <IconButton onClick={() => setBannerLink(link || '')} disabled={bannerLink === (link || '')} color='primary'>
+                  <ReplayOutlinedIcon />
+                </IconButton>
+                : null
+              }
             </Box>
             <Paper sx={{ p: 2, mb: 3 }}>
-              <TextField value={bannerLink} variant='outlined' placeholder='Наименование' onChange={e => setBannerLink(e.target.value)} sx={{ width: '100%' }} />
+              <TextField
+                value={bannerLink}
+                variant='outlined'
+                placeholder='Наименование'
+                onChange={e => setBannerLink(e.target.value)}
+                sx={{ width: '100%' }}
+                disabled={!userHasPermissions(PERMISSIONS.BANNER_EDIT)}
+              />
             </Paper>
             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
               <Typography variant='h6' gutterBottom>Изображение баннера</Typography>
-              <IconButton onClick={handleDelete} color='error' disabled={!filename}>
-                <DeleteOutlinedIcon />
-              </IconButton>
+              {
+                userHasPermissions(PERMISSIONS.BANNER_EDIT)
+                ? <IconButton onClick={handleDelete} color='error' disabled={!filename}>
+                  <DeleteOutlinedIcon />
+                </IconButton>
+                : null
+              }
             </Box>
             <Paper sx={{ p: 2, mb: 3 }}>
               <DropImage
                 field='image'
+                disabled={!userHasPermissions(PERMISSIONS.BANNER_EDIT)}
                 onDrop={file => {
                   uploadImage({ id: +id!, bannerImage: file });
                 }}
@@ -229,6 +265,7 @@ export const BannerEdit: FC = () => {
                   <Select
                     value={selectedStatusId?.toString() || ''}
                     fullWidth
+                    disabled={!userHasPermissions(PERMISSIONS.BANNER_EDIT)}
                     onChange={e => setSelectedStatusId(e.target.value ? +e.target.value : null)}
                     label='Статус'
                     labelId='banner-edit-status-select-standard-label'
@@ -238,6 +275,18 @@ export const BannerEdit: FC = () => {
                     ))}
                   </Select>
                 </FormControl>
+                {
+                  userHasPermissions(PERMISSIONS.BANNER_EDIT)
+                  ? <IconButton
+                    aria-label='Отменить'
+                    onClick={() => setSelectedStatusId(status_id)}
+                    disabled={selectedStatusId === status_id}
+                    color='primary'
+                  >
+                    <ReplayOutlinedIcon />
+                  </IconButton>
+                  : null
+                }
               </Box>
               <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
                 <LoadingWrap
@@ -249,6 +298,7 @@ export const BannerEdit: FC = () => {
                     <Select
                       value={selectedPlaceId?.toString() || ''}
                       fullWidth
+                      disabled={!userHasPermissions(PERMISSIONS.BANNER_EDIT)}
                       onChange={e => setSelectedPlaceId(e.target.value ? +e.target.value : null)}
                       label='Положение'
                       labelId='banner-edit-place-select-standard-label'
@@ -258,6 +308,18 @@ export const BannerEdit: FC = () => {
                       ))}
                     </Select>
                   </FormControl>
+                  {
+                    userHasPermissions(PERMISSIONS.BANNER_EDIT)
+                    ? <IconButton
+                      aria-label='Отменить'
+                      onClick={() => setSelectedPlaceId(place_id)}
+                      disabled={selectedPlaceId === place_id}
+                      color='primary'
+                    >
+                      <ReplayOutlinedIcon />
+                    </IconButton>
+                    : null
+                  }
                 </LoadingWrap>
               </Box>
               <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
@@ -268,6 +330,7 @@ export const BannerEdit: FC = () => {
                       hours: renderTimeViewClock,
                       minutes: renderTimeViewClock,
                     }}
+                    disabled={!userHasPermissions(PERMISSIONS.BANNER_EDIT)}
                     value={startedAt}
                     onChange={setStartedAt}
                     label='Дата начала показа'
@@ -275,6 +338,18 @@ export const BannerEdit: FC = () => {
                     sx={{ width: '100%' }}
                   />
                 </LocalizationProvider>
+                {
+                  userHasPermissions(PERMISSIONS.BANNER_EDIT)
+                  ? <IconButton
+                    aria-label='Отменить'
+                    onClick={() => setStartedAt(parseDate(started_at) ? dayjs(parseDate(started_at)) : null)}
+                    disabled={(startedAt ? startedAt.format(DATE_FORMAT_INPUT) : null) === started_at}
+                    color='primary'
+                  >
+                    <ReplayOutlinedIcon />
+                  </IconButton>
+                  : null
+                }
               </Box>
               <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 <LocalizationProvider dateAdapter={AdapterDayjs}  adapterLocale='ru'>
@@ -284,6 +359,7 @@ export const BannerEdit: FC = () => {
                       hours: renderTimeViewClock,
                       minutes: renderTimeViewClock,
                     }}
+                    disabled={!userHasPermissions(PERMISSIONS.BANNER_EDIT)}
                     value={finishedAt}
                     onChange={setFinishedAt}
                     label='Дата окончания показа'
@@ -291,6 +367,18 @@ export const BannerEdit: FC = () => {
                     sx={{ width: '100%' }}
                   />
                 </LocalizationProvider>
+                {
+                  userHasPermissions(PERMISSIONS.BANNER_EDIT)
+                  ? <IconButton
+                    aria-label='Отменить'
+                    onClick={() => setFinishedAt(parseDate(finished_at) ? dayjs(parseDate(finished_at)) : null)}
+                    disabled={(finishedAt ? finishedAt.format(DATE_FORMAT_INPUT) : null) === finished_at}
+                    color='primary'
+                  >
+                    <ReplayOutlinedIcon />
+                  </IconButton>
+                  : null
+                }
               </Box>
             </Paper>
             <Paper sx={{ p: 2, mb: 3 }}>

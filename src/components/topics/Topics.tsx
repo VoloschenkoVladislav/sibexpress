@@ -29,6 +29,8 @@ import { LoadingWrap } from "../features/LoadingWrap";
 import { ConfirmationWindow } from "../features/ConfirmationWindow";
 import { Loading } from "../features/Loading";
 import { NewItem } from "../features/NewItem";
+import { useAbac } from "react-abac";
+import { PERMISSIONS } from "../../constants/permission";
 
 
 interface TopicSkeletonProps {
@@ -66,6 +68,7 @@ const TopicSkeleton: FC<TopicSkeletonProps> = props => {
 };
 
 const TopicsTable: FC = () => {
+  const { userHasPermissions } = useAbac();
   const [ page, setPage ] = useState(0);
   const [ rowsPerPage, setRowsPerPage ] = useState(localStorage.getItem('topicsPerPage') ? +localStorage.getItem('topicsPerPage')! :  10);
   const [ selectedTopic, setSelectedTopic ] = useState<number | null>(null);
@@ -131,14 +134,22 @@ const TopicsTable: FC = () => {
         />
       </PopupWindow>
       <TableContainer component={Paper}  sx={{ minWidth: 650, h: '100%' }}>
-        <Table size="small" aria-label="a dense table">
+        <Table size='small' aria-label="a dense table">
           <TableHead>
             <TableRow component='th' scope='row'>
               <TableCell>ID</TableCell>
               <TableCell>Имя</TableCell>
               <TableCell>Упоминаний в материалах</TableCell>
-              <TableCell align="right"></TableCell>
-              <TableCell align="right"></TableCell>
+              {
+                userHasPermissions(PERMISSIONS.TOPIC_EDIT)
+                ? <TableCell align="right"></TableCell>
+                : null
+              }
+              {
+                userHasPermissions(PERMISSIONS.TOPIC_DELETE)
+                ? <TableCell align="right"></TableCell>
+                : null
+              }
             </TableRow>
           </TableHead>
           <TableBody>
@@ -155,23 +166,31 @@ const TopicsTable: FC = () => {
                   <TableCell>{topic.id}</TableCell>
                   <TableCell>{topic.title}</TableCell>
                   <TableCell>{topic.count}</TableCell>
-                  <TableCell align="right" sx={{ maxWidth: 7 }}>
-                    <Button onClick={() => {
-                      setSelectedTopicTitle(topic.title);
-                      setSelectedTopic(topic.id);
-                      setShowEditPopup(true);
-                    }}>
-                      <CreateOutlinedIcon />
-                    </Button>
-                  </TableCell>
-                  <TableCell align="right" sx={{ maxWidth: 7 }}>
-                    <Button onClick={() => {
-                      setSelectedTopic(topic.id);
-                      setShowDeletePopup(true);
-                    }}>
-                      <DeleteOutlinedIcon sx={{ color: '#C50000' }}/>
-                    </Button>
-                  </TableCell>
+                  {
+                    userHasPermissions(PERMISSIONS.TOPIC_EDIT)
+                    ? <TableCell align="right" sx={{ maxWidth: 7 }}>
+                      <Button onClick={() => {
+                        setSelectedTopicTitle(topic.title);
+                        setSelectedTopic(topic.id);
+                        setShowEditPopup(true);
+                      }}>
+                        <CreateOutlinedIcon />
+                      </Button>
+                    </TableCell>
+                    : null
+                  }
+                  {
+                    userHasPermissions(PERMISSIONS.TOPIC_DELETE)
+                    ? <TableCell align="right" sx={{ maxWidth: 7 }}>
+                      <Button onClick={() => {
+                        setSelectedTopic(topic.id);
+                        setShowDeletePopup(true);
+                      }}>
+                        <DeleteOutlinedIcon sx={{ color: '#C50000' }}/>
+                      </Button>
+                    </TableCell>
+                    : null
+                  }
                 </TableRow>
               ))}
             </LoadingWrap>
@@ -225,8 +244,8 @@ const EditTopic: FC<EditTopicProps> = props => {
       }}
     >
       <Box sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column' }}>
-        <Typography variant='h6' gutterBottom>Наименование темы</Typography>
-        <TextField value={title} variant='outlined' placeholder='Наименование' onChange={e => setTitle(e.target.value)} />
+        <Typography variant='h6' gutterBottom>Название темы</Typography>
+        <TextField value={title} variant='outlined' placeholder='Название' onChange={e => setTitle(e.target.value)} />
       </Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
         <Button variant='outlined' color='primary' onClick={onCancel}>Отменить</Button>
@@ -237,6 +256,7 @@ const EditTopic: FC<EditTopicProps> = props => {
 }
 
 export const Topics: FC = () => {
+  const { userHasPermissions } = useAbac();
   const [ newTopicPopupVisible, setNewTopicPopupVisible ] = useState(false);
   const [ createTopic ] = useCreateTopicMutation();
   const [ loading, setLoading ] = useState(false);
@@ -254,8 +274,8 @@ export const Topics: FC = () => {
             });
           }}
           onCancel={() => setNewTopicPopupVisible(false)}
-          title='Наименование темы'
-          placeholder='Наименование'
+          title='Название темы'
+          placeholder='Название'
         />
       </PopupWindow>
       <Box
@@ -269,15 +289,19 @@ export const Topics: FC = () => {
         <Typography variant='h4' gutterBottom>
           Управление темами
         </Typography>
-        <Button
-          variant='outlined'
-          onClick={() => setNewTopicPopupVisible(true)}
-          sx={{
-            my: 1
-          }}
-        >
-          Добавить тему
-        </Button>
+        {
+          userHasPermissions(PERMISSIONS.TOPIC_CREATE)
+          ? <Button
+            variant='outlined'
+            onClick={() => setNewTopicPopupVisible(true)}
+            sx={{
+              my: 1
+            }}
+          >
+            Добавить тему
+          </Button>
+          : null
+        }
       </Box>
       <Box sx={{ height: '100%', mt: 2 }}>
         <TopicsTable />

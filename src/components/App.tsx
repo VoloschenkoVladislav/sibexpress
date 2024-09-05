@@ -11,12 +11,18 @@ import { PostEdit } from './news/PostEdit';
 import { Banners } from './banners/Banners';
 import { BannerEdit } from './banners/BannerEdit';
 import { ErrorBoundary } from './features/ErrorBoundary';
+import { AbacProvider } from 'react-abac';
 import './App.css';
+import { useAppSelector } from '../hooks/redux/redux';
 
 
 const App: FC = () => {
+  const permissions = useAppSelector(state => state.authReducer.user?.permissions) || [];
   return (
-    <>
+    <AbacProvider
+      rules={{}}
+      permissions={permissions}
+    >
       <BrowserRouter>
         <ErrorBoundary>
           <Routes>
@@ -34,7 +40,7 @@ const App: FC = () => {
           </Routes>
         </ErrorBoundary>
       </BrowserRouter>
-    </>
+    </AbacProvider>
   );
 }
 

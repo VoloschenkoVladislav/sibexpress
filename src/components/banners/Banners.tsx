@@ -2,6 +2,7 @@ import { FC, useMemo, useState } from 'react';
 import { DashboardLayout } from '../layout/DashboardLayout';
 import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import {
   useCreateBannerMutation,
   useDeleteBannerMutation,
@@ -29,6 +30,8 @@ import { useBannerPlacesQuery } from '../../services/DictionaryService';
 import { PATHS } from '../../constants/path';
 import { Link } from 'react-router-dom';
 import { NewItem } from '../features/NewItem';
+import { useAbac } from "react-abac";
+import { PERMISSIONS } from "../../constants/permission";
 
 
 export const bannerStatuses = [
@@ -71,6 +74,7 @@ const BannerSkeleton: FC<BannerSkeletonProps> = props => {
 };
 
 const BannersTable: FC = () => {
+  const { userHasPermissions } = useAbac();
   const [ page, setPage ] = useState(0);
   const [ rowsPerPage, setRowsPerPage ] = useState(localStorage.getItem('bannersPerPage') ? +localStorage.getItem('bannersPerPage')! :  10);
   const [ selectedBanner, setSelectedBanner ] = useState<number | null>(null);
@@ -128,7 +132,11 @@ const BannersTable: FC = () => {
               <TableCell>Положение</TableCell>
               <TableCell>Статус</TableCell>
               <TableCell align='right'></TableCell>
-              <TableCell align='right'></TableCell>
+              {
+                userHasPermissions(PERMISSIONS.BANNER_DELETE)
+                ? <TableCell align="right"></TableCell>
+                : null
+              }
             </TableRow>
           </TableHead>
           <TableBody>
@@ -158,18 +166,26 @@ const BannersTable: FC = () => {
                   <TableCell align='right' sx={{ maxWidth: 7 }}>
                     <Link to={`${PATHS.BANNERS}/${banner.id}`} style={{ textDecoration: 'none' }}>
                       <Button>
-                        <CreateOutlinedIcon />
+                        {
+                          userHasPermissions(PERMISSIONS.BANNER_EDIT)
+                          ? <CreateOutlinedIcon />
+                          : <VisibilityOutlinedIcon />
+                        }
                       </Button>
                     </Link>
                   </TableCell>
-                  <TableCell align='right' sx={{ maxWidth: 7 }}>
-                    <Button onClick={() => {
-                      setSelectedBanner(banner.id);
-                      setShowDeletePopup(true);
-                    }}>
-                      <DeleteOutlinedIcon sx={{ color: '#C50000' }}/>
-                    </Button>
-                  </TableCell>
+                  {
+                    userHasPermissions(PERMISSIONS.BANNER_DELETE)
+                    ? <TableCell align='right' sx={{ maxWidth: 7 }}>
+                      <Button onClick={() => {
+                        setSelectedBanner(banner.id);
+                        setShowDeletePopup(true);
+                      }}>
+                        <DeleteOutlinedIcon sx={{ color: '#C50000' }}/>
+                      </Button>
+                    </TableCell>
+                    : null
+                  }
                 </TableRow>
               ))}
             </LoadingWrap>
@@ -210,6 +226,7 @@ const BannersTable: FC = () => {
 }
 
 export const Banners: FC = () => {
+  const { userHasPermissions } = useAbac();
   const [ newBannerPopupVisible, setNewBannerPopupVisible ] = useState(false);
   const [ createBanner ] = useCreateBannerMutation();
 
@@ -237,15 +254,19 @@ export const Banners: FC = () => {
         <Typography variant='h4' gutterBottom>
           Управление баннерами
         </Typography>
-        <Button
-          variant='outlined'
-          onClick={() => setNewBannerPopupVisible(true)}
-          sx={{
-            my: 1
-          }}
-        >
-          Добавить баннер
-        </Button>
+        {
+          userHasPermissions(PERMISSIONS.BANNER_CREATE)
+          ? <Button
+            variant='outlined'
+            onClick={() => setNewBannerPopupVisible(true)}
+            sx={{
+              my: 1
+            }}
+          >
+            Добавить баннер
+          </Button>
+          : null
+        }
       </Box>
       <Box sx={{ height: '100%', mt: 2 }}>
         <BannersTable />
