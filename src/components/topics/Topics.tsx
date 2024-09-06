@@ -2,6 +2,7 @@ import { FC, useMemo, useState } from "react";
 import { DashboardLayout } from "../layout/DashboardLayout";
 import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import {
   useCreateTopicMutation,
   useDeleteTopicMutation,
@@ -23,6 +24,8 @@ import {
   Box,
   TextField,
   Typography,
+  IconButton,
+  Tooltip,
 } from "@mui/material";
 import { PopupWindow } from "../features/PopupWindow";
 import { LoadingWrap } from "../features/LoadingWrap";
@@ -169,25 +172,39 @@ const TopicsTable: FC = () => {
                   {
                     userHasPermissions(PERMISSIONS.TOPIC_EDIT)
                     ? <TableCell align="right" sx={{ maxWidth: 7 }}>
-                      <Button onClick={() => {
-                        setSelectedTopicTitle(topic.title);
-                        setSelectedTopic(topic.id);
-                        setShowEditPopup(true);
-                      }}>
-                        <CreateOutlinedIcon />
-                      </Button>
+                      <Tooltip title='Редактировать тему'>
+                        <span>
+                          <IconButton
+                            color='primary'
+                            onClick={() => {
+                              setSelectedTopicTitle(topic.title);
+                              setSelectedTopic(topic.id);
+                              setShowEditPopup(true);
+                            }}
+                          >
+                            <CreateOutlinedIcon />
+                          </IconButton>
+                        </span>
+                      </Tooltip>
                     </TableCell>
                     : null
                   }
                   {
                     userHasPermissions(PERMISSIONS.TOPIC_DELETE)
                     ? <TableCell align="right" sx={{ maxWidth: 7 }}>
-                      <Button onClick={() => {
-                        setSelectedTopic(topic.id);
-                        setShowDeletePopup(true);
-                      }}>
-                        <DeleteOutlinedIcon sx={{ color: '#C50000' }}/>
-                      </Button>
+                      <Tooltip title='Удалить тему'>
+                        <span>
+                          <IconButton
+                            color='error'
+                            onClick={() => {
+                              setSelectedTopic(topic.id);
+                              setShowDeletePopup(true);
+                            }}
+                          >
+                            <DeleteOutlinedIcon />
+                          </IconButton>
+                        </span>
+                      </Tooltip>
                     </TableCell>
                     : null
                   }
@@ -291,15 +308,19 @@ export const Topics: FC = () => {
         </Typography>
         {
           userHasPermissions(PERMISSIONS.TOPIC_CREATE)
-          ? <Button
-            variant='outlined'
-            onClick={() => setNewTopicPopupVisible(true)}
-            sx={{
-              my: 1
-            }}
-          >
-            Добавить тему
-          </Button>
+          ? <Tooltip title='Добавить новую тему'>
+            <span>
+              <IconButton
+                color='primary'
+                onClick={() => setNewTopicPopupVisible(true)}
+                sx={{
+                  my: 1
+                }}
+              >
+                <AddOutlinedIcon />
+              </IconButton>
+            </span>
+          </Tooltip>
           : null
         }
       </Box>

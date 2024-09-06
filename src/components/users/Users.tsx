@@ -4,6 +4,7 @@ import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import {
   ICreateUserRequest,
   useCreateUserMutation,
@@ -27,6 +28,7 @@ import {
   Typography,
   InputAdornment,
   IconButton,
+  Tooltip,
 } from '@mui/material';
 import { PopupWindow } from '../features/PopupWindow';
 import { LoadingWrap } from '../features/LoadingWrap';
@@ -144,24 +146,41 @@ const UsersTable: FC = () => {
                   <TableCell>{user.updated_at}</TableCell>
                   <TableCell align='right' sx={{ maxWidth: 7 }}>
                     <Link to={`${PATHS.USERS}/${user.id}`} style={{ textDecoration: 'none' }}>
-                      <Button>
-                        {
+                      <Tooltip
+                        title={
                           userHasPermissions(PERMISSIONS.USER_EDIT)
-                          ? <CreateOutlinedIcon />
-                          : <VisibilityOutlinedIcon />
+                          ? 'Редактировать данные пользователя'
+                          : 'Открыть данные пользователя'
                         }
-                      </Button>
+                      >
+                        <span>
+                          <IconButton color='primary'>
+                            {
+                              userHasPermissions(PERMISSIONS.USER_EDIT)
+                              ? <CreateOutlinedIcon />
+                              : <VisibilityOutlinedIcon />
+                            }
+                          </IconButton>
+                        </span>
+                      </Tooltip>
                     </Link>
                   </TableCell>
                   {
                     userHasPermissions(PERMISSIONS.USER_DELETE)
                     ? <TableCell align='right' sx={{ maxWidth: 7 }}>
-                      <Button onClick={() => {
-                        setSelectedUser(user.id);
-                        setShowDeletePopup(true);
-                      }}>
-                        <DeleteOutlinedIcon sx={{ color: '#C50000' }}/>
-                      </Button>
+                      <Tooltip title='Удалить пользователя'>
+                        <span>
+                          <IconButton
+                            onClick={() => {
+                              setSelectedUser(user.id);
+                              setShowDeletePopup(true);
+                            }}
+                            color='error'
+                          >
+                            <DeleteOutlinedIcon/>
+                          </IconButton>
+                        </span>
+                      </Tooltip>
                     </TableCell>
                     : null
                   }
@@ -289,15 +308,19 @@ export const Users: FC = () => {
         </Typography>
         {
           userHasPermissions(PERMISSIONS.USER_CREATE)
-          ? <Button
-            variant='outlined'
-            onClick={() => setNewUserPopupVisible(true)}
-            sx={{
-              my: 1
-            }}
-          >
-            Добавить пользователя
-          </Button>
+          ? <Tooltip title='Добавить нового пользователя'>
+            <span>
+              <IconButton
+                color='primary'
+                onClick={() => setNewUserPopupVisible(true)}
+                sx={{
+                  my: 1
+                }}
+              >
+                <AddOutlinedIcon />
+              </IconButton>
+            </span>
+          </Tooltip>
           : null
         }
       </Box>

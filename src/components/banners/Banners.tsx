@@ -3,6 +3,7 @@ import { DashboardLayout } from '../layout/DashboardLayout';
 import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import {
   useCreateBannerMutation,
   useDeleteBannerMutation,
@@ -22,6 +23,8 @@ import {
   TablePagination,
   Box,
   Typography,
+  IconButton,
+  Tooltip,
 } from '@mui/material';
 import { PopupWindow } from '../features/PopupWindow';
 import { LoadingWrap } from '../features/LoadingWrap';
@@ -165,24 +168,41 @@ const BannersTable: FC = () => {
                   </TableCell>
                   <TableCell align='right' sx={{ maxWidth: 7 }}>
                     <Link to={`${PATHS.BANNERS}/${banner.id}`} style={{ textDecoration: 'none' }}>
-                      <Button>
-                        {
+                      <Tooltip
+                        title={
                           userHasPermissions(PERMISSIONS.BANNER_EDIT)
-                          ? <CreateOutlinedIcon />
-                          : <VisibilityOutlinedIcon />
+                          ? 'Редактировать баннер'
+                          : 'Открыть баннер'
                         }
-                      </Button>
+                      >
+                        <span>
+                          <IconButton color='primary'>
+                            {
+                              userHasPermissions(PERMISSIONS.BANNER_EDIT)
+                              ? <CreateOutlinedIcon />
+                              : <VisibilityOutlinedIcon />
+                            }
+                          </IconButton>
+                        </span>
+                      </Tooltip>
                     </Link>
                   </TableCell>
                   {
                     userHasPermissions(PERMISSIONS.BANNER_DELETE)
                     ? <TableCell align='right' sx={{ maxWidth: 7 }}>
-                      <Button onClick={() => {
-                        setSelectedBanner(banner.id);
-                        setShowDeletePopup(true);
-                      }}>
-                        <DeleteOutlinedIcon sx={{ color: '#C50000' }}/>
-                      </Button>
+                      <Tooltip title='Удалить баннер'>
+                        <span>
+                          <IconButton
+                            onClick={() => {
+                              setSelectedBanner(banner.id);
+                              setShowDeletePopup(true);
+                            }}
+                            color='error'
+                          >
+                            <DeleteOutlinedIcon/>
+                          </IconButton>
+                        </span>
+                      </Tooltip>
                     </TableCell>
                     : null
                   }
@@ -256,15 +276,19 @@ export const Banners: FC = () => {
         </Typography>
         {
           userHasPermissions(PERMISSIONS.BANNER_CREATE)
-          ? <Button
-            variant='outlined'
-            onClick={() => setNewBannerPopupVisible(true)}
-            sx={{
-              my: 1
-            }}
-          >
-            Добавить баннер
-          </Button>
+          ? <Tooltip title='Добавить новый баннер'>
+            <span>
+              <IconButton
+                color='primary'
+                onClick={() => setNewBannerPopupVisible(true)}
+                sx={{
+                  my: 1
+                }}
+              >
+                <AddOutlinedIcon />
+              </IconButton>
+            </span>
+          </Tooltip>
           : null
         }
       </Box>

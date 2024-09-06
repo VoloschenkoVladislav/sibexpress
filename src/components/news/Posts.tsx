@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import { PATHS } from "../../constants/path";
 import { useCreatePostMutation, useDeletePostMutation, useGetPostsQuery } from "../../services/PostService";
 import {
@@ -24,6 +25,8 @@ import {
   TablePagination,
   Box,
   Typography,
+  IconButton,
+  Tooltip,
 } from "@mui/material";
 import { PopupWindow } from "../features/PopupWindow";
 import { LoadingWrap } from "../features/LoadingWrap";
@@ -164,24 +167,41 @@ const PostsTable: FC = () => {
                   </TableCell>
                   <TableCell align="right" sx={{ maxWidth: 7 }}>
                     <Link to={`${PATHS.NEWS}/${post.id}`} style={{ textDecoration: 'none' }}>
-                      <Button>
-                        {
+                      <Tooltip
+                        title={
                           userHasPermissions(PERMISSIONS.POST_EDIT)
-                          ? <CreateOutlinedIcon />
-                          : <VisibilityOutlinedIcon />
+                          ? 'Редактировать материал'
+                          : 'Открыть материал'
                         }
-                      </Button>
+                      >
+                        <span>
+                          <IconButton color='primary'>
+                            {
+                              userHasPermissions(PERMISSIONS.POST_EDIT)
+                              ? <CreateOutlinedIcon />
+                              : <VisibilityOutlinedIcon />
+                            }
+                          </IconButton>
+                        </span>
+                      </Tooltip>
                     </Link>
                   </TableCell>
                   {
                     userHasPermissions(PERMISSIONS.POST_DELETE)
                     ? <TableCell align="right" sx={{ maxWidth: 7 }}>
-                      <Button onClick={() => {
-                        setSelectedPost(post.id);
-                        setShowDeletePopup(true);
-                      }}>
-                        <DeleteOutlinedIcon sx={{ color: '#C50000' }}/>
-                      </Button>
+                      <Tooltip title='Удалить материал'>
+                        <span>
+                          <IconButton
+                            onClick={() => {
+                              setSelectedPost(post.id);
+                              setShowDeletePopup(true);
+                            }}
+                            color='error'
+                          >
+                            <DeleteOutlinedIcon/>
+                          </IconButton>
+                        </span>
+                      </Tooltip>
                     </TableCell>
                     : null
                   }
@@ -255,15 +275,19 @@ export const Posts: FC = () => {
         </Typography>
         {
           userHasPermissions(PERMISSIONS.POST_CREATE)
-          ? <Button
-            variant='outlined'
-            onClick={() => setNewPostPopupVisible(true)}
-            sx={{
-              my: 1
-            }}
-          >
-            Добавить материал
-          </Button>
+          ? <Tooltip title='Добавить новый материал'>
+            <span>
+              <IconButton
+                color='primary'
+                onClick={() => setNewPostPopupVisible(true)}
+                sx={{
+                  my: 1
+                }}
+              >
+                <AddOutlinedIcon />
+              </IconButton>
+            </span>
+          </Tooltip>
           : null
         }
       </Box>
