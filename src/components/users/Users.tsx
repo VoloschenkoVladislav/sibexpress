@@ -197,7 +197,7 @@ const UsersTable: FC = () => {
                 rowsPerPageOptions={[10, 25, 50]}
                 onRowsPerPageChange={handleChangeRowsPerPage}
                 page={page}
-                labelRowsPerPage={'Пользавтелей на странице:'}
+                labelRowsPerPage={'Пользователей на странице:'}
                 labelDisplayedRows={({ from, to }) => {
                   const toCalc = usersCount === rowsPerPage
                     ? to
@@ -304,7 +304,7 @@ export const Users: FC = () => {
         }}
       >
         <Typography variant='h4' gutterBottom>
-          Управление пользователями
+          Пользователи
         </Typography>
         {
           userHasPermissions(PERMISSIONS.USER_CREATE)
