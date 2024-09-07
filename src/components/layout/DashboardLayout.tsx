@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import { Alert, Box, Snackbar } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { DashboardNavbar, navbarHeight } from './DashboardNavbar';
@@ -21,6 +21,7 @@ const DashboardLayoutRoot = styled('div')(() => ({
 
 export const DashboardLayout: FC<Props> = props => {
   const { children } = props;
+  const [ isSidebarOpen, setSidebarOpen ] = useState(false);
   const { errors, success } = useAppSelector(state => state.appReducer);
   const dispatch = useAppDispatch();
   const handleErrorSnackBarClose = () => {
@@ -40,7 +41,10 @@ export const DashboardLayout: FC<Props> = props => {
             flexDirection: 'column',
             position: 'absolute',
             right: 0,
-            left: drawerWidth,
+            left: {
+              lg: drawerWidth,
+              xs: 0,
+            },
             bottom: 0,
             top: navbarHeight,
             p: 5,
@@ -49,8 +53,11 @@ export const DashboardLayout: FC<Props> = props => {
           {children}
         </Box>
       </DashboardLayoutRoot>
-      <DashboardNavbar />
-      <DashboardDrawer />
+      <DashboardNavbar onSidebarOpen={() => setSidebarOpen(true)} />
+      <DashboardDrawer
+        onClose={() => setSidebarOpen(false)}
+        open={isSidebarOpen}
+      />
       {
         errors
         ? <Snackbar open onClose={handleErrorSnackBarClose}>

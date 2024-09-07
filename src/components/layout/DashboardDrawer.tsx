@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { PATHS } from '../../constants/path';
-import { Drawer, Box, Divider } from '@mui/material';
+import { Drawer, Box, Divider, useMediaQuery, Theme } from '@mui/material';
 import { NavItem } from './NavItem';
 import NewspaperOutlinedIcon from '@mui/icons-material/NewspaperOutlined';
 import SpeakerNotesOutlinedIcon from '@mui/icons-material/SpeakerNotesOutlined';
@@ -40,8 +40,15 @@ const items = [
 
 export const drawerWidth = 280;
 
-export const DashboardDrawer: FC = () => {
+interface Props {
+  open: boolean,
+  onClose: () => void,
+};
+
+export const DashboardDrawer: FC<Props> = ({ open, onClose }) => {
   const { userHasPermissions } = useAbac();
+  const lgUp = useMediaQuery((theme: Theme) => theme.breakpoints.up('lg'));
+
   const content = (
     <Box
       sx={{
@@ -66,17 +73,40 @@ export const DashboardDrawer: FC = () => {
     </Box>
   );
 
+  if (lgUp) {
+    return (
+      <Drawer
+        anchor='left'
+        open
+        PaperProps={{
+          sx: {
+            width: drawerWidth,
+            backgroundColor: 'primary.dark'
+          },
+        }}
+        variant='permanent'
+      >
+        {content}
+      </Drawer>
+    );
+  }
+
   return (
     <Drawer
       anchor='left'
-      open
+      ModalProps={{
+        keepMounted: true,
+      }}
+      open={open}
+      onClose={onClose}
       PaperProps={{
         sx: {
           width: drawerWidth,
           backgroundColor: 'primary.dark'
         },
       }}
-      variant='permanent'
+      sx={{ zIndex: (theme) => theme.zIndex.appBar + 100 }}
+      variant='temporary'
     >
       {content}
     </Drawer>

@@ -6,6 +6,7 @@ import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import { drawerWidth } from './DashboardDrawer';
 import { ConfirmationWindow } from '../features/ConfirmationWindow';
 import { PopupWindow } from '../features/PopupWindow';
+import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
 
 
 const DashboardNavbarRoot = styled(AppBar)(({ theme }) => ({
@@ -15,7 +16,11 @@ const DashboardNavbarRoot = styled(AppBar)(({ theme }) => ({
 
 export const navbarHeight = 64;
 
-export const DashboardNavbar: FC = () => {
+interface Props {
+  onSidebarOpen: () => void,
+};
+
+export const DashboardNavbar: FC<Props> = ({ onSidebarOpen }) => {
   const [ logoutConfirmationUp, setLogoutConfirmationUp ] = useState(false);
   const [ logout ] = useLazyLogoutQuery();
 
@@ -32,8 +37,14 @@ export const DashboardNavbar: FC = () => {
       </PopupWindow>
       <DashboardNavbarRoot
         sx={{
-          left: drawerWidth,
-          width: `calc(100% - ${drawerWidth}px)`,
+          left: {
+            lg: drawerWidth,
+            xs: 0,
+          },
+          width: {
+            lg: `calc(100% - ${drawerWidth}px)`,
+            xs: '100%'
+          }
         }}
       >
         <Toolbar
@@ -44,8 +55,18 @@ export const DashboardNavbar: FC = () => {
             px: 2,
           }}
         >
+          <IconButton
+            onClick={onSidebarOpen}
+            sx={{
+              display: {
+                xs: 'inline-flex',
+                lg: 'none',
+              },
+            }}
+          >
+            <MenuOutlinedIcon fontSize="small" />
+          </IconButton>
           <Box sx={{ flexGrow: 1 }} />
-          
           <Tooltip title='Выйти'>
             <span>
               <IconButton onClick={e => setLogoutConfirmationUp(true)} size='large'>
