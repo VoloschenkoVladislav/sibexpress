@@ -1,0 +1,10 @@
+services:
+  nginx-react:
+    container_name: sibexpressadmin
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+    - 80:80
+    environment:
+      NODE_ENV: production
