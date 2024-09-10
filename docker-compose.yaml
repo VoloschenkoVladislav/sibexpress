@@ -1,6 +1,6 @@
 services:
   nginx-react:
-    container_name: sibexpressadmin
+    container_name: sib-express-admin-frontend
     build:
       context: .
       dockerfile: Dockerfile
