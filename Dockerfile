@@ -1,5 +1,5 @@
 # build environment
-FROM node:13.12.0-alpine as build
+FROM node:20.17-alpine3.20 as build
 WORKDIR /app
 COPY . .
 RUN yarn
