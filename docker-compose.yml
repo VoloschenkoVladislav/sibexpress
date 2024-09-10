@@ -1,0 +1,13 @@
+services:
+  nginx:
+    container_name: sib-express-admin-nginx
+    restart: always
+    build:
+      context: docker/nginx
+      dockerfile: Dockerfile
+    volumes:
+      - ./app/build:/var/www
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.sib_express_from.rule=Host(`${APP_URL:-admin.sib.express}`)"
+      - "traefik.http.routers.sib_express_front.entryPoints=websecure,web"

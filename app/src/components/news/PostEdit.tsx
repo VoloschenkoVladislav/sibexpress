@@ -23,12 +23,12 @@ import {
   useGetPostQuery,
   useUploadImagesMutation,
   useUploadThumbnailMutation
-} from "../../services/PostService";
-import { useAppDispatch, useAppSelector } from "../../hooks/redux/redux";
-import { parseDate } from "../../utils/dateParser";
-import { DropImage } from "../features/DropImage";
-import { BlockEditor } from "../editor/EditorJS";
-import { SidePanel } from "./SidePanel";
+} from '../../services/PostService';
+import { useAppDispatch, useAppSelector } from '../../hooks/redux/redux';
+import { parseDate } from '../../utils/dateParser';
+import { DropImage } from '../features/DropImage';
+import { BlockEditor } from '../editor/EditorJS';
+import { SidePanel } from './SidePanel';
 import { ImageManager } from "./ImageManager";
 import { PopupWindow } from "../features/PopupWindow";
 import { LoadingWrap } from "../features/LoadingWrap";
@@ -41,7 +41,6 @@ import { Loading } from "../features/Loading";
 import { setSuccess } from "../../store/reducers/AppSlice";
 import { useAbac } from "react-abac";
 import { PERMISSIONS } from "../../constants/permission";
-
 
 interface TitleEditorProps {
   value: string,
