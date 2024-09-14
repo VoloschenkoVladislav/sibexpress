@@ -1,5 +1,6 @@
 import { API, BlockAPI } from '@editorjs/editorjs';
 import './SimpleImage.css';
+import { BASE_BACKEND_URL } from '../../../constants/baseUrl';
 
 
 export interface SimpleImageData {
@@ -81,7 +82,7 @@ export default class SimpleImage {
     }
 
     const img = document.createElement('img');
-    img.src = this._data.src || '';
+    img.src = this._data.src ? `${BASE_BACKEND_URL}/${this._data.src}` : '';
     return this._data.src ? img : buttonWrap;
   }
 

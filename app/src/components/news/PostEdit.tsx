@@ -318,7 +318,7 @@ export const PostEdit: FC = () => {
                 images: media.images,
               }}
               onImageClick={image => {
-                simpleImagePluginInstance.current?.setImage(`${process.env.REACT_APP_BASE_URL}/${image}`);
+                simpleImagePluginInstance.current?.setImage(image);
                 setImageGalleryUp(false);
               }}
               toolbar={false}

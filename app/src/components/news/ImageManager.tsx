@@ -5,6 +5,7 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import CollectionsOutlinedIcon from '@mui/icons-material/CollectionsOutlined';
 import { styled } from "@mui/material/styles";
+import { BASE_BACKEND_URL } from '../../constants/baseUrl';
 
 
 interface ImageGalleryProps {
@@ -69,8 +70,8 @@ const ImageItem: FC<ImageItemInterface> = ({ src, name, onClick, selected }) => 
           pointerEvents: 'none',
           userSelect: 'none',
         }}
-        srcSet={`${process.env.REACT_APP_BASE_URL}/${src + name}?w=248&fit=crop&auto=format&dpr=2 2x`}
-        src={`${process.env.REACT_APP_BASE_URL}/${src + name}?w=248&fit=crop&auto=format`}
+        srcSet={`${BASE_BACKEND_URL}/${src + name}?w=248&fit=crop&auto=format&dpr=2 2x`}
+        src={`${BASE_BACKEND_URL}/${src + name}?w=248&fit=crop&auto=format`}
         alt={name}
       />
     </ImageListItem>

@@ -1,5 +1,6 @@
 import React, { FC, useMemo, CSSProperties } from "react";
 import { useDropzone } from "react-dropzone";
+import { BASE_BACKEND_URL } from "../../constants/baseUrl";
 
 
 const baseStyle: CSSProperties = {
@@ -94,7 +95,7 @@ export const DropImage: FC<Props> = ({ field, onDrop, path, disabled }) => {
           ? <div style={thumb}>
             <div style={thumbInner}>
               <img
-                src={`${process.env.REACT_APP_BASE_URL}/${path}`}
+                src={`${BASE_BACKEND_URL}/${path}`}
                 alt={path}
                 loading="lazy"
               />
