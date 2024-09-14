@@ -2,6 +2,7 @@ import { BaseQueryApi, createApi, FetchArgs, fetchBaseQuery } from '@reduxjs/too
 import { IResponse } from '../models/IApi';
 import { RootState } from '../store/store';
 import Cookies from 'js-cookie';
+import { API_PATH, BASE_BACKEND_URL } from '../constants/baseUrl';
 
 
 export interface AuthRequestBody {
@@ -23,7 +24,7 @@ export interface AuthResponseError {
 }
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: `${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_API_PATH}`,
+  baseUrl: `${BASE_BACKEND_URL}${API_PATH}`,
   prepareHeaders: (headers, { getState }) => {
     const { accessToken } = (getState() as RootState).authReducer;
     if (accessToken) {

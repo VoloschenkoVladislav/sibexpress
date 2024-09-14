@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { IResponse } from '../models/IApi';
 import { RootState } from '../store/store';
+import { API_PATH, BASE_BACKEND_URL } from '../constants/baseUrl';
 
 
 export interface ITopic {
@@ -33,7 +34,7 @@ export const topicAPI = createApi({
   reducerPath: 'topcicAPI',
   tagTypes: ['topicCreate', 'topicEdit', 'topicDelete'],
   baseQuery: fetchBaseQuery({
-    baseUrl: `${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_API_PATH}`,
+    baseUrl: `${BASE_BACKEND_URL}${API_PATH}`,
     prepareHeaders: (headers, { getState }) => {
       const { accessToken } = (getState() as RootState).authReducer;
       if (accessToken) {

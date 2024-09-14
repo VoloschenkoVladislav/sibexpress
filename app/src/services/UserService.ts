@@ -2,6 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { IResponse } from '../models/IApi';
 import { RootState } from '../store/store';
 import paramsSerializer from './utils/paramsSerializer';
+import { API_PATH, BASE_BACKEND_URL } from '../constants/baseUrl';
 
 
 export interface IToken {
@@ -72,7 +73,7 @@ export const userAPI = createApi({
   reducerPath: 'userAPI',
   tagTypes: ['userCreated', 'userEdited', 'userDeleted'],
   baseQuery: fetchBaseQuery({
-    baseUrl: `${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_API_PATH}`,
+    baseUrl: `${BASE_BACKEND_URL}${API_PATH}`,
     prepareHeaders: (headers, { getState }) => {
       const { accessToken } = (getState() as RootState).authReducer;
       if (accessToken) {
