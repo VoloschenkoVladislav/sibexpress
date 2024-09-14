@@ -33,7 +33,6 @@ export const NavItem: React.FunctionComponent<Props> = props => {
             color: active ? 'common.white' : 'primary.light',
             backgroundColor: active ? 'primary.light' : undefined,
             borderRadius: 2,
-            fontWeight: active ? 'fontWeightBold' : undefined,
             justifyContent: 'flex-start',
             px: 3,
             py: 1,
