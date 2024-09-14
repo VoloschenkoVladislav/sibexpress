@@ -24,6 +24,8 @@ import { setSuccess } from '../../store/reducers/AppSlice';
 import { bannerStatuses } from './Banners';
 import { useAbac } from "react-abac";
 import { PERMISSIONS } from "../../constants/permission";
+import { PopupWindow } from '../features/PopupWindow';
+import { ConfirmationWindow } from '../features/ConfirmationWindow';
 
 
 export const BannerEdit: FC = () => {
@@ -36,6 +38,7 @@ export const BannerEdit: FC = () => {
   const [ uploadImage ] = useUploadBannerImageMutation();
   const [ deleteImage ] = useDeleteBannerImageMutation();
   const [ isSending, setIsSending ] = useState(false);
+  const [ showImageDeletePopup, setShowImageDeletePopup ] = useState(false);
   const [ bannerTitle, setBannerTitle ] = useState('');
   const [ bannerLink, setBannerLink ] = useState('');
   const [ selectedStatusId, setSelectedStatusId ] = useState<number | null>(null);
@@ -104,16 +107,6 @@ export const BannerEdit: FC = () => {
     });
   };
 
-  const handleDelete = () => {
-    setIsSending(true);
-    deleteImage(+id!).then(response => {
-      setIsSending(false);
-      if (!response.error) {
-        dispatch(setSuccess('Изображение удалено'));
-      }
-    });
-  };
-
   const hasChanged = useMemo(() => {
     return (
       selectedPlaceId !== place_id
@@ -139,6 +132,25 @@ export const BannerEdit: FC = () => {
 
   return (
     <DashboardLayout>
+      <PopupWindow visible={showImageDeletePopup}>
+        <ConfirmationWindow
+          onSubmit={() => {
+              setShowImageDeletePopup(false);
+              setIsSending(true);
+              deleteImage(+id!).then(response => {
+                setIsSending(false);
+                if (!response.error) {
+                  dispatch(setSuccess('Изображение удалено'));
+                }
+              });
+          }}
+          onReject={() => setShowImageDeletePopup(false)}
+          message={`Вы уверены, что хотите удалить изображение баннера?`}
+          submitColor='error'
+          submitTitle='Удалить'
+          rejectTitle='Отмена'
+        />
+      </PopupWindow>
       <Loading visible={isSending} />
       <Box
         sx={{
@@ -236,7 +248,7 @@ export const BannerEdit: FC = () => {
               <Typography variant='h6' gutterBottom>Изображение баннера</Typography>
               {
                 userHasPermissions(PERMISSIONS.BANNER_EDIT)
-                ? <IconButton onClick={handleDelete} color='error' disabled={!filename}>
+                ? <IconButton onClick={() => setShowImageDeletePopup(true)} color='error' disabled={!filename}>
                   <DeleteOutlinedIcon />
                 </IconButton>
                 : null
