@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { IResponse } from '../models/IApi';
 import { RootState } from '../store/store';
-import paramsSerializer from './utils/paramsSerializer';
+import formDataSerializer from './utils/formDataSerializer';
 import { API_PATH, BASE_BACKEND_URL } from '../constants/baseUrl';
 
 
@@ -65,7 +65,7 @@ export interface INewUserResponse {
 
 export interface IUserEditRequest {
   name: string,
-  password: string | null,
+  password?: string,
   permissions: string[],
 };
 
@@ -81,7 +81,6 @@ export const userAPI = createApi({
       }
       return headers
     },
-    paramsSerializer,
   }),
   endpoints: build => ({
     getUsers: build.query<IResponse<IUsersResponse, any>, { page: number, perPage: number }>({
@@ -95,11 +94,12 @@ export const userAPI = createApi({
       providesTags: ['userCreated', 'userDeleted'],
     }),
     createUser: build.mutation<IResponse<INewUserResponse, any>, ICreateUserRequest>({
-      query: ({ name, email, password }) => {
+      query: data => {
         return {
           url: `/users`,
           method: 'POST',
-          params: { name, email, password },
+          body: formDataSerializer(data),
+          formData: true,
         }
       },
       invalidatesTags: (result, error) => error ? [] : ['userCreated'],
@@ -113,7 +113,8 @@ export const userAPI = createApi({
         return {
           url: `/users/${id}`,
           method: 'POST',
-          params: userData,
+          body: formDataSerializer(userData),
+          formData: true,
         }
       },
       invalidatesTags: (result, error) => error ? [] : ['userEdited'],
