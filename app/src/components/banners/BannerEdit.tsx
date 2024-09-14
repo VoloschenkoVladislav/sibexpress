@@ -106,8 +106,11 @@ export const BannerEdit: FC = () => {
 
   const handleDelete = () => {
     setIsSending(true);
-    deleteImage(+id!).then(() => {
+    deleteImage(+id!).then(response => {
       setIsSending(false);
+      if (!response.error) {
+        dispatch(setSuccess('Изображение удалено'));
+      }
     });
   };
 
@@ -244,7 +247,13 @@ export const BannerEdit: FC = () => {
                 field='image'
                 disabled={!userHasPermissions(PERMISSIONS.BANNER_EDIT)}
                 onDrop={file => {
-                  uploadImage({ id: +id!, bannerImage: file });
+                  setIsSending(true);
+                  uploadImage({ id: +id!, bannerImage: file }).then(response => {
+                    setIsSending(false);
+                    if (!response.error) {
+                      dispatch(setSuccess('Изображение загружено'));
+                    }
+                  });
                 }}
                 path={filename}
               />

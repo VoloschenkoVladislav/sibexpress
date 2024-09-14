@@ -34,6 +34,8 @@ import { Loading } from "../features/Loading";
 import { NewItem } from "../features/NewItem";
 import { useAbac } from "react-abac";
 import { PERMISSIONS } from "../../constants/permission";
+import { useAppDispatch } from "../../hooks/redux/redux";
+import { setSuccess } from "../../store/reducers/AppSlice";
 
 
 interface TopicSkeletonProps {
@@ -71,6 +73,7 @@ const TopicSkeleton: FC<TopicSkeletonProps> = props => {
 };
 
 const TopicsTable: FC = () => {
+  const dispatch = useAppDispatch();
   const { userHasPermissions } = useAbac();
   const [ page, setPage ] = useState(0);
   const [ rowsPerPage, setRowsPerPage ] = useState(localStorage.getItem('topicsPerPage') ? +localStorage.getItem('topicsPerPage')! :  10);
@@ -109,8 +112,11 @@ const TopicsTable: FC = () => {
             if (selectedTopic) {
               setShowDeletePopup(false);
               setLoading(true);
-              deleteTopic(selectedTopic).then(() => {
+              deleteTopic(selectedTopic).then(response => {
                 setLoading(false);
+                if (!response.error) {
+                  dispatch(setSuccess('Тема удалена'));
+                }
               });
             }
           }}
@@ -128,8 +134,11 @@ const TopicsTable: FC = () => {
             setShowEditPopup(false);
             setLoading(true);
             if (selectedTopic) {
-              editTopic({ id: selectedTopic, title }).then(() => {
+              editTopic({ id: selectedTopic, title }).then(response => {
                 setLoading(false);
+                if (!response.error) {
+                  dispatch(setSuccess('Тема изменена'));
+                }
               });
             }
           }}
