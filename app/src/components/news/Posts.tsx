@@ -80,11 +80,11 @@ const PostsTable: FC = () => {
   const postsCount = useMemo(() => posts?.data?.items?.length, [posts]);
   
   const getTypeTitle = (type_id: number) => {
-    return types.filter(type => type.id === type_id)[0].title;
+    return types.filter(type => type.id === type_id)[0]?.title || '';
   };
 
   const getStatusTitle = (status_id: number) => {
-    return statuses.filter(status => status.id === status_id)[0].title;
+    return statuses.filter(status => status.id === status_id)[0]?.title || '';
   };
 
   const handleChangePage = (
