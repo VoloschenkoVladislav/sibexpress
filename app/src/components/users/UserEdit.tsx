@@ -64,7 +64,7 @@ export const UserEdit: FC = () => {
       userData: {
         name: userName,
         permissions: Array.from(selectedUserPermissions),
-        password: password,
+        password: password || undefined,
       }
     }).then(response => {
       setIsSending(false);
