@@ -1,5 +1,5 @@
 import React, { FC, useState, ChangeEvent } from 'react';
-import { Box, Button, IconButton, ImageList, ImageListItem, Stack, Tooltip, Typography } from "@mui/material";
+import { Box, Button, Grid, IconButton, Stack, Tooltip, Typography } from "@mui/material";
 import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
@@ -41,11 +41,11 @@ const VisuallyHiddenInput = styled('input')({
 
 const ImageItem: FC<ImageItemInterface> = ({ src, name, onClick, selected }) => {
   return (
-    <ImageListItem
+    <Grid
+      item
+      xs={3}
       onClick={onClick}
-      sx={{
-        p: 0.3,
-      }}
+      sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}
     >
       <CheckCircleOutlineOutlinedIcon
         color='success'
@@ -69,12 +69,13 @@ const ImageItem: FC<ImageItemInterface> = ({ src, name, onClick, selected }) => 
           borderRadius: '3px',
           pointerEvents: 'none',
           userSelect: 'none',
+          width: '100%'
         }}
         srcSet={`${BASE_BACKEND_URL}/${src + name}?w=248&fit=crop&auto=format&dpr=2 2x`}
         src={`${BASE_BACKEND_URL}/${src + name}?w=248&fit=crop&auto=format`}
         alt={name}
       />
-    </ImageListItem>
+    </Grid>
   );
 }
 
@@ -107,7 +108,11 @@ export const ImageManager: FC<ImageGalleryProps> = ({ media, onLoadImage, onCanc
       <Typography variant='h4' gutterBottom>Галерея</Typography>
       {
         images.length
-        ? <ImageList sx={{ width: 800, height: 450, p: 1 }} cols={4}>
+        ? <Grid
+          container
+          sx={{ width: 800, height: 450, my: 1, pr: 1, overflowY: 'auto' }}
+          spacing={2}
+        >
           {
             images.map(image => (
               <ImageItem
@@ -122,7 +127,7 @@ export const ImageManager: FC<ImageGalleryProps> = ({ media, onLoadImage, onCanc
               />
             ))
           }
-        </ImageList>
+        </Grid>
         : <Box sx={{ width: 800, height: 450, p: 1 }}>
           <Stack
             direction='row'
