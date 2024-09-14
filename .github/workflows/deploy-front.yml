@@ -19,5 +19,5 @@ jobs:
         port: 22
         script: |
           cd /data/admin.sib.express
-          git pull https://${{ secrets.GIT_TOKEN }}@github.com/${{ github.repository }} main
-          docker build -f ./docker/node/Dockerfile
+          git pull origin main
+          docker build --file ./docker/node/Dockerfile --output ./app/build .

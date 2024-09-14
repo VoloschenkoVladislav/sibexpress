@@ -1,7 +1,13 @@
+networks:
+  traefik_tayga:
+    external: true
+ 
 services:
   nginx:
     container_name: sib-express-admin-nginx
     restart: always
+    networks:
+      - traefik_tayga
     build:
       context: docker/nginx
       dockerfile: Dockerfile
@@ -9,5 +15,8 @@ services:
       - ./app/build:/var/www
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.sib_express_from.rule=Host(`${APP_URL:-admin.sib.express}`)"
+      - "traefik.http.routers.sib_express_front.rule=Host(`${APP_URL:-admin.sib.express}`)"
       - "traefik.http.routers.sib_express_front.entryPoints=websecure,web"
+      - "traefik.http.routers.sib_express_front.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.sib_express_front.tls=true"
+
