@@ -395,8 +395,8 @@ export const PostEdit: FC = () => {
             }}>
               <SidePanel
                 selectedTopicIds={selectedTopicIds}
-                selectedStatusId={selectedStatusId || status_id}
-                selectedTypeId={selectedTypeId || type_id}
+                selectedStatusId={selectedStatusId === null ? status_id : selectedStatusId}
+                selectedTypeId={selectedTypeId === null ? type_id : selectedTypeId}
                 publishedAt={parseDate(publishedAt) ? dayjs(parseDate(publishedAt)) : null}
                 createdAt={dayjs(parseDate(created_at))}
                 updatedAt={dayjs(parseDate(updated_at))}

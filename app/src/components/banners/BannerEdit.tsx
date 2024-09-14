@@ -26,6 +26,7 @@ import { useAbac } from "react-abac";
 import { PERMISSIONS } from "../../constants/permission";
 import { PopupWindow } from '../features/PopupWindow';
 import { ConfirmationWindow } from '../features/ConfirmationWindow';
+import { ResetInput } from '../features/ResetInput';
 
 
 export const BannerEdit: FC = () => {
@@ -248,9 +249,13 @@ export const BannerEdit: FC = () => {
               <Typography variant='h6' gutterBottom>Изображение баннера</Typography>
               {
                 userHasPermissions(PERMISSIONS.BANNER_EDIT)
-                ? <IconButton onClick={() => setShowImageDeletePopup(true)} color='error' disabled={!filename}>
-                  <DeleteOutlinedIcon />
-                </IconButton>
+                ? <Tooltip title='Удалить изображение'>
+                  <span>
+                    <IconButton onClick={() => setShowImageDeletePopup(true)} color='error' disabled={!filename}>
+                      <DeleteOutlinedIcon />
+                    </IconButton>
+                  </span>
+                </Tooltip>
                 : null
               }
             </Box>
@@ -280,7 +285,11 @@ export const BannerEdit: FC = () => {
             }}
           >
             <Paper sx={{ p: 2, mb: 3 }}>
-              <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
+              <ResetInput
+                disabled={selectedStatusId === status_id}
+                onReset={() => setSelectedStatusId(status_id)}
+                visible={userHasPermissions(PERMISSIONS.BANNER_EDIT)}
+              >
                 <FormControl sx={{ width: '100%' }}>
                   <InputLabel id='banner-edit-status-select-standard-label'>Статус</InputLabel>
                   <Select
@@ -290,26 +299,19 @@ export const BannerEdit: FC = () => {
                     onChange={e => setSelectedStatusId(e.target.value ? +e.target.value : null)}
                     label='Статус'
                     labelId='banner-edit-status-select-standard-label'
+                    sx={{ mr: 1 }}
                   >
                     {bannerStatuses.map(status => (
                       <MenuItem key={status.id} value={status.id.toString()}>{status.title}</MenuItem>
                     ))}
                   </Select>
                 </FormControl>
-                {
-                  userHasPermissions(PERMISSIONS.BANNER_EDIT)
-                  ? <IconButton
-                    aria-label='Отменить'
-                    onClick={() => setSelectedStatusId(status_id)}
-                    disabled={selectedStatusId === status_id}
-                    color='primary'
-                  >
-                    <ReplayOutlinedIcon />
-                  </IconButton>
-                  : null
-                }
-              </Box>
-              <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
+              </ResetInput>
+              <ResetInput
+                disabled={selectedPlaceId === place_id}
+                onReset={() => setSelectedPlaceId(place_id)}
+                visible={userHasPermissions(PERMISSIONS.BANNER_EDIT)}
+              >
                 <LoadingWrap
                   isLoading={isPlacesLoading}
                   loader={<CircularProgress />}
@@ -323,27 +325,20 @@ export const BannerEdit: FC = () => {
                       onChange={e => setSelectedPlaceId(e.target.value ? +e.target.value : null)}
                       label='Положение'
                       labelId='banner-edit-place-select-standard-label'
+                      sx={{ mr: 1 }}
                     >
                       {places!.map(place => (
                         <MenuItem key={place.id} value={place.id.toString()}>{place.title}</MenuItem>
                       ))}
                     </Select>
                   </FormControl>
-                  {
-                    userHasPermissions(PERMISSIONS.BANNER_EDIT)
-                    ? <IconButton
-                      aria-label='Отменить'
-                      onClick={() => setSelectedPlaceId(place_id)}
-                      disabled={selectedPlaceId === place_id}
-                      color='primary'
-                    >
-                      <ReplayOutlinedIcon />
-                    </IconButton>
-                    : null
-                  }
                 </LoadingWrap>
-              </Box>
-              <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
+              </ResetInput>
+              <ResetInput
+                disabled={(startedAt ? startedAt.format(DATE_FORMAT_INPUT) : null) === started_at}
+                onReset={() => setStartedAt(parseDate(started_at) ? dayjs(parseDate(started_at)) : null)}
+                visible={userHasPermissions(PERMISSIONS.BANNER_EDIT)}
+              >
                 <LocalizationProvider dateAdapter={AdapterDayjs}  adapterLocale='ru'>
                   <DateTimePicker
                     views={['year', 'month', 'day', 'hours', 'minutes']}
@@ -359,20 +354,12 @@ export const BannerEdit: FC = () => {
                     sx={{ width: '100%' }}
                   />
                 </LocalizationProvider>
-                {
-                  userHasPermissions(PERMISSIONS.BANNER_EDIT)
-                  ? <IconButton
-                    aria-label='Отменить'
-                    onClick={() => setStartedAt(parseDate(started_at) ? dayjs(parseDate(started_at)) : null)}
-                    disabled={(startedAt ? startedAt.format(DATE_FORMAT_INPUT) : null) === started_at}
-                    color='primary'
-                  >
-                    <ReplayOutlinedIcon />
-                  </IconButton>
-                  : null
-                }
-              </Box>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+              </ResetInput>
+              <ResetInput
+                disabled={(finishedAt ? finishedAt.format(DATE_FORMAT_INPUT) : null) === finished_at}
+                onReset={() => setFinishedAt(parseDate(finished_at) ? dayjs(parseDate(finished_at)) : null)}
+                visible={userHasPermissions(PERMISSIONS.BANNER_EDIT)}
+              >
                 <LocalizationProvider dateAdapter={AdapterDayjs}  adapterLocale='ru'>
                   <DateTimePicker
                     views={['year', 'month', 'day', 'hours', 'minutes']}
@@ -388,19 +375,7 @@ export const BannerEdit: FC = () => {
                     sx={{ width: '100%' }}
                   />
                 </LocalizationProvider>
-                {
-                  userHasPermissions(PERMISSIONS.BANNER_EDIT)
-                  ? <IconButton
-                    aria-label='Отменить'
-                    onClick={() => setFinishedAt(parseDate(finished_at) ? dayjs(parseDate(finished_at)) : null)}
-                    disabled={(finishedAt ? finishedAt.format(DATE_FORMAT_INPUT) : null) === finished_at}
-                    color='primary'
-                  >
-                    <ReplayOutlinedIcon />
-                  </IconButton>
-                  : null
-                }
-              </Box>
+              </ResetInput>
             </Paper>
             <Paper sx={{ p: 2, mb: 3 }}>
               <Box sx={{ mb: 2 }}>
