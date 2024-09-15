@@ -1,8 +1,8 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { IResponse } from '../models/IApi';
 import { RootState } from '../store/store';
-import formDataSerializer from './utils/formDataSerializer';
 import { API_PATH, BASE_BACKEND_URL } from '../constants/baseUrl';
+import paramsSerializer from './utils/paramsSerializer';
 
 
 export interface IToken {
@@ -81,6 +81,7 @@ export const userAPI = createApi({
       }
       return headers
     },
+    paramsSerializer,
   }),
   endpoints: build => ({
     getUsers: build.query<IResponse<IUsersResponse, any>, { page: number, perPage: number }>({
@@ -98,8 +99,7 @@ export const userAPI = createApi({
         return {
           url: `/users`,
           method: 'POST',
-          body: formDataSerializer(data),
-          formData: true,
+          params: data,
         }
       },
       invalidatesTags: (result, error) => error ? [] : ['userCreated'],
@@ -113,8 +113,7 @@ export const userAPI = createApi({
         return {
           url: `/users/${id}`,
           method: 'POST',
-          body: formDataSerializer(userData),
-          formData: true,
+          params: userData
         }
       },
       invalidatesTags: (result, error) => error ? [] : ['userEdited'],

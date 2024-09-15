@@ -1,8 +1,8 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { IResponse } from '../models/IApi';
 import { RootState } from '../store/store';
-import formDataSerializer from './utils/formDataSerializer';
 import { API_PATH, BASE_BACKEND_URL } from '../constants/baseUrl';
+import paramsSerializer from './utils/paramsSerializer';
 
 
 export interface IShortPost {
@@ -89,6 +89,7 @@ export const postAPI = createApi({
       }
       return headers
     },
+    paramsSerializer,
   }),
   endpoints: build => ({
     getPosts: build.query<IResponse<IPostsResponse, any>, { page: number, perPage: number }>({
@@ -106,8 +107,7 @@ export const postAPI = createApi({
         return {
           url: `/posts`,
           method: 'POST',
-          body: formDataSerializer({ title }),
-          formData: true,
+          params: { title },
         }
       },
       invalidatesTags: (result, error) => error ? [] : ['postCreated'],
@@ -121,8 +121,7 @@ export const postAPI = createApi({
         return {
           url: `/posts/${id}`,
           method: 'POST',
-          body: formDataSerializer(postData),
-          formData: true,
+          params: postData,
         }
       },
       invalidatesTags: (result, error) => error ? [] : ['postEdited'],
@@ -169,8 +168,7 @@ export const postAPI = createApi({
         return {
           url: `/posts/${id}/images`,
           method: 'DELETE',
-          body: formDataSerializer({ images }),
-          formData: true,
+          params: { images },
         }
       }
     }),

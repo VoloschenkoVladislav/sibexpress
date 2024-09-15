@@ -6,10 +6,14 @@ const paramsSerializer = (params: Record<string, any>): string => {
 
     if (Array.isArray(value)) {
       value.forEach((item) => {
-        searchParams.append(`${key}[]`, item);
+        if (item !== undefined && item !== null) {
+          searchParams.append(`${key}[]`, item);
+        }
       });
     } else {
-      searchParams.append(key, value);
+      if (value !== undefined && value !== null) {
+        searchParams.append(key, value);
+      }
     }
   }
 

@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { IResponse } from '../models/IApi';
 import { RootState } from '../store/store';
 import { API_PATH, BASE_BACKEND_URL } from '../constants/baseUrl';
-import formDataSerializer from './utils/formDataSerializer';
+import paramsSerializer from './utils/paramsSerializer';
 
 
 export interface IShortBanner {
@@ -70,6 +70,7 @@ export const bannerAPI = createApi({
       }
       return headers
     },
+    paramsSerializer,
   }),
   endpoints: build => ({
     getBanners: build.query<IResponse<IBannersResponse, any>, { page: number, perPage: number }>({
@@ -95,8 +96,7 @@ export const bannerAPI = createApi({
         return {
           url: `/banners`,
           method: 'POST',
-          body: formDataSerializer({ title }),
-          formData: true,
+          params: { title },
         }
       },
       invalidatesTags: (result, error) => error ? [] : ['bannerCreate'],
@@ -106,8 +106,7 @@ export const bannerAPI = createApi({
         return {
           url: `/banners/${id}`,
           method: 'POST',
-          body: formDataSerializer(data),
-          formData: true,
+          params: data,
         }
       },
       invalidatesTags: (result, error) => error ? [] : ['bannerEdit'],

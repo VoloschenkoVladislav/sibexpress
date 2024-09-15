@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { IResponse } from '../models/IApi';
 import { RootState } from '../store/store';
 import { API_PATH, BASE_BACKEND_URL } from '../constants/baseUrl';
-import formDataSerializer from './utils/formDataSerializer';
+import paramsSerializer from './utils/paramsSerializer';
 
 
 export interface ITopic {
@@ -43,6 +43,7 @@ export const topicAPI = createApi({
       }
       return headers
     },
+    paramsSerializer,
   }),
   endpoints: build => ({
     getTopics: build.query<IResponse<ITopicsResponse, any>, { page: number, perPage: number }>({
@@ -60,8 +61,7 @@ export const topicAPI = createApi({
         return {
           url: `/tags`,
           method: 'POST',
-          body: formDataSerializer({ title }),
-          formData: true,
+          params: { title },
         }
       },
       invalidatesTags: (result, error) => error ? [] : ['topicCreate'],
@@ -71,8 +71,7 @@ export const topicAPI = createApi({
         return {
           url: `/tags/${id}`,
           method: 'POST',
-          body: formDataSerializer({ title }),
-          formData: true,
+          body: { title },
         }
       },
       invalidatesTags: (result, error) => error ? [] : ['topicEdit'],
