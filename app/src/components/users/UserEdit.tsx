@@ -111,11 +111,17 @@ export const UserEdit: FC = () => {
         sx={{
           display: 'flex',
           justifyContent: 'space-between',
+          flexDirection: {
+            xs: 'column',
+            md: 'row',
+          },
           width: '100%',
-          alignItems: 'center',
+          alignItems: {
+            xs: 'start',
+            md: 'center',
+          },
         }}
       >
-        
         {
           userHasPermissions(PERMISSIONS.USER_EDIT)
           ? <>
@@ -154,12 +160,28 @@ export const UserEdit: FC = () => {
       >
         <Box sx={{
           display: 'flex',
-          justifyContent: 'space-between',
+          flexDirection: {
+            lg: 'row',
+            md: 'column',
+            xs: 'column',
+          },
+          justifyContent: {
+            lg: 'space-between'
+          },
           alignItems: 'start',
           height: '100%',
           mt: 2,
         }}>
-          <Box sx={{ width: '75%', mr: 2 }}>
+          <Box
+            sx={{
+              width: {
+                lg: '75%',
+                md: '100%',
+                xs: '100%',
+              },
+              mr: 2,
+            }}
+          >
             <Typography variant='h6' gutterBottom>Учётные данные</Typography>
             <Paper sx={{ p: 2, mb: 2 }}>
               <Box sx={{ m: 1, mb: 2 }}>
@@ -215,7 +237,15 @@ export const UserEdit: FC = () => {
               >
                 <Grid container spacing={2} sx={{ p: 3 }}>
                   {permissions.map(p => (
-                    <Grid item xs={3} key={p.name}>
+                    <Grid
+                      item
+                      xs={12}
+                      xl={3}
+                      lg={4}
+                      md={4}
+                      sm={6}
+                      key={p.name}
+                    >
                       <FormControlLabel
                         key={p.title}
                         label={p.title}
@@ -237,7 +267,11 @@ export const UserEdit: FC = () => {
             sx={{
               display: 'flex',
               flexDirection: 'column',
-              width: '25%',
+              width: {
+                lg: '25%',
+                md: '100%',
+                xs: '100%',
+              },
               height: '100%',
             }}
           >
