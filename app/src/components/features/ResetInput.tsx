@@ -16,21 +16,19 @@ export const ResetInput: FC<Props> = ({ onReset, disabled, visible, children }) 
       {children}
       {
         visible
-        ? <Box>
-          <Tooltip title='Отменить'>
-            <span>
-              <IconButton
-                aria-label='Отменить'
-                onClick={onReset}
-                disabled={disabled}
-                color='primary'
-                sx={{ ml: 1 }}
-              >
-                <ReplayOutlinedIcon />
-              </IconButton>
-            </span>
-          </Tooltip>
-        </Box>
+        ? <Tooltip title='Отменить'>
+          <span>
+            <IconButton
+              aria-label='Отменить'
+              onClick={onReset}
+              disabled={disabled}
+              color='primary'
+              sx={{ ml: 1 }}
+            >
+              <ReplayOutlinedIcon />
+            </IconButton>
+          </span>
+        </Tooltip>
         : null
       }
     </Box>

@@ -77,7 +77,7 @@ export const SidePanel: FC<SidePanelProps> = props => {
   );
 
   return (
-    <Box sx={{ p: 1, height: '100%' }}>
+    <Box sx={{ height: '100%' }}>
       <LoadingWrap
         isLoading={isStatusesLoading}
         loader={<CircularProgress />}
@@ -187,7 +187,6 @@ export const SidePanel: FC<SidePanelProps> = props => {
         <LocalizationProvider dateAdapter={AdapterDayjs}  adapterLocale="ru">
           <DateTimeField
             disabled
-            sx={{ width: '100%' }}
             value={createdAt}
             label='Дата создания'
             format={DATE_FORMAT_OUTPUT}

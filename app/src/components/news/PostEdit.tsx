@@ -237,14 +237,21 @@ export const PostEdit: FC = () => {
         sx={{
           display: 'flex',
           justifyContent: 'space-between',
+          flexDirection: {
+            xs: 'column',
+            md: 'row',
+          },
           width: '100%',
-          alignItems: 'center',
+          alignItems: {
+            xs: 'start',
+            md: 'center',
+          },
         }}
       >
         {
           userHasPermissions(PERMISSIONS.POST_EDIT)
           ? <>
-            <Typography variant='h4' gutterBottom>Редактирование материала</Typography>
+            <Typography variant='h4' gutterBottom >Редактирование материала</Typography>
             <Stack direction='row' spacing={2}>
               <Tooltip title='Отменить все изменения'>
                 <span>
@@ -289,7 +296,14 @@ export const PostEdit: FC = () => {
       >
         <Box sx={{
           display: 'flex',
-          justifyContent: 'space-between',
+          flexDirection: {
+            lg: 'row',
+            md: 'column',
+            xs: 'column',
+          },
+          justifyContent: {
+            lg: 'space-between'
+          },
           alignItems: 'start',
           height: '100%',
           mt: 2,
@@ -338,7 +352,14 @@ export const PostEdit: FC = () => {
             />
           </PopupWindow>
 
-          <Box sx={{ width: '75%', mr: 2 }}>
+          <Box sx={{
+            width: {
+              lg: '75%',
+              md: '100%',
+              xs: '100%',
+            },
+            mr: 2,
+          }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
               <Typography variant='h6' gutterBottom>Заголовок</Typography>
               {
@@ -397,14 +418,30 @@ export const PostEdit: FC = () => {
           <Box
             sx={{
               display: 'flex',
-              flexDirection: 'column',
-              width: '25%',
+              flexDirection: {
+                lg: 'column',
+                md: 'row',
+                xs: 'column',
+              },
+              width: {
+                lg: '25%',
+                md: '100%',
+                xs: '100%',
+              },
               height: '100%',
             }}
           >
             <Paper sx={{
-              p: 1,
+              p: 2,
+              mr: {
+                md: 2,
+              },
               mb: 3,
+              width: {
+                lg: '100%',
+                md: '50%',
+                xs: 'auto',
+              }
             }}>
               <SidePanel
                 selectedTopicIds={selectedTopicIds}
@@ -427,33 +464,35 @@ export const PostEdit: FC = () => {
                 publishedAtResetDisabled={publishedAt === published_at}
               />
             </Paper>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-              <Typography variant='h6' gutterBottom>Главное изображение</Typography>
-              {
-                userHasPermissions(PERMISSIONS.POST_EDIT)
-                ? <IconButton onClick={() => setShowDeleteThumbnailPopup(true)} color='error' disabled={!(media.src && media.thumb)}>
-                  <DeleteOutlinedIcon />
-                </IconButton>
-                : null
-              }
+            <Box>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Typography variant='h6' gutterBottom>Главное изображение</Typography>
+                {
+                  userHasPermissions(PERMISSIONS.POST_EDIT)
+                  ? <IconButton onClick={() => setShowDeleteThumbnailPopup(true)} color='error' disabled={!(media.src && media.thumb)}>
+                    <DeleteOutlinedIcon />
+                  </IconButton>
+                  : null
+                }
+              </Box>
+              <Paper sx={{ p: 3, mb: 2 }}>
+                <DropImage
+                  field="thumbnail"
+                  disabled={!userHasPermissions(PERMISSIONS.POST_EDIT)}
+                  onDrop={file => {
+                    setIsSending(true);
+                    sendThumbnail({ id: +id!, thumbnail: file })
+                      .then(response => {
+                        setIsSending(false);
+                        if (!response.error) {
+                          dispatch(setSuccess('Изображение сохранено'));
+                        }
+                      });
+                  }}
+                  path={(media.src && media.thumb) ? `${media.src}${media.thumb}` : null}
+                />
+              </Paper>
             </Box>
-            <Paper sx={{ p: 3, mb: 2 }}>
-              <DropImage
-                field="thumbnail"
-                disabled={!userHasPermissions(PERMISSIONS.POST_EDIT)}
-                onDrop={file => {
-                  setIsSending(true);
-                  sendThumbnail({ id: +id!, thumbnail: file })
-                    .then(response => {
-                      setIsSending(false);
-                      if (!response.error) {
-                        dispatch(setSuccess('Изображение сохранено'));
-                      }
-                    });
-                }}
-                path={(media.src && media.thumb) ? `${media.src}${media.thumb}` : null}
-              />
-            </Paper>
           </Box>
         </Box>
       </LoadingWrap>

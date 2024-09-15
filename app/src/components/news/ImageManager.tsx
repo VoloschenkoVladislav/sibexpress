@@ -43,7 +43,10 @@ const ImageItem: FC<ImageItemInterface> = ({ src, name, onClick, selected }) => 
   return (
     <Grid
       item
-      xs={3}
+      xs={12}
+      sm={6}
+      md={4}
+      lg={3}
       onClick={onClick}
       sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}
     >
@@ -51,9 +54,9 @@ const ImageItem: FC<ImageItemInterface> = ({ src, name, onClick, selected }) => 
         color='success'
         style={{
           display: !selected ? 'none' : undefined,
-          position: 'absolute',
-          top: -1,
-          left: 3,
+          position: 'relative',
+          top: '8%',
+          left: '-50%',
           zIndex: 120,
           fontSize: '1.5em',
           backgroundColor: '#FFFFFF',
@@ -110,7 +113,15 @@ export const ImageManager: FC<ImageGalleryProps> = ({ media, onLoadImage, onCanc
         images.length
         ? <Grid
           container
-          sx={{ width: 800, height: 450, my: 1, pr: 1, overflowY: 'auto' }}
+          sx={{
+            maxWidth: 800,
+            width: '100%',
+            maxHeight: 450,
+            height: '100%',
+            my: 1,
+            pr: 1,
+            overflowY: 'auto'
+          }}
           spacing={2}
         >
           {
