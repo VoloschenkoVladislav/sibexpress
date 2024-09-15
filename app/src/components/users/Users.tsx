@@ -29,6 +29,9 @@ import {
   InputAdornment,
   IconButton,
   Tooltip,
+  useMediaQuery,
+  Theme,
+  Stack,
 } from '@mui/material';
 import { PopupWindow } from '../features/PopupWindow';
 import { LoadingWrap } from '../features/LoadingWrap';
@@ -58,21 +61,23 @@ const UserSkeleton: FC<UserSkeletonProps> = props => {
       <TableCell><Skeleton variant='text' /></TableCell>
       <TableCell><Skeleton variant='text' /></TableCell>
       <TableCell><Skeleton variant='text' /></TableCell>
-      <TableCell align='right' sx={{ maxWidth: 7 }}>
-        <Button disabled>
-          <CreateOutlinedIcon />
-        </Button>
-      </TableCell>
-      <TableCell align='right' sx={{ maxWidth: 7 }}>
-        <Button disabled>
-          <DeleteOutlinedIcon/>
-        </Button>
+      <TableCell><Skeleton variant='text' /></TableCell>
+      <TableCell align='right' sx={{ py: 0 }}>
+        <Stack direction='row' spacing={3} justifyContent='flex-end'>
+          <IconButton disabled>
+            <CreateOutlinedIcon />
+          </IconButton>
+          <IconButton disabled>
+            <DeleteOutlinedIcon/>
+          </IconButton>
+        </Stack>
       </TableCell>
     </TableRow>
   );
 };
 
 const UsersTable: FC = () => {
+  const smDown = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
   const { userHasPermissions } = useAbac();
   const [ page, setPage ] = useState(0);
   const [ rowsPerPage, setRowsPerPage ] = useState(localStorage.getItem('usersPerPage') ? +localStorage.getItem('usersPerPage')! :  10);
@@ -113,20 +118,15 @@ const UsersTable: FC = () => {
           rejectTitle='Отмена'
         />
       </PopupWindow>
-      <TableContainer component={Paper}  sx={{ minWidth: 650, h: '100%' }}>
-        <Table size='small' aria-label='a dense table'>
+      <TableContainer component={Paper}  sx={{ width: '100%', h: '100%' }}>
+        <Table aria-label='a dense table'>
           <TableHead>
             <TableRow component='th' scope='row'>
               <TableCell>ID</TableCell>
               <TableCell>E-mail</TableCell>
-              <TableCell>Создан</TableCell>
-              <TableCell>Изменён</TableCell>
+              <TableCell sx={{ display: { md: 'table-cell', xs: 'none' } }}>Создан</TableCell>
+              <TableCell sx={{ display: { md: 'table-cell', xs: 'none' } }}>Изменён</TableCell>
               <TableCell align='right'></TableCell>
-              {
-                userHasPermissions(PERMISSIONS.USER_DELETE)
-                ? <TableCell align="right"></TableCell>
-                : null
-              }
             </TableRow>
           </TableHead>
           <TableBody>
@@ -142,48 +142,48 @@ const UsersTable: FC = () => {
                 >
                   <TableCell>{user.id}</TableCell>
                   <TableCell>{user.email}</TableCell>
-                  <TableCell>{user.created_at}</TableCell>
-                  <TableCell>{user.updated_at}</TableCell>
-                  <TableCell align='right' sx={{ maxWidth: 7 }}>
-                    <Link to={`${PATHS.USERS}/${user.id}`} style={{ textDecoration: 'none' }}>
-                      <Tooltip
-                        title={
-                          userHasPermissions(PERMISSIONS.USER_EDIT)
-                          ? 'Редактировать данные пользователя'
-                          : 'Открыть данные пользователя'
-                        }
-                      >
-                        <span>
-                          <IconButton color='primary'>
-                            {
-                              userHasPermissions(PERMISSIONS.USER_EDIT)
-                              ? <CreateOutlinedIcon />
-                              : <VisibilityOutlinedIcon />
-                            }
-                          </IconButton>
-                        </span>
-                      </Tooltip>
-                    </Link>
+                  <TableCell sx={{ display: { md: 'table-cell', xs: 'none' } }}>{user.created_at}</TableCell>
+                  <TableCell sx={{ display: { md: 'table-cell', xs: 'none' } }}>{user.updated_at}</TableCell>
+                  <TableCell align='right' sx={{ py: 0 }}>
+                    <Stack direction='row' spacing={3} justifyContent='flex-end'>
+                      <Link to={`${PATHS.USERS}/${user.id}`} style={{ textDecoration: 'none' }}>
+                        <Tooltip
+                          title={
+                            userHasPermissions(PERMISSIONS.USER_EDIT)
+                            ? 'Редактировать данные пользователя'
+                            : 'Открыть данные пользователя'
+                          }
+                        >
+                          <span>
+                            <IconButton color='primary'>
+                              {
+                                userHasPermissions(PERMISSIONS.USER_EDIT)
+                                ? <CreateOutlinedIcon />
+                                : <VisibilityOutlinedIcon />
+                              }
+                            </IconButton>
+                          </span>
+                        </Tooltip>
+                      </Link>
+                      {
+                        userHasPermissions(PERMISSIONS.USER_DELETE)
+                        ? <Tooltip title='Удалить пользователя'>
+                          <span>
+                            <IconButton
+                              onClick={() => {
+                                setSelectedUser(user.id);
+                                setShowDeletePopup(true);
+                              }}
+                              color='error'
+                            >
+                              <DeleteOutlinedIcon/>
+                            </IconButton>
+                          </span>
+                        </Tooltip>
+                        : null
+                      }
+                    </Stack>
                   </TableCell>
-                  {
-                    userHasPermissions(PERMISSIONS.USER_DELETE)
-                    ? <TableCell align='right' sx={{ maxWidth: 7 }}>
-                      <Tooltip title='Удалить пользователя'>
-                        <span>
-                          <IconButton
-                            onClick={() => {
-                              setSelectedUser(user.id);
-                              setShowDeletePopup(true);
-                            }}
-                            color='error'
-                          >
-                            <DeleteOutlinedIcon/>
-                          </IconButton>
-                        </span>
-                      </Tooltip>
-                    </TableCell>
-                    : null
-                  }
                 </TableRow>
               ))}
             </LoadingWrap>
@@ -197,7 +197,7 @@ const UsersTable: FC = () => {
                 rowsPerPageOptions={[10, 25, 50]}
                 onRowsPerPageChange={handleChangeRowsPerPage}
                 page={page}
-                labelRowsPerPage={'Пользователей на странице:'}
+                labelRowsPerPage={smDown ? '' : 'Пользователей на странице:'}
                 labelDisplayedRows={({ from, to }) => {
                   const toCalc = usersCount === rowsPerPage
                     ? to

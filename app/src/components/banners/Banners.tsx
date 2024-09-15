@@ -17,7 +17,6 @@ import {
   TableCell,
   TableBody,
   Paper,
-  Button,
   Skeleton,
   TableFooter,
   TablePagination,
@@ -25,6 +24,9 @@ import {
   Typography,
   IconButton,
   Tooltip,
+  Theme,
+  useMediaQuery,
+  Stack,
 } from '@mui/material';
 import { PopupWindow } from '../features/PopupWindow';
 import { LoadingWrap } from '../features/LoadingWrap';
@@ -33,8 +35,8 @@ import { useBannerPlacesQuery } from '../../services/DictionaryService';
 import { PATHS } from '../../constants/path';
 import { Link } from 'react-router-dom';
 import { NewItem } from '../features/NewItem';
-import { useAbac } from "react-abac";
-import { PERMISSIONS } from "../../constants/permission";
+import { useAbac } from 'react-abac';
+import { PERMISSIONS } from '../../constants/permission';
 
 
 export const bannerStatuses = [
@@ -62,21 +64,23 @@ const BannerSkeleton: FC<BannerSkeletonProps> = props => {
       <TableCell><Skeleton variant='text' /></TableCell>
       <TableCell><Skeleton variant='text' /></TableCell>
       <TableCell><Skeleton variant='text' /></TableCell>
-      <TableCell align='right' sx={{ maxWidth: 7 }}>
-        <Button disabled>
-          <CreateOutlinedIcon />
-        </Button>
-      </TableCell>
-      <TableCell align='right' sx={{ maxWidth: 7 }}>
-        <Button disabled>
-          <DeleteOutlinedIcon/>
-        </Button>
+      <TableCell><Skeleton variant='text' /></TableCell>
+      <TableCell align='right' sx={{ py: 0 }}>
+        <Stack direction='row' spacing={3} justifyContent='flex-end'>
+          <IconButton disabled>
+            <CreateOutlinedIcon />
+          </IconButton>
+          <IconButton disabled>
+            <DeleteOutlinedIcon/>
+          </IconButton>
+        </Stack>
       </TableCell>
     </TableRow>
   );
 };
 
 const BannersTable: FC = () => {
+  const smDown = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
   const { userHasPermissions } = useAbac();
   const [ page, setPage ] = useState(0);
   const [ rowsPerPage, setRowsPerPage ] = useState(localStorage.getItem('bannersPerPage') ? +localStorage.getItem('bannersPerPage')! :  10);
@@ -126,20 +130,15 @@ const BannersTable: FC = () => {
           rejectTitle='Отмена'
         />
       </PopupWindow>
-      <TableContainer component={Paper}  sx={{ minWidth: 650, h: '100%' }}>
-        <Table size='small' aria-label='a dense table'>
+      <TableContainer component={Paper}  sx={{ width: '100%', h: '100%' }}>
+        <Table aria-label='a dense table'>
           <TableHead>
             <TableRow component='th' scope='row'>
               <TableCell>ID</TableCell>
               <TableCell>Имя</TableCell>
-              <TableCell>Положение</TableCell>
-              <TableCell>Статус</TableCell>
+              <TableCell sx={{ display: { md: 'table-cell', xs: 'none' } }}>Положение</TableCell>
+              <TableCell sx={{ display: { sm: 'table-cell', xs: 'none' } }}>Статус</TableCell>
               <TableCell align='right'></TableCell>
-              {
-                userHasPermissions(PERMISSIONS.BANNER_DELETE)
-                ? <TableCell align="right"></TableCell>
-                : null
-              }
             </TableRow>
           </TableHead>
           <TableBody>
@@ -155,57 +154,57 @@ const BannersTable: FC = () => {
                 >
                   <TableCell>{banner.id}</TableCell>
                   <TableCell>{banner.title}</TableCell>
-                  <TableCell>
+                  <TableCell sx={{ display: { md: 'table-cell', xs: 'none' } }}>
                     <LoadingWrap
                       isLoading={isPlacesLoading}
-                      loader={<Skeleton variant="text" />}
+                      loader={<Skeleton variant='text' />}
                     >
                       {banner.type_id !== null ? getPlaceTitle(banner.type_id) : ''}
                     </LoadingWrap>
                   </TableCell>
-                  <TableCell>
+                  <TableCell sx={{ display: { sm: 'table-cell', xs: 'none' } }}>
                     {banner.status_id !== null ? getStatusTitle(banner.status_id) : ''}
                   </TableCell>
-                  <TableCell align='right' sx={{ maxWidth: 7 }}>
-                    <Link to={`${PATHS.BANNERS}/${banner.id}`} style={{ textDecoration: 'none' }}>
-                      <Tooltip
-                        title={
-                          userHasPermissions(PERMISSIONS.BANNER_EDIT)
-                          ? 'Редактировать баннер'
-                          : 'Открыть баннер'
-                        }
-                      >
-                        <span>
-                          <IconButton color='primary'>
-                            {
-                              userHasPermissions(PERMISSIONS.BANNER_EDIT)
-                              ? <CreateOutlinedIcon />
-                              : <VisibilityOutlinedIcon />
-                            }
-                          </IconButton>
-                        </span>
-                      </Tooltip>
-                    </Link>
+                  <TableCell align='right' sx={{ py: 0 }}>
+                    <Stack direction='row' spacing={3} justifyContent='flex-end'>
+                      <Link to={`${PATHS.BANNERS}/${banner.id}`} style={{ textDecoration: 'none' }}>
+                        <Tooltip
+                          title={
+                            userHasPermissions(PERMISSIONS.BANNER_EDIT)
+                            ? 'Редактировать баннер'
+                            : 'Открыть баннер'
+                          }
+                        >
+                          <span>
+                            <IconButton color='primary'>
+                              {
+                                userHasPermissions(PERMISSIONS.BANNER_EDIT)
+                                ? <CreateOutlinedIcon />
+                                : <VisibilityOutlinedIcon />
+                              }
+                            </IconButton>
+                          </span>
+                        </Tooltip>
+                      </Link>
+                      {
+                        userHasPermissions(PERMISSIONS.BANNER_DELETE)
+                        ? <Tooltip title='Удалить баннер'>
+                          <span>
+                            <IconButton
+                              onClick={() => {
+                                setSelectedBanner(banner.id);
+                                setShowDeletePopup(true);
+                              }}
+                              color='error'
+                            >
+                              <DeleteOutlinedIcon/>
+                            </IconButton>
+                          </span>
+                        </Tooltip>
+                        : null
+                      }
+                    </Stack>
                   </TableCell>
-                  {
-                    userHasPermissions(PERMISSIONS.BANNER_DELETE)
-                    ? <TableCell align='right' sx={{ maxWidth: 7 }}>
-                      <Tooltip title='Удалить баннер'>
-                        <span>
-                          <IconButton
-                            onClick={() => {
-                              setSelectedBanner(banner.id);
-                              setShowDeletePopup(true);
-                            }}
-                            color='error'
-                          >
-                            <DeleteOutlinedIcon/>
-                          </IconButton>
-                        </span>
-                      </Tooltip>
-                    </TableCell>
-                    : null
-                  }
                 </TableRow>
               ))}
             </LoadingWrap>
@@ -219,7 +218,7 @@ const BannersTable: FC = () => {
                 rowsPerPageOptions={[10, 25, 50]}
                 onRowsPerPageChange={handleChangeRowsPerPage}
                 page={page}
-                labelRowsPerPage={'Баннеров на странице:'}
+                labelRowsPerPage={smDown ? '' : 'Баннеров на странице:'}
                 labelDisplayedRows={({ from, to }) => {
                   const toCalc = bannersCount === rowsPerPage
                     ? to

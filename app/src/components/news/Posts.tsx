@@ -1,16 +1,16 @@
-import { FC, useMemo, useState } from "react";
-import { DashboardLayout } from "../layout/DashboardLayout";
-import { Link } from "react-router-dom";
+import { FC, useMemo, useState } from 'react';
+import { DashboardLayout } from '../layout/DashboardLayout';
+import { Link } from 'react-router-dom';
 import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
-import { PATHS } from "../../constants/path";
-import { useCreatePostMutation, useDeletePostMutation, useGetPostsQuery } from "../../services/PostService";
+import { PATHS } from '../../constants/path';
+import { useCreatePostMutation, useDeletePostMutation, useGetPostsQuery } from '../../services/PostService';
 import {
   useStatusesQuery,
   useTypesQuery,
-} from "../../services/DictionaryService";
+} from '../../services/DictionaryService';
 import {
   TableContainer,
   Table,
@@ -19,7 +19,6 @@ import {
   TableCell,
   TableBody,
   Paper,
-  Button,
   Skeleton,
   TableFooter,
   TablePagination,
@@ -27,13 +26,16 @@ import {
   Typography,
   IconButton,
   Tooltip,
-} from "@mui/material";
-import { PopupWindow } from "../features/PopupWindow";
-import { LoadingWrap } from "../features/LoadingWrap";
-import { ConfirmationWindow } from "../features/ConfirmationWindow";
+  useMediaQuery,
+  Theme,
+  Stack,
+} from '@mui/material';
+import { PopupWindow } from '../features/PopupWindow';
+import { LoadingWrap } from '../features/LoadingWrap';
+import { ConfirmationWindow } from '../features/ConfirmationWindow';
 import { NewItem } from '../features/NewItem';
-import { useAbac } from "react-abac";
-import { PERMISSIONS } from "../../constants/permission";
+import { useAbac } from 'react-abac';
+import { PERMISSIONS } from '../../constants/permission';
 
 
 interface PostSkeletonProps {
@@ -47,26 +49,27 @@ const PostSkeleton: FC<PostSkeletonProps> = props => {
     <TableRow
       key={id}
     >
-      <TableCell><Skeleton variant="text" /></TableCell>
-      <TableCell><Skeleton variant="text" /></TableCell>
-      <TableCell><Skeleton variant="text" /></TableCell>
-      <TableCell><Skeleton variant="text" /></TableCell>
-      <TableCell><Skeleton variant="text" /></TableCell>
-      <TableCell align="right" sx={{ maxWidth: 7 }}>
-        <Button disabled>
-          <CreateOutlinedIcon />
-        </Button>
-      </TableCell>
-      <TableCell align="right" sx={{ maxWidth: 7 }}>
-        <Button disabled>
-          <DeleteOutlinedIcon/>
-        </Button>
+      <TableCell><Skeleton variant='text' /></TableCell>
+      <TableCell><Skeleton variant='text' /></TableCell>
+      <TableCell><Skeleton variant='text' /></TableCell>
+      <TableCell><Skeleton variant='text' /></TableCell>
+      <TableCell><Skeleton variant='text' /></TableCell>
+      <TableCell align='right' sx={{ py: 0 }}>
+        <Stack direction='row' spacing={3} justifyContent='flex-end'>
+          <IconButton disabled>
+            <CreateOutlinedIcon />
+          </IconButton>
+          <IconButton disabled>
+            <DeleteOutlinedIcon/>
+          </IconButton>
+        </Stack>
       </TableCell>
     </TableRow>
   );
 };
 
 const PostsTable: FC = () => {
+  const smDown = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
   const { userHasPermissions } = useAbac();
   const [ page, setPage ] = useState(0);
   const [ rowsPerPage, setRowsPerPage ] = useState(localStorage.getItem('postsPerPage') ? +localStorage.getItem('postsPerPage')! :  10);
@@ -118,21 +121,16 @@ const PostsTable: FC = () => {
           rejectColor='primary'
         />
       </PopupWindow>
-      <TableContainer component={Paper}  sx={{ minWidth: 650, h: '100%' }}>
-        <Table size="small" aria-label="a dense table">
+      <TableContainer component={Paper}  sx={{ width: '100%', h: '100%' }}>
+        <Table aria-label='a dense table' stickyHeader>
           <TableHead>
             <TableRow component='th' scope='row'>
               <TableCell>ID</TableCell>
               <TableCell>Заголовок</TableCell>
-              <TableCell>Тип</TableCell>
-              <TableCell>Дата и время</TableCell>
-              <TableCell>Статус</TableCell>
-              <TableCell align="right"></TableCell>
-              {
-                userHasPermissions(PERMISSIONS.POST_DELETE)
-                ? <TableCell align="right"></TableCell>
-                : null
-              }
+              <TableCell sx={{ display: { sm: 'table-cell', xs: 'none' } }}>Тип</TableCell>
+              <TableCell sx={{ display: { sm: 'table-cell', xs: 'none' } }}>Статус</TableCell>
+              <TableCell sx={{ display: { lg: 'table-cell', xs: 'none' } }}>Дата и время</TableCell>
+              <TableCell align='right' sx={{ maxWidth: 8 }}></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -143,68 +141,66 @@ const PostsTable: FC = () => {
               ))}
             >
               {posts?.data?.items?.map(post => (
-                <TableRow
-                  key={post.id}
-                >
+                <TableRow key={post.id}>
                   <TableCell>{post.id}</TableCell>
                   <TableCell>{post.title.replaceAll(/<.*?>/ig, '')}</TableCell>
-                  <TableCell>
+                  <TableCell sx={{ display: { sm: 'table-cell', xs: 'none' } }}>
                     <LoadingWrap
                       isLoading={isTypesLoading}
-                      loader={<Skeleton variant="text" />}
+                      loader={<Skeleton variant='text' />}
                     >
                       {getTypeTitle(post.type_id)}
                     </LoadingWrap>
                   </TableCell>
-                  <TableCell>{post.published_at}</TableCell>
-                  <TableCell>
+                  <TableCell sx={{ display: { sm: 'table-cell', xs: 'none' } }}>
                     <LoadingWrap
                       isLoading={isStatusesLoading}
-                      loader={<Skeleton variant="text" />}
+                      loader={<Skeleton variant='text' />}
                     >
                       {getStatusTitle(post.status_id)}
                     </LoadingWrap>
                   </TableCell>
-                  <TableCell align="right" sx={{ maxWidth: 7 }}>
-                    <Link to={`${PATHS.NEWS}/${post.id}`} style={{ textDecoration: 'none' }}>
-                      <Tooltip
-                        title={
-                          userHasPermissions(PERMISSIONS.POST_EDIT)
-                          ? 'Редактировать материал'
-                          : 'Открыть материал'
-                        }
-                      >
-                        <span>
-                          <IconButton color='primary'>
-                            {
-                              userHasPermissions(PERMISSIONS.POST_EDIT)
-                              ? <CreateOutlinedIcon />
-                              : <VisibilityOutlinedIcon />
-                            }
-                          </IconButton>
-                        </span>
-                      </Tooltip>
-                    </Link>
+                  <TableCell sx={{ display: { lg: 'table-cell', xs: 'none' } }}>{post.published_at}</TableCell>
+                  <TableCell align='right' sx={{ py: 0 }}>
+                    <Stack direction='row' spacing={3} justifyContent='flex-end'>
+                      <Link to={`${PATHS.NEWS}/${post.id}`} style={{ textDecoration: 'none' }}>
+                        <Tooltip
+                          title={
+                            userHasPermissions(PERMISSIONS.POST_EDIT)
+                            ? 'Редактировать материал'
+                            : 'Открыть материал'
+                          }
+                        >
+                          <span>
+                            <IconButton color='primary'>
+                              {
+                                userHasPermissions(PERMISSIONS.POST_EDIT)
+                                ? <CreateOutlinedIcon />
+                                : <VisibilityOutlinedIcon />
+                              }
+                            </IconButton>
+                          </span>
+                        </Tooltip>
+                      </Link>
+                      {
+                        userHasPermissions(PERMISSIONS.POST_DELETE)
+                        ? <Tooltip title='Удалить материал'>
+                          <span>
+                            <IconButton
+                              onClick={() => {
+                                setSelectedPost(post.id);
+                                setShowDeletePopup(true);
+                              }}
+                              color='error'
+                            >
+                              <DeleteOutlinedIcon/>
+                            </IconButton>
+                          </span>
+                        </Tooltip>
+                        : null
+                      }
+                    </Stack>
                   </TableCell>
-                  {
-                    userHasPermissions(PERMISSIONS.POST_DELETE)
-                    ? <TableCell align="right" sx={{ maxWidth: 7 }}>
-                      <Tooltip title='Удалить материал'>
-                        <span>
-                          <IconButton
-                            onClick={() => {
-                              setSelectedPost(post.id);
-                              setShowDeletePopup(true);
-                            }}
-                            color='error'
-                          >
-                            <DeleteOutlinedIcon/>
-                          </IconButton>
-                        </span>
-                      </Tooltip>
-                    </TableCell>
-                    : null
-                  }
                 </TableRow>
               ))}
             </LoadingWrap>
@@ -218,7 +214,7 @@ const PostsTable: FC = () => {
                 rowsPerPageOptions={[10, 25, 50]}
                 onRowsPerPageChange={handleChangeRowsPerPage}
                 page={page}
-                labelRowsPerPage={"Новостей на странице:"}
+                labelRowsPerPage={smDown ? '' : 'Новостей на странице:'}
                 labelDisplayedRows={({ from, to }) => {
                   const toCalc = postsCount === rowsPerPage
                     ? to

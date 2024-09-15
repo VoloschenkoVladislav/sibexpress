@@ -47,7 +47,12 @@ export const DashboardLayout: FC<Props> = props => {
             },
             bottom: 0,
             top: navbarHeight,
-            p: 5,
+            py: 5,
+            px: {
+              md: 5,
+              sm: 3,
+              xs: 2,
+            },
           }}
         >
           {children}

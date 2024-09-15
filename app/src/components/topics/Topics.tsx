@@ -1,5 +1,5 @@
-import { FC, useMemo, useState } from "react";
-import { DashboardLayout } from "../layout/DashboardLayout";
+import { FC, useMemo, useState } from 'react';
+import { DashboardLayout } from '../layout/DashboardLayout';
 import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
@@ -8,7 +8,7 @@ import {
   useDeleteTopicMutation,
   useGetTopicsQuery,
   useEditTopicMutation,
-} from "../../services/TopicService";
+} from '../../services/TopicService';
 import {
   TableContainer,
   Table,
@@ -26,16 +26,19 @@ import {
   Typography,
   IconButton,
   Tooltip,
-} from "@mui/material";
-import { PopupWindow } from "../features/PopupWindow";
-import { LoadingWrap } from "../features/LoadingWrap";
-import { ConfirmationWindow } from "../features/ConfirmationWindow";
-import { Loading } from "../features/Loading";
-import { NewItem } from "../features/NewItem";
-import { useAbac } from "react-abac";
-import { PERMISSIONS } from "../../constants/permission";
-import { useAppDispatch } from "../../hooks/redux/redux";
-import { setSuccess } from "../../store/reducers/AppSlice";
+  useMediaQuery,
+  Theme,
+  Stack,
+} from '@mui/material';
+import { PopupWindow } from '../features/PopupWindow';
+import { LoadingWrap } from '../features/LoadingWrap';
+import { ConfirmationWindow } from '../features/ConfirmationWindow';
+import { Loading } from '../features/Loading';
+import { NewItem } from '../features/NewItem';
+import { useAbac } from 'react-abac';
+import { PERMISSIONS } from '../../constants/permission';
+import { useAppDispatch } from '../../hooks/redux/redux';
+import { setSuccess } from '../../store/reducers/AppSlice';
 
 
 interface TopicSkeletonProps {
@@ -55,24 +58,25 @@ const TopicSkeleton: FC<TopicSkeletonProps> = props => {
     <TableRow
       key={id}
     >
-      <TableCell><Skeleton variant="text" /></TableCell>
-      <TableCell><Skeleton variant="text" /></TableCell>
-      <TableCell><Skeleton variant="text" /></TableCell>
-      <TableCell align="right" sx={{ maxWidth: 7 }}>
-        <Button disabled>
-          <CreateOutlinedIcon />
-        </Button>
-      </TableCell>
-      <TableCell align="right" sx={{ maxWidth: 7 }}>
-        <Button disabled>
-          <DeleteOutlinedIcon/>
-        </Button>
+      <TableCell><Skeleton variant='text' /></TableCell>
+      <TableCell><Skeleton variant='text' /></TableCell>
+      <TableCell><Skeleton variant='text' /></TableCell>
+      <TableCell align='right' sx={{ py: 0 }}>
+        <Stack direction='row' spacing={3} justifyContent='flex-end'>
+          <IconButton disabled>
+            <CreateOutlinedIcon />
+          </IconButton>
+          <IconButton disabled>
+            <DeleteOutlinedIcon/>
+          </IconButton>
+        </Stack>
       </TableCell>
     </TableRow>
   );
 };
 
 const TopicsTable: FC = () => {
+  const smDown = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
   const dispatch = useAppDispatch();
   const { userHasPermissions } = useAbac();
   const [ page, setPage ] = useState(0);
@@ -145,21 +149,16 @@ const TopicsTable: FC = () => {
           onCancel={() => setShowEditPopup(false)}
         />
       </PopupWindow>
-      <TableContainer component={Paper}  sx={{ minWidth: 650, h: '100%' }}>
-        <Table size='small' aria-label="a dense table">
+      <TableContainer component={Paper}  sx={{ width: '100%', h: '100%' }}>
+        <Table aria-label='a dense table'>
           <TableHead>
             <TableRow component='th' scope='row'>
               <TableCell>ID</TableCell>
               <TableCell>Имя</TableCell>
-              <TableCell>Упоминаний в материалах</TableCell>
+              <TableCell sx={{ display: { sm: 'table-cell', xs: 'none' } }}>Упоминаний в материалах</TableCell>
               {
                 userHasPermissions(PERMISSIONS.TOPIC_EDIT)
-                ? <TableCell align="right"></TableCell>
-                : null
-              }
-              {
-                userHasPermissions(PERMISSIONS.TOPIC_DELETE)
-                ? <TableCell align="right"></TableCell>
+                ? <TableCell align='right'></TableCell>
                 : null
               }
             </TableRow>
@@ -177,46 +176,46 @@ const TopicsTable: FC = () => {
                 >
                   <TableCell>{topic.id}</TableCell>
                   <TableCell>{topic.title}</TableCell>
-                  <TableCell>{topic.count}</TableCell>
-                  {
-                    userHasPermissions(PERMISSIONS.TOPIC_EDIT)
-                    ? <TableCell align="right" sx={{ maxWidth: 7 }}>
-                      <Tooltip title='Редактировать тему'>
-                        <span>
-                          <IconButton
-                            color='primary'
-                            onClick={() => {
-                              setSelectedTopicTitle(topic.title);
-                              setSelectedTopic(topic.id);
-                              setShowEditPopup(true);
-                            }}
-                          >
-                            <CreateOutlinedIcon />
-                          </IconButton>
-                        </span>
-                      </Tooltip>
-                    </TableCell>
-                    : null
-                  }
-                  {
-                    userHasPermissions(PERMISSIONS.TOPIC_DELETE)
-                    ? <TableCell align="right" sx={{ maxWidth: 7 }}>
-                      <Tooltip title='Удалить тему'>
-                        <span>
-                          <IconButton
-                            color='error'
-                            onClick={() => {
-                              setSelectedTopic(topic.id);
-                              setShowDeletePopup(true);
-                            }}
-                          >
-                            <DeleteOutlinedIcon />
-                          </IconButton>
-                        </span>
-                      </Tooltip>
-                    </TableCell>
-                    : null
-                  }
+                  <TableCell sx={{ display: { sm: 'table-cell', xs: 'none' } }}>{topic.count}</TableCell>
+                  <TableCell align='right' sx={{ py: 0 }}>
+                    <Stack direction='row' spacing={3} justifyContent='flex-end'>
+                      {
+                        userHasPermissions(PERMISSIONS.TOPIC_EDIT)
+                        ? <Tooltip title='Редактировать тему'>
+                          <span>
+                            <IconButton
+                              color='primary'
+                              onClick={() => {
+                                setSelectedTopicTitle(topic.title);
+                                setSelectedTopic(topic.id);
+                                setShowEditPopup(true);
+                              }}
+                            >
+                              <CreateOutlinedIcon />
+                            </IconButton>
+                          </span>
+                        </Tooltip>
+                        : null
+                      }
+                      {
+                        userHasPermissions(PERMISSIONS.TOPIC_DELETE)
+                        ? <Tooltip title='Удалить тему'>
+                          <span>
+                            <IconButton
+                              color='error'
+                              onClick={() => {
+                                setSelectedTopic(topic.id);
+                                setShowDeletePopup(true);
+                              }}
+                            >
+                              <DeleteOutlinedIcon />
+                            </IconButton>
+                          </span>
+                        </Tooltip>
+                        : null
+                      }
+                    </Stack>
+                  </TableCell>
                 </TableRow>
               ))}
             </LoadingWrap>
@@ -230,7 +229,7 @@ const TopicsTable: FC = () => {
                 rowsPerPageOptions={[10, 25, 50]}
                 onRowsPerPageChange={handleChangeRowsPerPage}
                 page={page}
-                labelRowsPerPage={"Тем на странице:"}
+                labelRowsPerPage={smDown ? '' : 'Тем на странице:'}
                 labelDisplayedRows={({ from, to }) => {
                   const toCalc = topicsCount === rowsPerPage
                     ? to
