@@ -157,8 +157,15 @@ export const BannerEdit: FC = () => {
         sx={{
           display: 'flex',
           justifyContent: 'space-between',
+          flexDirection: {
+            xs: 'column',
+            md: 'row',
+          },
           width: '100%',
-          alignItems: 'center',
+          alignItems: {
+            xs: 'start',
+            md: 'center',
+          },
         }}
       >
         {
@@ -199,12 +206,28 @@ export const BannerEdit: FC = () => {
       >
         <Box sx={{
           display: 'flex',
-          justifyContent: 'space-between',
+          flexDirection: {
+            lg: 'row',
+            md: 'column',
+            xs: 'column',
+          },
+          justifyContent: {
+            lg: 'space-between'
+          },
           alignItems: 'start',
           height: '100%',
           mt: 2,
         }}>
-          <Box sx={{ width: '75%', mr: 2 }}>
+          <Box
+            sx={{
+              width: {
+                lg: '75%',
+                md: '100%',
+                xs: '100%',
+              },
+              mr: 2,
+            }}
+          >
             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
               <Typography variant='h6' gutterBottom>Наименование</Typography>
               {
@@ -279,12 +302,35 @@ export const BannerEdit: FC = () => {
           <Box
             sx={{
               display: 'flex',
-              flexDirection: 'column',
-              width: '25%',
+              flexDirection: {
+                lg: 'column',
+                md: 'row',
+                xs: 'column',
+              },
+              width: {
+                lg: '25%',
+                md: '100%',
+                xs: '100%',
+              },
               height: '100%',
             }}
           >
-            <Paper sx={{ p: 2, mb: 3 }}>
+            <Paper
+              sx={{
+                p: 2,
+                mb: 3,
+                mr: {
+                  lg: 0,
+                  md: 3,
+                  xs: 0,
+                },
+                width: {
+                  lg: 'auto',
+                  md: '65%',
+                  xs: 'auto',
+                }
+              }}
+            >
               <ResetInput
                 disabled={selectedStatusId === status_id}
                 onReset={() => setSelectedStatusId(status_id)}
@@ -377,7 +423,17 @@ export const BannerEdit: FC = () => {
                 </LocalizationProvider>
               </ResetInput>
             </Paper>
-            <Paper sx={{ p: 2, mb: 3 }}>
+            <Paper
+              sx={{
+                p: 2,
+                mb: 3,
+                width: {
+                  lg: 'auto',
+                  md: '35%',
+                  xs: 'auto',
+                }
+              }}
+            >
               <Box sx={{ mb: 2 }}>
                 <LocalizationProvider dateAdapter={AdapterDayjs}  adapterLocale='ru'>
                   <DateTimeField

@@ -1,6 +1,6 @@
-import React, { FC, useMemo, CSSProperties } from "react";
-import { useDropzone } from "react-dropzone";
-import { BASE_BACKEND_URL } from "../../constants/baseUrl";
+import React, { FC, useMemo, CSSProperties } from 'react';
+import { useDropzone } from 'react-dropzone';
+import { BASE_BACKEND_URL } from '../../constants/baseUrl';
 
 
 const baseStyle: CSSProperties = {
@@ -87,7 +87,7 @@ export const DropImage: FC<Props> = ({ field, onDrop, path, disabled }) => {
   ]);
 
   return (
-    <section className="container">
+    <section className='container'>
       <div {...getRootProps({ className: 'dropzone', style })}>
         <input {...getInputProps()} />
         {
@@ -97,7 +97,11 @@ export const DropImage: FC<Props> = ({ field, onDrop, path, disabled }) => {
               <img
                 src={`${BASE_BACKEND_URL}/${path}`}
                 alt={path}
-                loading="lazy"
+                loading='lazy'
+                style={{
+                  width: '100%',
+                  objectFit: 'contain',
+                }}
               />
             </div>
           </div>
