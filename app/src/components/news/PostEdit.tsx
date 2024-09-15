@@ -41,6 +41,7 @@ import { Loading } from "../features/Loading";
 import { setSuccess } from "../../store/reducers/AppSlice";
 import { useAbac } from "react-abac";
 import { PERMISSIONS } from "../../constants/permission";
+import { ConfirmationWindow } from "../features/ConfirmationWindow";
 
 interface TitleEditorProps {
   value: string,
@@ -115,6 +116,7 @@ export const PostEdit: FC = () => {
   const [ imageGalleryUp, setImageGalleryUp ] = useState(false);
   const [ postTitle, setPostTitle ] = useState<string>("");
   const [ isSending, setIsSending ] = useState(false);
+  const [ showDeleteThumbnailPopup, setShowDeleteThumbnailPopup ] = useState(false);
 
   const simpleImagePluginInstance = useRef<SimpleImage>(null);
   
@@ -153,6 +155,7 @@ export const PostEdit: FC = () => {
   };
 
   const handleDeleteThumbnail = () => {
+    setShowDeleteThumbnailPopup(false);
     setIsSending(true);
     deleteThumbnail(+id!).then(response => {
       setIsSending(false);
@@ -219,6 +222,16 @@ export const PostEdit: FC = () => {
 
   return (
     <DashboardLayout>
+      <PopupWindow visible={showDeleteThumbnailPopup}>
+        <ConfirmationWindow
+          onSubmit={handleDeleteThumbnail}
+          onReject={() => setShowDeleteThumbnailPopup(false)}
+          message={`Вы уверены, что хотите удалить главное изображение?`}
+          submitColor='error'
+          submitTitle='Удалить'
+          rejectTitle='Отмена'
+        />
+      </PopupWindow>
       <Loading visible={isSending} />
       <Box
         sx={{
@@ -418,7 +431,7 @@ export const PostEdit: FC = () => {
               <Typography variant='h6' gutterBottom>Главное изображение</Typography>
               {
                 userHasPermissions(PERMISSIONS.POST_EDIT)
-                ? <IconButton onClick={handleDeleteThumbnail} color='error' disabled={!(media.src && media.thumb)}>
+                ? <IconButton onClick={() => setShowDeleteThumbnailPopup(true)} color='error' disabled={!(media.src && media.thumb)}>
                   <DeleteOutlinedIcon />
                 </IconButton>
                 : null
