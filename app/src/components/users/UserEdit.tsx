@@ -230,7 +230,7 @@ export const UserEdit: FC = () => {
               </Box>
             </Paper>
             <Typography variant='h6' gutterBottom>Права</Typography>
-            <Paper sx={{ p: 2 }}>
+            <Paper sx={{ p: 2, mb: 2 }}>
               <LoadingWrap
                 isLoading={isPermissionsLoading}
                 loader={<CircularProgress />}
