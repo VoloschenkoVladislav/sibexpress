@@ -107,7 +107,7 @@ export const postAPI = createApi({
         return {
           url: `/posts`,
           method: 'POST',
-          params: { title },
+          body: { title },
         }
       },
       invalidatesTags: (result, error) => error ? [] : ['postCreated'],
@@ -121,7 +121,7 @@ export const postAPI = createApi({
         return {
           url: `/posts/${id}`,
           method: 'POST',
-          params: postData,
+          body: postData,
         }
       },
       invalidatesTags: (result, error) => error ? [] : ['postEdited'],
@@ -168,7 +168,7 @@ export const postAPI = createApi({
         return {
           url: `/posts/${id}/images`,
           method: 'DELETE',
-          params: { images },
+          body: { images },
         }
       }
     }),

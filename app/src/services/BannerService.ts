@@ -96,7 +96,7 @@ export const bannerAPI = createApi({
         return {
           url: `/banners`,
           method: 'POST',
-          params: { title },
+          body: { title },
         }
       },
       invalidatesTags: (result, error) => error ? [] : ['bannerCreate'],
@@ -106,7 +106,7 @@ export const bannerAPI = createApi({
         return {
           url: `/banners/${id}`,
           method: 'POST',
-          params: data,
+          body: data,
         }
       },
       invalidatesTags: (result, error) => error ? [] : ['bannerEdit'],

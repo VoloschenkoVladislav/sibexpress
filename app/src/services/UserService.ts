@@ -99,7 +99,7 @@ export const userAPI = createApi({
         return {
           url: `/users`,
           method: 'POST',
-          params: data,
+          body: data,
         }
       },
       invalidatesTags: (result, error) => error ? [] : ['userCreated'],
@@ -113,7 +113,7 @@ export const userAPI = createApi({
         return {
           url: `/users/${id}`,
           method: 'POST',
-          params: userData
+          body: userData
         }
       },
       invalidatesTags: (result, error) => error ? [] : ['userEdited'],

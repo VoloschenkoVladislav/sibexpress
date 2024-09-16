@@ -61,7 +61,7 @@ export const topicAPI = createApi({
         return {
           url: `/tags`,
           method: 'POST',
-          params: { title },
+          body: { title },
         }
       },
       invalidatesTags: (result, error) => error ? [] : ['topicCreate'],
