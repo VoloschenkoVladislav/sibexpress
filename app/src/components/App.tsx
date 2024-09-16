@@ -12,7 +12,6 @@ import { Banners } from './banners/Banners';
 import { BannerEdit } from './banners/BannerEdit';
 import { ErrorBoundary } from './features/ErrorBoundary';
 import { AbacProvider } from 'react-abac';
-import './App.css';
 import { useAppSelector } from '../hooks/redux/redux';
 
 
