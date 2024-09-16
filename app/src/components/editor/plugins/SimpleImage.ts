@@ -64,10 +64,10 @@ export default class SimpleImage {
   render(): HTMLImageElement | HTMLDivElement {
     const button = document.createElement('button');
     button.innerHTML = 'Выбрать изображение';
-    button.className = 'simple-image-button';
+    button.className = 'ce-simple_image__button';
 
     const buttonWrap = document.createElement('div');
-    buttonWrap.className = 'simple-image-buttonwrap';
+    buttonWrap.className = 'ce-simple_image__buttonwrap';
     buttonWrap.appendChild(button);
 
     button.addEventListener('click', event => {
@@ -82,6 +82,7 @@ export default class SimpleImage {
     }
 
     const img = document.createElement('img');
+    img.className = 'ce-simple_image__image';
     img.src = this._data.src ? `${BASE_BACKEND_URL}/${this._data.src}` : '';
     return this._data.src ? img : buttonWrap;
   }
