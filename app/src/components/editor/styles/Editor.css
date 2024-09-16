@@ -1,3 +1,7 @@
+.ce-toolbar {
+  z-index: 4;
+}
+
 .ce-inline-toolbar {
   margin: 335px 10px;
 }
